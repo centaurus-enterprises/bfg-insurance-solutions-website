@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>Whole Life Insurance | Brown Agency</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      padding: 9rem 5% 5rem;
+      background: linear-gradient(150deg, #FFF8F0 0%, #f5e8d8 60%, #ecdcc8 100%);
+      border-bottom: 1px solid var(--parchment-mid);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      gap: 3rem;
+    }
+
+    /* Decorative rings */
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 420px; height: 420px;
+      border-radius: 50%;
+      border: 1px solid rgba(192,133,82,0.12);
+      pointer-events: none;
+    }
+    .page-hero::after {
+      content: '';
+      position: absolute;
+      top: -30px; right: -30px;
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      border: 1px solid rgba(140,90,60,0.08);
+      pointer-events: none;
+    }
+
+    .page-hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 580px;
+      flex: 1 1 auto;
+    }
+
+    /* Hero SVG illustration */
+    .hero-illustration {
+      position: relative;
+      z-index: 1;
+      flex: 0 0 auto;
+      width: 260px;
+      opacity: 0.92;
+      align-self: flex-end;
+    }
+
+    @media (max-width: 820px) {
+      .hero-illustration { display: none; }
+      .page-hero { display: block; }
+    }
+
+    .page-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--saddle);
+      margin-bottom: 1.25rem;
+    }
+
+    .page-eyebrow::before {
+      content: '';
+      display: block;
+      width: 28px; height: 1px;
+      background: var(--saddle);
+    }
+
+    .page-hero h1 {
+      font-family: 'Raleway', sans-serif;
+      font-size: clamp(2.4rem, 4.5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--espresso);
+      margin-bottom: 1.25rem;
+    }
+
+    .page-hero h1 span { color: var(--cognac); }
+
+    .page-hero p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      max-width: 520px;
+    }
+
+    /* ── PRODUCT LAYOUT ── */
+    .product-content {
+      padding: 5rem 5%;
+      background: var(--parchment);
+      display: grid;
+      grid-template-columns: 1fr 1.8fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    /* LEFT SIDEBAR */
+    .product-sidebar {
+      position: sticky;
+      top: 100px;
+    }
+
+    .sidebar-tag {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--cognac);
+      border: 1px solid rgba(192,133,82,0.35);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      border-left: 2px solid var(--parchment-mid);
+    }
+
+    .sidebar-nav a {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-light);
+      text-decoration: none;
+      padding: 0.5rem 0 0.5rem 1.25rem;
+      border-left: 2px solid transparent;
+      margin-left: -2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .sidebar-nav a:hover,
+    .sidebar-nav a.active {
+      color: var(--cognac);
+      border-left-color: var(--cognac);
+    }
+
+    .sidebar-divider {
+      height: 1px;
+      background: var(--parchment-mid);
+      margin: 1.5rem 0;
+    }
+
+    .sidebar-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-light);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .sidebar-back:hover { color: var(--cognac); }
+
+    /* ── CONTENT BLOCKS ── */
+    .content-block {
+      margin-bottom: 3.5rem;
+      padding-bottom: 3.5rem;
+      border-bottom: 1px solid var(--parchment-mid);
+    }
+    .content-block:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .block-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--saddle);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .block-label::before {
+      content: '';
+      display: block;
+      width: 16px; height: 1px;
+      background: var(--saddle);
+    }
+
+    .content-block h2 {
+      font-family: 'Raleway', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--espresso);
+      margin-bottom: 1rem;
+    }
+    .content-block h2 span { color: var(--cognac); }
+
+    .content-block p {
+      font-size: 0.975rem;
+      color: var(--text-secondary);
+      line-height: 1.85;
+      margin-bottom: 1rem;
+    }
+    .content-block p:last-child { margin-bottom: 0; }
+
+    /* ── WHO IT'S FOR — icon cards ── */
+    .who-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .who-card {
+      background: var(--white);
+      border: 1px solid var(--parchment-mid);
+      border-radius: 8px;
+      padding: 1.25rem 1.25rem 1.25rem 1rem;
+      display: flex;
+      gap: 0.9rem;
+      align-items: flex-start;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .who-card:hover {
+      border-color: rgba(192,133,82,0.4);
+      box-shadow: 0 2px 12px rgba(75,46,43,0.06);
+    }
+
+    .who-icon {
+      flex-shrink: 0;
+      width: 34px; height: 34px;
+      background: rgba(192,133,82,0.1);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .who-icon svg { width: 18px; height: 18px; stroke: var(--cognac); fill: none; stroke-width: 1.8; }
+
+    .who-card-text strong {
+      display: block;
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--espresso);
+      margin-bottom: 0.3rem;
+    }
+    .who-card-text p {
+      font-size: 0.855rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    @media (max-width: 600px) {
+      .who-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── CASH VALUE GROWTH SVG DIAGRAM ── */
+    .diagram-wrap {
+      background: var(--white);
+      border: 1px solid var(--parchment-mid);
+      border-radius: 10px;
+      padding: 2rem 1.75rem 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .diagram-title {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--espresso);
+      margin-bottom: 1.25rem;
+    }
+
+    /* ── BENEFITS ROWS ── */
+    .benefits-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .benefit-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1.1rem 0;
+      border-bottom: 1px solid var(--parchment-mid);
+    }
+    .benefit-row:last-child { border-bottom: none; }
+    .benefit-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--cognac);
+      flex-shrink: 0;
+      margin-top: 0.55rem;
+    }
+    .benefit-row p {
+      font-size: 0.925rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin: 0;
+    }
+    .benefit-row strong { color: var(--espresso); font-weight: 600; }
+
+    /* ── TERM vs WHOLE COMPARE TABLE ── */
+    .compare-wrap {
+      overflow-x: auto;
+      margin-top: 1.25rem;
+      border-radius: 8px;
+      border: 1px solid var(--parchment-mid);
+    }
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    .compare-table thead th {
+      padding: 0.9rem 1.2rem;
+      text-align: left;
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--espresso);
+      background: rgba(192,133,82,0.07);
+      border-bottom: 1px solid var(--parchment-mid);
+    }
+    .compare-table thead th.col-wl {
+      background: rgba(192,133,82,0.15);
+      color: var(--cognac);
+    }
+    .compare-table tbody td {
+      padding: 0.9rem 1.2rem;
+      border-bottom: 1px solid var(--parchment-mid);
+      color: var(--text-secondary);
+      line-height: 1.65;
+      vertical-align: top;
+    }
+    .compare-table tbody tr:last-child td { border-bottom: none; }
+    .compare-table tbody td:first-child {
+      font-weight: 600;
+      color: var(--espresso);
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
+    .col-wl { background: rgba(192,133,82,0.05); }
+
+    .ct-win {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #5a7a52;
+      background: rgba(90,122,82,0.1);
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      margin-bottom: 0.35rem;
+    }
+    .ct-mid {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #8a6f30;
+      background: rgba(138,111,48,0.1);
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      margin-bottom: 0.35rem;
+    }
+    .ct-loss {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #8a4040;
+      background: rgba(138,64,64,0.1);
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      margin-bottom: 0.35rem;
+    }
+
+    /* ── STANDOUT CARRIERS ── */
+    .carrier-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+    @media (max-width: 600px) { .carrier-grid { grid-template-columns: 1fr; } }
+
+    .carrier-card {
+      background: var(--white);
+      border: 1px solid var(--parchment-mid);
+      border-radius: 8px;
+      padding: 1.25rem 1.35rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+    .carrier-card:hover {
+      border-color: rgba(192,133,82,0.4);
+      box-shadow: 0 2px 10px rgba(75,46,43,0.07);
+    }
+    .carrier-badge {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cognac);
+      border: 1px solid rgba(192,133,82,0.4);
+      padding: 0.18rem 0.55rem;
+      border-radius: 20px;
+      margin-bottom: 0.7rem;
+    }
+    .carrier-card h4 {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--espresso);
+      margin-bottom: 0.4rem;
+    }
+    .carrier-card p {
+      font-size: 0.86rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    /* ── FAQ ACCORDION ── */
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .faq-item {
+      background: var(--white);
+      border: 1px solid var(--parchment-mid);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .faq-item:hover { border-color: rgba(192,133,82,0.3); }
+
+    .faq-q {
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.2rem 1.4rem;
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--espresso);
+      line-height: 1.4;
+    }
+
+    .faq-chevron {
+      flex-shrink: 0;
+      stroke: var(--cognac);
+      transition: transform 0.25s ease;
+    }
+    .faq-accordion.open .faq-chevron { transform: rotate(180deg); }
+
+    .faq-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    .faq-accordion.open .faq-body { max-height: 600px; }
+
+    .faq-a {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      padding: 0 1.4rem 1.4rem;
+      margin: 0;
+      display: block;
+    }
+
+    /* ── BOTTOM CTA ── */
+    .page-cta {
+      padding: 5.5rem 5%;
+      background: var(--espresso);
+      text-align: center;
+    }
+    .page-cta h2 {
+      font-family: 'Raleway', sans-serif;
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 0.75rem;
+    }
+    .page-cta h2 span { color: var(--cognac); }
+    .page-cta p {
+      font-size: 1rem;
+      color: rgba(255,248,240,0.6);
+      margin-bottom: 2rem;
+      max-width: 460px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .product-content {
+        grid-template-columns: 1fr;
+        padding: 3rem 5%;
+        gap: 0;
+      }
+      .product-sidebar {
+        position: static;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2.5rem;
+        border-bottom: 1px solid var(--parchment-mid);
+        padding-bottom: 2rem;
+      }
+      .sidebar-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem 0;
+        border-left: none;
+        width: 100%;
+      }
+      .sidebar-nav a {
+        border-left: none;
+        border-bottom: 2px solid transparent;
+        padding: 0.35rem 0.75rem 0.35rem 0;
+      }
+      .sidebar-nav a:hover { border-bottom-color: var(--cognac); }
+      .sidebar-divider { display: none; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-logo">Brown<span>Agency</span></a>
+    <ul class="nav-links">
+      <li><a href="about.html">About Us</a></li>
+      <li class="nav-dropdown">
+        <a href="products.html" class="nav-dropdown-toggle">Products ▾</a>
+        <ul class="dropdown-menu">
+          <li><a href="mortgage_protection.html">Mortgage Protection</a></li>
+          <li><a href="term_life.html">Term Life</a></li>
+          <li><a href="whole_life.html">Whole Life</a></li>
+          <li><a href="final_expense.html">Final Expense</a></li>
+          <li><a href="iul.html">IUL / Wealth Building</a></li>
+          <li><a href="living_benefits.html">Living Benefits</a></li>
+        </ul>
+      </li>
+      <li><a href="careers.html">Careers</a></li>
+      <li><a href="qualify.html" class="nav-cta">See If You Qualify</a></li>
+    </ul>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <div class="page-hero">
+    <div class="page-hero-inner">
+      <div class="page-eyebrow">Permanent Coverage</div>
+      <h1>Coverage That <span>Never Expires</span></h1>
+      <p>Whole life insurance is the only policy guaranteed to be there regardless of when you need it — building real cash value along the way.</p>
+    </div>
+
+    <!-- Hero SVG: stylized tree with roots and rings — permanence metaphor -->
+    <div class="hero-illustration">
+      <svg viewBox="0 0 260 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- Ground line -->
+        <line x1="20" y1="228" x2="240" y2="228" stroke="#C08552" stroke-width="1" stroke-dasharray="4 3" opacity="0.3"/>
+
+        <!-- Roots -->
+        <path d="M130 228 Q105 240 80 258" stroke="#8C5A3C" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.5"/>
+        <path d="M130 228 Q118 245 108 268" stroke="#8C5A3C" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.35"/>
+        <path d="M130 228 Q142 245 152 268" stroke="#8C5A3C" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.35"/>
+        <path d="M130 228 Q155 240 180 258" stroke="#8C5A3C" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.5"/>
+
+        <!-- Trunk -->
+        <path d="M118 228 Q114 195 118 160 Q122 140 130 120" stroke="#4B2E2B" stroke-width="10" stroke-linecap="round" fill="none"/>
+        <path d="M142 228 Q146 195 142 160 Q138 140 130 120" stroke="#4B2E2B" stroke-width="10" stroke-linecap="round" fill="none"/>
+        <path d="M118 228 L142 228" stroke="#4B2E2B" stroke-width="10" fill="none"/>
+
+        <!-- Trunk fill -->
+        <path d="M119 228 Q115 195 119 160 Q123 140 130 120 Q137 140 141 160 Q145 195 141 228 Z" fill="#4B2E2B" opacity="0.9"/>
+
+        <!-- Main branches -->
+        <path d="M130 165 Q100 148 75 130" stroke="#4B2E2B" stroke-width="5" stroke-linecap="round" fill="none"/>
+        <path d="M130 150 Q115 125 118 100" stroke="#4B2E2B" stroke-width="4" stroke-linecap="round" fill="none"/>
+        <path d="M130 165 Q160 148 185 130" stroke="#4B2E2B" stroke-width="5" stroke-linecap="round" fill="none"/>
+        <path d="M130 150 Q145 125 142 100" stroke="#4B2E2B" stroke-width="4" stroke-linecap="round" fill="none"/>
+        <path d="M130 140 Q128 115 130 95" stroke="#4B2E2B" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+
+        <!-- Canopy clusters -->
+        <!-- Far left -->
+        <ellipse cx="72" cy="118" rx="32" ry="26" fill="#C08552" opacity="0.15"/>
+        <ellipse cx="72" cy="118" rx="22" ry="18" fill="#C08552" opacity="0.2"/>
+        <!-- Left -->
+        <ellipse cx="110" cy="90" rx="28" ry="22" fill="#C08552" opacity="0.18"/>
+        <ellipse cx="110" cy="90" rx="19" ry="15" fill="#C08552" opacity="0.22"/>
+        <!-- Center top -->
+        <ellipse cx="130" cy="72" rx="34" ry="28" fill="#C08552" opacity="0.22"/>
+        <ellipse cx="130" cy="72" rx="24" ry="19" fill="#C08552" opacity="0.26"/>
+        <!-- Right -->
+        <ellipse cx="150" cy="90" rx="28" ry="22" fill="#C08552" opacity="0.18"/>
+        <ellipse cx="150" cy="90" rx="19" ry="15" fill="#C08552" opacity="0.22"/>
+        <!-- Far right -->
+        <ellipse cx="188" cy="118" rx="32" ry="26" fill="#C08552" opacity="0.15"/>
+        <ellipse cx="188" cy="118" rx="22" ry="18" fill="#C08552" opacity="0.2"/>
+
+        <!-- Ring markers on trunk (growth rings concept) -->
+        <path d="M120 185 Q130 182 140 185" stroke="#C08552" stroke-width="1" fill="none" opacity="0.5" stroke-dasharray="3 2"/>
+        <path d="M121 200 Q130 197 139 200" stroke="#C08552" stroke-width="1" fill="none" opacity="0.5" stroke-dasharray="3 2"/>
+        <path d="M120 215 Q130 212 140 215" stroke="#C08552" stroke-width="1" fill="none" opacity="0.5" stroke-dasharray="3 2"/>
+
+        <!-- Small leaf accents -->
+        <ellipse cx="62" cy="105" rx="8" ry="5" fill="#8C5A3C" opacity="0.3" transform="rotate(-20 62 105)"/>
+        <ellipse cx="196" cy="108" rx="8" ry="5" fill="#8C5A3C" opacity="0.3" transform="rotate(15 196 108)"/>
+        <ellipse cx="130" cy="50" rx="7" ry="5" fill="#8C5A3C" opacity="0.35" transform="rotate(-5 130 50)"/>
+
+        <!-- Label: "Grows over time" subtle text -->
+        <text x="38" y="258" font-family="DM Sans, sans-serif" font-size="8" fill="#8C5A3C" opacity="0.55" letter-spacing="0.05em">Grows over time</text>
+
+        <!-- Dotted growth arrow up the right side -->
+        <path d="M210 220 L210 95" stroke="#C08552" stroke-width="1" stroke-dasharray="3 3" opacity="0.4"/>
+        <polygon points="210,84 206,96 214,96" fill="#C08552" opacity="0.4"/>
+        <text x="216" y="165" font-family="DM Sans, sans-serif" font-size="7.5" fill="#8C5A3C" opacity="0.6" writing-mode="vertical-rl" text-anchor="middle" letter-spacing="0.08em">Cash Value</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- PRODUCT CONTENT -->
+  <div class="product-content">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="product-sidebar">
+      <div class="sidebar-tag">Permanent Coverage</div>
+      <ul class="sidebar-nav">
+        <li><a href="#what-it-is">What It Is</a></li>
+        <li><a href="#cash-value">Cash Value</a></li>
+        <li><a href="#who-benefits">Who Benefits</a></li>
+        <li><a href="#vs-term">Whole vs. Term</a></li>
+        <li><a href="#carriers">Standout Products</a></li>
+        <li><a href="#faq">Common Questions</a></li>
+      </ul>
+      <div class="sidebar-divider"></div>
+      <a href="products.html" class="sidebar-back">
+        ← All Products
+      </a>
+    </aside>
+
+    <!-- RIGHT CONTENT -->
+    <div class="product-body">
+
+      <!-- WHAT IT IS -->
+      <div class="content-block" id="what-it-is">
+        <div class="block-label">What It Is</div>
+        <h2>Insurance That <span>Lasts a Lifetime</span></h2>
+        <p>Whole life insurance is a permanent policy — it does not expire after 10, 20, or 30 years. As long as premiums are paid, coverage stays in force for the life of the insured, whether that's age 65, 85, or 105. The death benefit is guaranteed regardless of when the policyholder passes.</p>
+        <p>Because it is permanent by design, whole life carries a higher premium than term coverage of the same face value. That cost difference is the price of certainty — a term policy expires and must be renewed or replaced as the insured ages; a whole life policy does not. For clients who need a guarantee, not just a probability, that distinction matters significantly.</p>
+        <p>Premium payments are typically fixed for the life of the policy. Policyholders know exactly what they will pay in year one, year twenty, and beyond. This predictability makes whole life easy to budget for and eliminates the concern of premiums increasing as health declines.</p>
+        <p>Whole life is not a speculative product. It is straightforward: pay premiums, maintain coverage, and the death benefit will be paid. There are no market-linked variables, no crediting caps, and no surrender charges that alter the base coverage. What you're promised is what is delivered.</p>
+      </div>
+
+      <!-- CASH VALUE -->
+      <div class="content-block" id="cash-value">
+        <div class="block-label">Cash Value</div>
+        <h2>A Policy That <span>Builds Equity</span></h2>
+        <p>Every whole life premium payment serves two purposes: it keeps the death benefit active and contributes to a cash value account that grows over time. This growth is credited at a guaranteed minimum rate set by the carrier — it accumulates regardless of market conditions and is not subject to loss.</p>
+        <p>Cash value grows tax-deferred. There is no annual tax event on the gains inside the policy. If the policyholder needs access to those funds, they can borrow against the cash value without triggering a taxable withdrawal. Policy loans do not require repayment on a fixed schedule, though unpaid balances reduce the death benefit paid to beneficiaries.</p>
+        <p>Some whole life policies issued by mutual carriers also pay dividends — an annual distribution based on the company's financial performance. Dividends are not guaranteed, but many carriers have paid them consistently for decades. Policyholders can use dividends to reduce premiums, purchase additional coverage, or let them accumulate and compound inside the policy. This is what makes a participating whole life policy particularly powerful for long-term wealth building.</p>
+
+        <!-- Cash Value Growth Diagram -->
+        <div class="diagram-wrap">
+          <div class="diagram-title">Illustrative Cash Value Growth Over Time</div>
+          <svg viewBox="0 0 520 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+
+            <!-- Grid lines -->
+            <line x1="60" y1="20" x2="60" y2="160" stroke="#e8d8c8" stroke-width="1"/>
+            <line x1="60" y1="160" x2="500" y2="160" stroke="#e8d8c8" stroke-width="1"/>
+            <line x1="60" y1="120" x2="500" y2="120" stroke="#e8d8c8" stroke-width="0.5" stroke-dasharray="3 3"/>
+            <line x1="60" y1="80" x2="500" y2="80" stroke="#e8d8c8" stroke-width="0.5" stroke-dasharray="3 3"/>
+            <line x1="60" y1="40" x2="500" y2="40" stroke="#e8d8c8" stroke-width="0.5" stroke-dasharray="3 3"/>
+
+            <!-- Y-axis labels -->
+            <text x="52" y="164" text-anchor="end" font-family="DM Sans, sans-serif" font-size="9" fill="#8C5A3C" opacity="0.7">$0</text>
+            <text x="52" y="124" text-anchor="end" font-family="DM Sans, sans-serif" font-size="9" fill="#8C5A3C" opacity="0.7">$25K</text>
+            <text x="52" y="84" text-anchor="end" font-family="DM Sans, sans-serif" font-size="9" fill="#8C5A3C" opacity="0.7">$50K</text>
+            <text x="52" y="44" text-anchor="end" font-family="DM Sans, sans-serif" font-size="9" fill="#8C5A3C" opacity="0.7">$75K</text>
+
+            <!-- X-axis labels -->
+            <text x="60" y="174" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="9" fill="#8C5A3C" opacity="0.7">Yr 1</text>
+            <text x="170" y="174" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="9" fill="#8C5A3C" opacity="0.7">Yr 10</text>
+            <text x="280" y="174" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="9" fill="#8C5A3C" opacity="0.7">Yr 20</text>
+            <text x="390" y="174" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="9" fill="#8C5A3C" opacity="0.7">Yr 30</text>
+            <text x="500" y="174" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="9" fill="#8C5A3C" opacity="0.7">Yr 40</text>
+
+            <!-- Death Benefit flat line (full fill area under it) -->
+            <rect x="60" y="25" width="440" height="135" fill="rgba(75,46,43,0.04)" rx="2"/>
+            <line x1="60" y1="25" x2="500" y2="25" stroke="#4B2E2B" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <text x="504" y="29" font-family="DM Sans, sans-serif" font-size="9" fill="#4B2E2B" opacity="0.7">Death Benefit</text>
+
+            <!-- Cash value curve (fill area) -->
+            <path d="M60 158 Q110 155 170 145 Q230 130 280 110 Q340 84 390 62 Q445 40 500 30 L500 160 L60 160 Z"
+                  fill="rgba(192,133,82,0.14)"/>
+
+            <!-- Cash value curve (stroke) -->
+            <path d="M60 158 Q110 155 170 145 Q230 130 280 110 Q340 84 390 62 Q445 40 500 30"
+                  stroke="#C08552" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+            <!-- With dividends (dashed upper curve) -->
+            <path d="M60 158 Q110 154 170 140 Q230 120 280 96 Q340 68 390 47 Q445 28 500 22"
+                  stroke="#8C5A3C" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-dasharray="5 3"/>
+
+            <!-- Data point markers -->
+            <circle cx="170" cy="145" r="3.5" fill="#C08552"/>
+            <circle cx="280" cy="110" r="3.5" fill="#C08552"/>
+            <circle cx="390" cy="62" r="3.5" fill="#C08552"/>
+
+            <!-- Legend -->
+            <rect x="62" y="185" width="10" height="2" fill="#C08552" rx="1"/>
+            <text x="76" y="188" font-family="DM Sans, sans-serif" font-size="8.5" fill="#4B2E2B">Guaranteed Cash Value</text>
+            <line x1="195" y1="186" x2="205" y2="186" stroke="#8C5A3C" stroke-width="1.5" stroke-dasharray="4 2"/>
+            <text x="210" y="188" font-family="DM Sans, sans-serif" font-size="8.5" fill="#4B2E2B">+ Dividends (not guaranteed)</text>
+
+            <!-- Note -->
+            <text x="260" y="198" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="7.5" fill="#8C5A3C" opacity="0.55">Illustrative only — actual values vary by carrier, age, health, and policy design</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- WHO BENEFITS -->
+      <div class="content-block" id="who-benefits">
+        <div class="block-label">Who Benefits & Why</div>
+        <h2>Is This <span>Right for You?</span></h2>
+        <p>Whole life works best when the need for coverage is permanent and when the policyholder values certainty over flexibility. These are the clients who tend to benefit most.</p>
+
+        <div class="who-grid">
+          <div class="who-card">
+            <div class="who-icon">
+              <!-- Family icon -->
+              <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="who-card-text">
+              <strong>Parents of Young Children</strong>
+              <p>Locking in a whole life policy when children are young secures permanent coverage at a low rate, with cash value that compounds across decades.</p>
+            </div>
+          </div>
+          <div class="who-card">
+            <div class="who-icon">
+              <!-- Heart/estate icon -->
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </div>
+            <div class="who-card-text">
+              <strong>Estate Planning Clients</strong>
+              <p>A guaranteed death benefit can fund estate taxes, equalize inheritance between heirs, or ensure charitable gifts are made regardless of when death occurs.</p>
+            </div>
+          </div>
+          <div class="who-card">
+            <div class="who-icon">
+              <!-- Business / briefcase icon -->
+              <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            </div>
+            <div class="who-card-text">
+              <strong>Business Owners</strong>
+              <p>Whole life is commonly used to fund buy-sell agreements, key-person coverage, or as a tax-advantaged savings vehicle for business owners without access to corporate retirement plans.</p>
+            </div>
+          </div>
+          <div class="who-card">
+            <div class="who-icon">
+              <!-- Shield icon -->
+              <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="who-card-text">
+              <strong>Those Who've Become Uninsurable</strong>
+              <p>Clients who developed health conditions after purchasing an existing policy may not be able to qualify for new coverage. A whole life policy held from a healthier period locks in coverage that cannot be taken away.</p>
+            </div>
+          </div>
+          <div class="who-card">
+            <div class="who-icon">
+              <!-- Piggy bank / savings icon -->
+              <svg viewBox="0 0 24 24"><path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8.5 3.3 1.5 4.5-.5 2-.5 4-.5 4h3c0-.5.5-1 1-1h3.5s1 1.5 2.5 1.5 2.5-1.5 2.5-1.5H21s-.5-2.5-.5-4C22 14.8 22 5 19 5z"/><path d="M2 9.5C2 7 4 5 7 5"/></svg>
+            </div>
+            <div class="who-card-text">
+              <strong>Conservative Savers</strong>
+              <p>For those who want guaranteed growth without market exposure, the cash value component of a whole life policy offers a protected, tax-advantaged alternative to taxable savings accounts.</p>
+            </div>
+          </div>
+          <div class="who-card">
+            <div class="who-icon">
+              <!-- People / legacy icon -->
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
+            </div>
+            <div class="who-card-text">
+              <strong>Legacy-Minded Clients</strong>
+              <p>Whole life is one of the most efficient ways to transfer wealth to the next generation — the death benefit passes income-tax free to named beneficiaries, outside of probate.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WHOLE VS TERM -->
+      <div class="content-block" id="vs-term">
+        <div class="block-label">Side-by-Side Comparison</div>
+        <h2>Whole Life vs. <span>Term Life</span></h2>
+        <p>The right choice between whole and term depends on the client's timeline, budget, and what they actually need coverage to accomplish. Neither is universally superior — they solve different problems.</p>
+
+        <div class="compare-wrap">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Term Life</th>
+                <th class="col-wl">Whole Life</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Coverage Duration</td>
+                <td>
+                  <div class="ct-mid">Temporary</div>
+                  Covers a set period — 10, 20, or 30 years. Expires if not renewed.
+                </td>
+                <td class="col-wl">
+                  <div class="ct-win">Permanent</div>
+                  Stays in force for life, guaranteed, as long as premiums are paid.
+                </td>
+              </tr>
+              <tr>
+                <td>Premium Cost</td>
+                <td>
+                  <div class="ct-win">Lower</div>
+                  Significantly cheaper for the same face value, especially at younger ages.
+                </td>
+                <td class="col-wl">
+                  <div class="ct-loss">Higher</div>
+                  Premiums are higher but fixed for life — no increases as health or age changes.
+                </td>
+              </tr>
+              <tr>
+                <td>Cash Value</td>
+                <td>
+                  <div class="ct-loss">None</div>
+                  Purely a death benefit vehicle. Premiums do not build any equity or savings component.
+                </td>
+                <td class="col-wl">
+                  <div class="ct-win">Guaranteed Growth</div>
+                  Cash value accumulates at a guaranteed rate, tax-deferred, accessible via policy loans.
+                </td>
+              </tr>
+              <tr>
+                <td>Dividends</td>
+                <td>
+                  <div class="ct-loss">None</div>
+                  Term policies do not participate in carrier surplus distributions.
+                </td>
+                <td class="col-wl">
+                  <div class="ct-win">Possible</div>
+                  Participating whole life may earn annual dividends — not guaranteed, but historically consistent for strong mutual carriers.
+                </td>
+              </tr>
+              <tr>
+                <td>Renewability Risk</td>
+                <td>
+                  <div class="ct-loss">Present</div>
+                  If health declines during the term, renewing or replacing coverage at expiration becomes expensive or impossible.
+                </td>
+                <td class="col-wl">
+                  <div class="ct-win">None</div>
+                  Once issued, the policy cannot be cancelled by the carrier due to health changes. Coverage is locked.
+                </td>
+              </tr>
+              <tr>
+                <td>Best For</td>
+                <td>Income replacement during working years, mortgage coverage, temporary high-need periods with a limited budget.</td>
+                <td class="col-wl">Permanent income replacement, estate planning, legacy transfers, business uses, or when coverage must exist no matter when death occurs.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- STANDOUT PRODUCTS / CARRIERS -->
+      <div class="content-block" id="carriers">
+        <div class="block-label">Standout Products</div>
+        <h2>Products We <span>Work With</span></h2>
+        <p>As an independent agency, we have access to whole life products across multiple carriers. These are some of the standout options we commonly recommend, depending on client goals and health profile.</p>
+
+        <div class="carrier-grid">
+          <div class="carrier-card">
+            <div class="carrier-badge">Mutual of Omaha</div>
+            <h4>Guaranteed Whole Life</h4>
+            <p>A simplified issue product with no medical exam required. Designed for clients who want permanent coverage without the underwriting process — especially useful for those with health history concerns. Available up to age 85.</p>
+          </div>
+          <div class="carrier-card">
+            <div class="carrier-badge">North American</div>
+            <h4>Custom Whole Life</h4>
+            <p>A fully underwritten whole life product with strong guaranteed cash value accumulation. Well-suited for clients who qualify medically and want to maximize the long-term cash value component over the death benefit.</p>
+          </div>
+          <div class="carrier-card">
+            <div class="carrier-badge">Foresters Financial</div>
+            <h4>PlanRight Whole Life</h4>
+            <p>A simplified-issue product that includes built-in living benefit riders at no additional cost, covering terminal, chronic, and critical illness. Strong option for clients who want whole life protection alongside living benefit access.</p>
+          </div>
+          <div class="carrier-card">
+            <div class="carrier-badge">Gerber Life</div>
+            <h4>Grow-Up Plan</h4>
+            <p>A whole life product for children that locks in coverage early, builds guaranteed cash value, and includes the option for the child to purchase additional coverage as an adult — regardless of health at that time.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="content-block" id="faq">
+        <div class="block-label">Common Questions</div>
+        <h2>Questions Worth <span>Asking</span></h2>
+        <p>Whole life generates more questions than most products because it combines protection and savings in a single vehicle. Here are the ones we hear most often.</p>
+
+        <div class="faq-list">
+
+          <div class="faq-item faq-accordion">
+            <button class="faq-q faq-toggle" aria-expanded="false">
+              Isn't whole life just an overpriced term policy?
+              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-body">
+              <p class="faq-a">The comparison only makes sense if the two products are solving the same problem — and they're not. Term covers a period of time; whole life covers a life. If your need for coverage ends when your mortgage is paid or your kids are grown, term is the right and more cost-efficient tool. But if you need your family protected regardless of when you die, or if you're building a legacy, funding an estate, or protecting a business interest, term cannot do that — it expires. The "buy term and invest the difference" argument also assumes the policyholder is disciplined enough to actually invest the difference, and that those investments are in tax-advantaged structures comparable to what whole life provides. For many clients, neither assumption holds.</p>
+            </div>
+          </div>
+
+          <div class="faq-item faq-accordion">
+            <button class="faq-q faq-toggle" aria-expanded="false">
+              How do policy loans work, and are they risky?
+              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-body">
+              <p class="faq-a">A policy loan lets you borrow against the cash value of your policy without the carrier's permission, without a credit check, and without a fixed repayment timeline. The loan doesn't leave the policy — the carrier uses your cash value as collateral and lends you money from their own general account. Interest accrues on the loan balance. If you never repay it, the outstanding balance plus interest is deducted from the death benefit at the time of your death. The risk is in mismanaging the loan — if the balance grows unchecked over many years and approaches the policy's death benefit, the policy can become at risk of lapsing. Used responsibly, policy loans are one of the most flexible liquidity mechanisms available in any financial product.</p>
+            </div>
+          </div>
+
+          <div class="faq-item faq-accordion">
+            <button class="faq-q faq-toggle" aria-expanded="false">
+              What happens if I stop paying premiums?
+              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-body">
+              <p class="faq-a">If you stop paying premiums, whole life policies typically have three non-forfeiture options, which vary by carrier and policy terms. First, you can take the cash surrender value as a lump sum — you receive the accumulated cash value and the coverage ends. Second, reduced paid-up insurance converts your cash value into a smaller, fully paid death benefit that requires no further premiums. Third, extended term uses the cash value to purchase term coverage at the original face amount for as long as the funds last. Unlike term life, where missing a premium means losing coverage outright, whole life gives you choices. Speaking with your agent before stopping payments is always advisable, as the right option depends on your situation.</p>
+            </div>
+          </div>
+
+          <div class="faq-item faq-accordion">
+            <button class="faq-q faq-toggle" aria-expanded="false">
+              Are dividends actually reliable, or is that a sales pitch?
+              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-body">
+              <p class="faq-a">Dividends are not guaranteed — that's a legal disclosure, not a warning sign. Established mutual carriers like MassMutual, Northwestern Mutual, and Guardian have paid dividends every single year for over 150 years. They are not guaranteed because they depend on the carrier's actual investment returns, mortality experience, and operating expenses — but for the largest mutual companies, they have been extraordinarily consistent. Dividends do more than just exist: when used to purchase paid-up additions, they compound inside the policy, accelerating cash value growth and increasing the death benefit over time. Whether dividends are meaningful to you depends on which carrier you're looking at and over what time horizon you're evaluating the policy.</p>
+            </div>
+          </div>
+
+          <div class="faq-item faq-accordion">
+            <button class="faq-q faq-toggle" aria-expanded="false">
+              Can I get whole life if I have health issues?
+              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-body">
+              <p class="faq-a">It depends on the product. Fully underwritten whole life requires a medical review, and applicants with significant health conditions may be declined or rated. Simplified issue whole life products — like Mutual of Omaha's Guaranteed Whole Life or Foresters' PlanRight — use a short health questionnaire with no medical exam, and are designed to accept clients who wouldn't qualify for standard underwriting. Guaranteed issue products go a step further: they accept anyone within the eligible age range with no health questions at all. These products typically carry a graded death benefit for the first two years, meaning the full benefit only pays out after an initial waiting period. Face amounts are also lower than underwritten products. The right fit depends on your health history, age, and the amount of coverage you need.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /product-body -->
+  </div><!-- /product-content -->
+
+  <!-- CTA -->
+  <section class="page-cta">
+    <h2>Think this might be <span>right for you?</span></h2>
+    <p>Answer a few quick questions and we'll confirm whether whole life fits your situation — no pressure, no obligation.</p>
+    <a href="qualify.html" class="btn-primary">See If You Qualify &nbsp;→</a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">Brown<span>Agency</span></a>
+        <p>Independent life insurance brokerage serving families across the U.S. We work for you — not the carriers.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Products</h4>
+        <ul>
+          <li><a href="mortgage_protection.html">Mortgage Protection</a></li>
+          <li><a href="term_life.html">Term Life</a></li>
+          <li><a href="whole_life.html">Whole Life</a></li>
+          <li><a href="iul.html">IUL / Wealth</a></li>
+          <li><a href="final_expense.html">Final Expense</a></li>
+          <li><a href="living_benefits.html">Living Benefits</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="careers.html">Careers</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Get Started</h4>
+        <ul>
+          <li><a href="qualify.html">See If You Qualify</a></li>
+          <li><a href="careers.html">Join Our Team</a></li>
+          <li><a href="#">Agent Portal</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Brown Agency LLC. All rights reserved.</span>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Disclaimers</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // FAQ accordion
+    document.querySelectorAll('.faq-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-accordion');
+        const isOpen = item.classList.contains('open');
+
+        document.querySelectorAll('.faq-accordion').forEach(el => {
+          el.classList.remove('open');
+          el.querySelector('.faq-toggle').setAttribute('aria-expanded', 'false');
+        });
+
+        if (!isOpen) {
+          item.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+
+    // Sidebar active link highlighting on scroll
+    const sections = document.querySelectorAll('.content-block[id]');
+    const navLinks = document.querySelectorAll('.sidebar-nav a');
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => {
+            link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id);
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+
+    sections.forEach(s => observer.observe(s));
+  </script>
+
+</body>
+</html>

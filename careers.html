@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Careers — Brown Agency</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* ── CAREERS-PAGE SPECIFIC STYLES ── */
+
+    /* Hero */
+    .careers-hero {
+      position: relative;
+      min-height: 88vh;
+      display: flex;
+      align-items: center;
+      padding: 0 5%;
+      overflow: hidden;
+    }
+
+    .careers-hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 70% at 80% 30%, rgba(192,133,82,0.22) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 60% at 10% 80%, rgba(140,90,60,0.15) 0%, transparent 60%),
+        linear-gradient(160deg, #f5e9da 0%, #e8d4bc 55%, #d4b896 100%);
+      z-index: 0;
+    }
+
+    /* Diagonal stripe accent */
+    .careers-hero-bg::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 45%;
+      height: 100%;
+      background: linear-gradient(135deg, transparent 0%, rgba(192,133,82,0.08) 50%, transparent 100%);
+      clip-path: polygon(20% 0%, 100% 0%, 100% 100%, 0% 100%);
+    }
+
+    .careers-hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 660px;
+      animation: fadeUp 0.9s ease both;
+    }
+
+    /* Floating badge */
+    .careers-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--espresso);
+      color: var(--cognac);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 0.45rem 1rem;
+      border-radius: 2px;
+      margin-bottom: 1.75rem;
+      animation: fadeUp 0.9s ease 0.1s both;
+    }
+
+    .careers-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--cognac);
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .careers-hero h1 {
+      font-family: 'Raleway', serif;
+      font-size: clamp(2.6rem, 5vw, 4.2rem);
+      font-weight: 900;
+      line-height: 1.08;
+      color: var(--espresso);
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.9s ease 0.2s both;
+    }
+
+    .careers-hero h1 em {
+      font-style: normal;
+      color: var(--cognac);
+    }
+
+    .careers-hero p {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      max-width: 520px;
+      margin-bottom: 2.5rem;
+      animation: fadeUp 0.9s ease 0.3s both;
+    }
+
+    .careers-hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      animation: fadeUp 0.9s ease 0.4s both;
+    }
+
+    /* Floating stat cards in hero */
+    .hero-proof {
+      position: absolute;
+      right: 5%;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      z-index: 1;
+      animation: fadeUp 0.9s ease 0.5s both;
+    }
+
+    .proof-card {
+      background: rgba(255,248,240,0.88);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(192,133,82,0.25);
+      border-radius: 8px;
+      padding: 1.1rem 1.5rem;
+      min-width: 180px;
+      box-shadow: 0 4px 20px rgba(75,46,43,0.08);
+    }
+
+    .proof-card-number {
+      font-family: 'Raleway', serif;
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--cognac);
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+
+    .proof-card-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* ── WHY JOIN SECTION ── */
+    .why-join {
+      padding: 6rem 5%;
+      background: var(--parchment);
+    }
+
+    .why-join-header {
+      max-width: 560px;
+      margin-bottom: 4rem;
+    }
+
+    .why-join-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .benefit-card {
+      background: var(--white);
+      border: 1px solid var(--parchment-mid);
+      border-radius: 8px;
+      padding: 2.25rem;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .benefit-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 0;
+      background: var(--cognac);
+      transition: height 0.35s ease;
+      border-radius: 0 0 2px 0;
+    }
+
+    .benefit-card:hover {
+      border-color: var(--cognac);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(192,133,82,0.12);
+    }
+
+    .benefit-card:hover::before { height: 100%; }
+
+    .benefit-icon {
+      width: 48px; height: 48px;
+      background: linear-gradient(135deg, rgba(192,133,82,0.12), rgba(140,90,60,0.08));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 1.25rem;
+      border: 1px solid rgba(192,133,82,0.2);
+    }
+
+    .benefit-card h3 {
+      font-family: 'Raleway', serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--espresso);
+      margin-bottom: 0.65rem;
+    }
+
+    .benefit-card p {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* ── SYMMETRY SPOTLIGHT ── */
+    .symmetry-section {
+      padding: 5.5rem 5%;
+      background: var(--espresso);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .symmetry-section::before {
+      content: 'SYMMETRY';
+      position: absolute;
+      right: -2%;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Raleway', serif;
+      font-size: clamp(6rem, 12vw, 10rem);
+      font-weight: 900;
+      color: rgba(255,248,240,0.03);
+      letter-spacing: -0.02em;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .symmetry-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .symmetry-text .section-eyebrow {
+      color: var(--cognac);
+    }
+
+    .symmetry-text .section-eyebrow::before {
+      background: var(--cognac);
+    }
+
+    .symmetry-text h2 {
+      font-family: 'Raleway', serif;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-weight: 800;
+      color: var(--parchment);
+      line-height: 1.2;
+      margin-bottom: 1.25rem;
+    }
+
+    .symmetry-text h2 span { color: var(--cognac); }
+
+    .symmetry-text p {
+      font-size: 0.975rem;
+      color: rgba(255,248,240,0.6);
+      line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+
+    .symmetry-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: rgba(255,248,240,0.08);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(255,248,240,0.08);
+    }
+
+    .sym-stat {
+      background: rgba(255,248,240,0.04);
+      padding: 1.75rem;
+      text-align: center;
+      transition: background 0.25s;
+    }
+
+    .sym-stat:hover { background: rgba(192,133,82,0.12); }
+
+    .sym-stat-num {
+      font-family: 'Raleway', serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--cognac);
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+
+    .sym-stat-label {
+      font-size: 0.75rem;
+      color: rgba(255,248,240,0.45);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      line-height: 1.4;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how-it-works {
+      padding: 6rem 5%;
+      background: var(--parchment-dark);
+      border-top: 1px solid var(--parchment-mid);
+    }
+
+    .how-header {
+      text-align: center;
+      max-width: 540px;
+      margin: 0 auto 4rem;
+    }
+
+    .how-header .section-eyebrow { justify-content: center; }
+    .how-header .section-eyebrow::before { display: none; }
+
+    .how-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      position: relative;
+    }
+
+    .how-steps::before {
+      content: '';
+      position: absolute;
+      top: 1.9rem;
+      left: calc(12.5% + 1rem);
+      right: calc(12.5% + 1rem);
+      height: 1px;
+      background: linear-gradient(90deg, var(--cognac), var(--parchment-mid));
+      z-index: 0;
+    }
+
+    .how-step {
+      position: relative;
+      z-index: 1;
+      padding: 0 1.5rem;
+      text-align: center;
+    }
+
+    .how-step-num {
+      width: 3.75rem; height: 3.75rem;
+      border-radius: 50%;
+      background: var(--white);
+      border: 1.5px solid var(--cognac);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Raleway', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--cognac);
+      margin: 0 auto 1.5rem;
+    }
+
+    .how-step h3 {
+      font-family: 'Raleway', serif;
+      font-size: 0.975rem;
+      font-weight: 700;
+      color: var(--espresso);
+      margin-bottom: 0.5rem;
+    }
+
+    .how-step p {
+      font-size: 0.83rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    /* ── APPLICATION FORM ── */
+    .application-section {
+      padding: 6rem 5%;
+      background: var(--parchment);
+    }
+
+    .application-inner {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .application-intro .section-eyebrow { margin-bottom: 1.25rem; }
+
+    .application-intro h2 {
+      font-family: 'Raleway', serif;
+      font-size: clamp(1.75rem, 2.8vw, 2.4rem);
+      font-weight: 800;
+      color: var(--espresso);
+      line-height: 1.2;
+      margin-bottom: 1.25rem;
+    }
+
+    .application-intro h2 span { color: var(--cognac); }
+
+    .application-intro p {
+      font-size: 0.925rem;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+
+    .privacy-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      background: rgba(192,133,82,0.07);
+      border: 1px solid rgba(192,133,82,0.2);
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .privacy-note::before {
+      content: '🔒';
+      font-size: 1rem;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    /* Form */
+    .agent-form {
+      background: var(--white);
+      border: 1px solid var(--parchment-mid);
+      border-radius: 10px;
+      padding: 2.75rem;
+      box-shadow: 0 4px 24px rgba(75,46,43,0.06);
+    }
+
+    .form-section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cognac);
+      margin-bottom: 1.25rem;
+      margin-top: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-section-label:first-child { margin-top: 0; }
+
+    .form-section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--parchment-mid);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-row .form-group { margin-bottom: 0; }
+
+    .form-group label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--espresso);
+      letter-spacing: 0.02em;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+      background: var(--parchment);
+      border: 1.5px solid var(--parchment-mid);
+      border-radius: 5px;
+      padding: 0.7rem 0.95rem;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      outline: none;
+      width: 100%;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--cognac);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(192,133,82,0.12);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    .form-group select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238C5A3C' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.95rem center;
+      padding-right: 2.5rem;
+    }
+
+    /* Radio + checkbox groups */
+    .radio-group,
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .radio-option,
+    .checkbox-option {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      padding: 0.6rem 0.85rem;
+      border-radius: 5px;
+      border: 1.5px solid var(--parchment-mid);
+      background: var(--parchment);
+      transition: border-color 0.2s, background 0.2s, color 0.2s;
+      user-select: none;
+    }
+
+    .radio-option:hover,
+    .checkbox-option:hover {
+      border-color: var(--cognac);
+      background: rgba(192,133,82,0.05);
+      color: var(--espresso);
+    }
+
+    .radio-option input,
+    .checkbox-option input {
+      display: none;
+    }
+
+    .radio-option.selected,
+    .checkbox-option.checked {
+      border-color: var(--cognac);
+      background: rgba(192,133,82,0.08);
+      color: var(--espresso);
+      font-weight: 500;
+    }
+
+    .radio-dot {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      border: 1.5px solid var(--parchment-mid);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: border-color 0.2s;
+    }
+
+    .radio-option.selected .radio-dot {
+      border-color: var(--cognac);
+    }
+
+    .radio-dot::after {
+      content: '';
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--cognac);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .radio-option.selected .radio-dot::after { opacity: 1; }
+
+    .checkbox-box {
+      width: 16px; height: 16px;
+      border-radius: 3px;
+      border: 1.5px solid var(--parchment-mid);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: border-color 0.2s, background 0.2s;
+      font-size: 0.7rem;
+      color: transparent;
+    }
+
+    .checkbox-option.checked .checkbox-box {
+      border-color: var(--cognac);
+      background: var(--cognac);
+      color: white;
+    }
+
+    /* Submit */
+    .form-submit {
+      margin-top: 1.75rem;
+    }
+
+    .btn-form-submit {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      background: var(--cognac);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.975rem;
+      padding: 1rem 2rem;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(192,133,82,0.3);
+      letter-spacing: 0.02em;
+    }
+
+    .btn-form-submit:hover {
+      background: var(--saddle);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(140,90,60,0.35);
+    }
+
+    .btn-form-submit:active { transform: translateY(0); }
+
+    .form-disclaimer {
+      margin-top: 0.85rem;
+      font-size: 0.75rem;
+      color: var(--text-light);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* Success state */
+    .form-success {
+      display: none;
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+
+    .success-icon {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--cognac), var(--saddle));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      margin: 0 auto 1.5rem;
+      box-shadow: 0 8px 24px rgba(192,133,82,0.3);
+    }
+
+    .form-success h3 {
+      font-family: 'Raleway', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--espresso);
+      margin-bottom: 0.75rem;
+    }
+
+    .form-success p {
+      font-size: 0.925rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1050px) {
+      .hero-proof { display: none; }
+      .symmetry-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .application-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .why-join-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 900px) {
+      .how-steps { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+      .how-steps::before { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      .why-join-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .agent-form { padding: 1.75rem; }
+      .symmetry-stats { grid-template-columns: 1fr 1fr; }
+      .how-steps { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">Brown<span>Agency</span></a>
+  <ul class="nav-links">
+    <li><a href="about.html">About Us</a></li>
+    <li class="nav-dropdown">
+      <a href="products.html" class="nav-dropdown-toggle">Products & Carriers ▾</a>
+      <ul class="dropdown-menu">
+        <li><a href="mortgage_protection.html">Mortgage Protection</a></li>
+        <li><a href="term_life.html">Term Life</a></li>
+        <li><a href="whole_life.html">Whole Life</a></li>
+        <li><a href="final_expense.html">Final Expense</a></li>
+        <li><a href="iul.html">IUL / Wealth Building</a></li>
+        <li><a href="living_benefits.html">Living Benefits</a></li>
+      </ul>
+    </li>
+    <li><a href="careers.html">Careers</a></li>
+    <li><a href="qualify.html" class="nav-cta">See If You Qualify</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="careers-hero">
+  <div class="careers-hero-bg"></div>
+
+  <div class="careers-hero-content">
+    <div class="careers-badge">Now Recruiting · Independent Agents</div>
+    <h1>
+      Build a Business<br>
+      You're <em>Proud</em> to Own.
+    </h1>
+    <p>
+      Join an independent agency where your effort determines your income,
+      your schedule, and your future. No ceiling. No commute. No politics.
+    </p>
+    <div class="careers-hero-actions">
+      <a href="#apply" class="btn-primary">Apply Now &nbsp;→</a>
+      <a href="#why-join" class="btn-secondary">See the Opportunity</a>
+    </div>
+  </div>
+
+  <div class="hero-proof">
+    <div class="proof-card">
+      <div class="proof-card-number">100%</div>
+      <div class="proof-card-label">Commission-based<br>— no salary cap</div>
+    </div>
+    <div class="proof-card">
+      <div class="proof-card-number">$0</div>
+      <div class="proof-card-label">Cost to get<br>started</div>
+    </div>
+    <div class="proof-card">
+      <div class="proof-card-number">Week 1</div>
+      <div class="proof-card-label">Licensed & writing<br>your first policy</div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY JOIN -->
+<section class="why-join" id="why-join">
+  <div class="why-join-header">
+    <div class="section-eyebrow">Why Brown Agency</div>
+    <h2 class="section-title">Everything you need.<br>Nothing holding you back.</h2>
+    <p class="section-body">We built this agency on one principle: agents who are supported, trained, and compensated fairly will build careers that last.</p>
+  </div>
+
+  <div class="why-join-grid">
+
+    <div class="benefit-card">
+      <div class="benefit-icon">💰</div>
+      <h3>Uncapped Commission</h3>
+      <p>Earn 80–140% of first-year premium from day one. Top producers in our network routinely earn $10K–$20K+ per month with no ceiling on your income.</p>
+    </div>
+
+    <div class="benefit-card">
+      <div class="benefit-icon">📅</div>
+      <h3>Work on Your Schedule</h3>
+      <p>Set your own hours, work from anywhere, and choose how many clients you take on. This is your business — run it the way that works for your life.</p>
+    </div>
+
+    <div class="benefit-card">
+      <div class="benefit-icon">🎓</div>
+      <h3>Free Training & Mentorship</h3>
+      <p>Access Symmetry's full training library, live coaching calls, and direct mentorship from our agency principals — at zero cost to you.</p>
+    </div>
+
+    <div class="benefit-card">
+      <div class="benefit-icon">🏢</div>
+      <h3>50+ Top-Rated Carriers</h3>
+      <p>Shop across dozens of A-rated carriers to find the best fit for every client. You're never boxed into one company's product line.</p>
+    </div>
+
+    <div class="benefit-card">
+      <div class="benefit-icon">📈</div>
+      <h3>Ownership & Residuals</h3>
+      <p>Build a book of business you own. Earn renewals. Recruit agents beneath you and receive overrides — creating true passive income streams.</p>
+    </div>
+
+    <div class="benefit-card">
+      <div class="benefit-icon">🤝</div>
+      <h3>Warm, Pre-Set Leads</h3>
+      <p>We offer access to mortgage protection leads — homeowners who requested information. No cold calling strangers. Start with people who raised their hand.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- SYMMETRY SPOTLIGHT -->
+<section class="symmetry-section">
+  <div class="symmetry-inner">
+    <div class="symmetry-text">
+      <div class="section-eyebrow">Our Platform</div>
+      <h2>Backed by <span>Symmetry Financial Group</span></h2>
+      <p>
+        Symmetry Financial Group is one of the fastest-growing insurance marketing organizations in the country. As an independent agency under SFG, our agents gain access to enterprise-level resources while maintaining full autonomy.
+      </p>
+      <p>
+        SFG has been consistently recognized as a top workplace and one of the best companies for agent development — providing technology, contracting, and support that independent agents simply can't access on their own.
+      </p>
+    </div>
+
+    <div class="symmetry-stats">
+      <div class="sym-stat">
+        <div class="sym-stat-num">10K+</div>
+        <div class="sym-stat-label">Active agents<br>nationwide</div>
+      </div>
+      <div class="sym-stat">
+        <div class="sym-stat-num">Top 5</div>
+        <div class="sym-stat-label">IMO in the<br>country</div>
+      </div>
+      <div class="sym-stat">
+        <div class="sym-stat-num">50+</div>
+        <div class="sym-stat-label">Carrier<br>partners</div>
+      </div>
+      <div class="sym-stat">
+        <div class="sym-stat-num">$0</div>
+        <div class="sym-stat-label">Startup cost<br>to agents</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-it-works">
+  <div class="how-header">
+    <div class="section-eyebrow">Getting Started</div>
+    <h2 class="section-title">From application to<br>first paycheck — fast.</h2>
+  </div>
+
+  <div class="how-steps">
+    <div class="how-step">
+      <div class="how-step-num">01</div>
+      <h3>Submit Your Application</h3>
+      <p>Fill out the form below. We'll review your background and reach out within 24–48 hours to schedule a call.</p>
+    </div>
+    <div class="how-step">
+      <div class="how-step-num">02</div>
+      <h3>Discovery Call</h3>
+      <p>A 20-minute conversation to learn about your goals, answer your questions, and make sure we're a mutual fit.</p>
+    </div>
+    <div class="how-step">
+      <div class="how-step-num">03</div>
+      <h3>Get Licensed</h3>
+      <p>If you're not yet licensed, we'll guide you through the state exam process. Most agents pass within 1–2 weeks.</p>
+    </div>
+    <div class="how-step">
+      <div class="how-step-num">04</div>
+      <h3>Start Writing Business</h3>
+      <p>With training complete and contracts in place, you're ready. Most agents write their first policy in week one.</p>
+    </div>
+  </div>
+</section>
+
+<!-- APPLICATION FORM -->
+<section class="application-section" id="apply">
+  <div class="application-inner">
+
+    <!-- Left: Intro -->
+    <div class="application-intro">
+      <div class="section-eyebrow">Agent Application</div>
+      <h2>Take the first<br><span>step today.</span></h2>
+      <p>
+        Whether you're a seasoned agent looking for a better platform, or someone brand new to insurance who's hungry to build something real — we want to hear from you.
+      </p>
+      <p>
+        Complete the form and one of our principals will be in touch within one business day.
+      </p>
+      <div class="privacy-note">
+        Your information is kept strictly confidential. We never sell or share contact details with third parties.
+      </div>
+    </div>
+
+    <!-- Right: Form -->
+    <div class="agent-form">
+      <div id="formContent">
+
+        <!-- Section 1: Contact Info -->
+        <div class="form-section-label">Contact Information</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">First Name *</label>
+            <input type="text" id="firstName" placeholder="John" required />
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last Name *</label>
+            <input type="text" id="lastName" placeholder="Smith" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" placeholder="john@email.com" required />
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number *</label>
+            <input type="tel" id="phone" placeholder="(555) 000-0000" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="state">State You Reside In *</label>
+            <select id="state" required>
+              <option value="" disabled selected>Select state…</option>
+              <option>Alabama</option><option>Alaska</option><option>Arizona</option><option>Arkansas</option>
+              <option>California</option><option>Colorado</option><option>Connecticut</option><option>Delaware</option>
+              <option>Florida</option><option>Georgia</option><option>Hawaii</option><option>Idaho</option>
+              <option>Illinois</option><option>Indiana</option><option>Iowa</option><option>Kansas</option>
+              <option>Kentucky</option><option>Louisiana</option><option>Maine</option><option>Maryland</option>
+              <option>Massachusetts</option><option>Michigan</option><option>Minnesota</option><option>Mississippi</option>
+              <option>Missouri</option><option>Montana</option><option>Nebraska</option><option>Nevada</option>
+              <option>New Hampshire</option><option>New Jersey</option><option>New Mexico</option><option>New York</option>
+              <option>North Carolina</option><option>North Dakota</option><option>Ohio</option><option>Oklahoma</option>
+              <option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option><option>South Carolina</option>
+              <option>South Dakota</option><option>Tennessee</option><option>Texas</option><option>Utah</option>
+              <option>Vermont</option><option>Virginia</option><option>Washington</option><option>West Virginia</option>
+              <option>Wisconsin</option><option>Wyoming</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="bestTime">Best Time to Reach You</label>
+            <select id="bestTime">
+              <option value="" disabled selected>Select…</option>
+              <option>Morning (8am–12pm)</option>
+              <option>Afternoon (12pm–5pm)</option>
+              <option>Evening (5pm–8pm)</option>
+              <option>Anytime</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Section 2: Background -->
+        <div class="form-section-label">Your Background</div>
+
+        <div class="form-group">
+          <label>Do you currently hold a life insurance license? *</label>
+          <div class="radio-group" id="licensedGroup">
+            <label class="radio-option" onclick="selectRadio(this, 'licensed')">
+              <span class="radio-dot"></span>
+              Yes — I'm already licensed
+            </label>
+            <label class="radio-option" onclick="selectRadio(this, 'licensed')">
+              <span class="radio-dot"></span>
+              No — but I'm willing to get licensed
+            </label>
+            <label class="radio-option" onclick="selectRadio(this, 'licensed')">
+              <span class="radio-dot"></span>
+              No — and I'm not sure yet
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>How much sales or insurance experience do you have? *</label>
+          <div class="radio-group" id="experienceGroup">
+            <label class="radio-option" onclick="selectRadio(this, 'experience')">
+              <span class="radio-dot"></span>
+              None — I'm completely new to this
+            </label>
+            <label class="radio-option" onclick="selectRadio(this, 'experience')">
+              <span class="radio-dot"></span>
+              Some — I've worked in sales or related fields
+            </label>
+            <label class="radio-option" onclick="selectRadio(this, 'experience')">
+              <span class="radio-dot"></span>
+              Experienced — I've sold insurance before
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>What type of work arrangement are you looking for? *</label>
+          <div class="radio-group" id="arrangementGroup">
+            <label class="radio-option" onclick="selectRadio(this, 'arrangement')">
+              <span class="radio-dot"></span>
+              Part-time — evenings and weekends
+            </label>
+            <label class="radio-option" onclick="selectRadio(this, 'arrangement')">
+              <span class="radio-dot"></span>
+              Full-time — this would be my primary income
+            </label>
+            <label class="radio-option" onclick="selectRadio(this, 'arrangement')">
+              <span class="radio-dot"></span>
+              Undecided — want to learn more first
+            </label>
+          </div>
+        </div>
+
+        <!-- Section 3: Goals -->
+        <div class="form-section-label">Your Goals</div>
+
+        <div class="form-group">
+          <label>What's your income goal in your first year?</label>
+          <select id="incomeGoal">
+            <option value="" disabled selected>Select a range…</option>
+            <option>Under $30,000</option>
+            <option>$30,000 – $60,000</option>
+            <option>$60,000 – $100,000</option>
+            <option>$100,000+</option>
+            <option>Not sure yet</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>What interests you most about this opportunity? (select all that apply)</label>
+          <div class="checkbox-group" id="interestGroup">
+            <label class="checkbox-option" onclick="toggleCheckbox(this)">
+              <span class="checkbox-box">✓</span>
+              Uncapped income potential
+            </label>
+            <label class="checkbox-option" onclick="toggleCheckbox(this)">
+              <span class="checkbox-box">✓</span>
+              Flexible schedule / work from home
+            </label>
+            <label class="checkbox-option" onclick="toggleCheckbox(this)">
+              <span class="checkbox-box">✓</span>
+              Helping families protect their homes
+            </label>
+            <label class="checkbox-option" onclick="toggleCheckbox(this)">
+              <span class="checkbox-box">✓</span>
+              Building a team and earning overrides
+            </label>
+            <label class="checkbox-option" onclick="toggleCheckbox(this)">
+              <span class="checkbox-box">✓</span>
+              Owning my own book of business
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="message">Anything else you'd like us to know?</label>
+          <textarea id="message" placeholder="Tell us about your background, motivation, or any questions you have…"></textarea>
+        </div>
+
+        <!-- How did you hear -->
+        <div class="form-group">
+          <label for="referral">How did you hear about us?</label>
+          <select id="referral">
+            <option value="" disabled selected>Select…</option>
+            <option>Referred by an agent</option>
+            <option>Facebook / Instagram</option>
+            <option>Google search</option>
+            <option>LinkedIn</option>
+            <option>YouTube</option>
+            <option>Friend or family</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="form-submit">
+          <button type="button" class="btn-form-submit" onclick="submitApplication()">
+            Submit Application &nbsp;→
+          </button>
+          <p class="form-disclaimer">By submitting, you agree to be contacted by Brown Agency regarding career opportunities. We respect your privacy.</p>
+        </div>
+
+      </div>
+
+      <!-- Success State -->
+      <div class="form-success" id="formSuccess">
+        <div class="success-icon">✓</div>
+        <h3>Application Received!</h3>
+        <p>
+          Thank you for your interest in Brown Agency. One of our principals will review your application and be in touch within <strong>1 business day</strong> to schedule a discovery call.
+        </p>
+        <br>
+        <p style="font-size:0.82rem; color: var(--text-light);">
+          In the meantime, feel free to explore our <a href="products.html" style="color:var(--cognac);">product offerings</a> to familiarize yourself with what we help families protect.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="nav-logo">Brown<span>Agency</span></a>
+      <p>Independent life insurance brokerage serving families across the U.S. We work for you — not the carriers.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Products</h4>
+      <ul>
+        <li><a href="mortgage_protection.html">Mortgage Protection</a></li>
+        <li><a href="term_life.html">Term Life</a></li>
+        <li><a href="whole_life.html">Whole Life</a></li>
+        <li><a href="iul.html">IUL / Wealth</a></li>
+        <li><a href="final_expense.html">Final Expense</a></li>
+        <li><a href="living_benefits.html">Living Benefits</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="careers.html">Careers</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Get Started</h4>
+      <ul>
+        <li><a href="qualify.html">See If You Qualify</a></li>
+        <li><a href="careers.html">Join Our Team</a></li>
+        <li><a href="#">Agent Portal</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Brown Agency LLC. All rights reserved.</span>
+    <div class="footer-legal">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Disclaimers</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Radio selection
+  function selectRadio(el, groupId) {
+    const group = el.closest('.radio-group');
+    group.querySelectorAll('.radio-option').forEach(opt => opt.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  // Checkbox toggle
+  function toggleCheckbox(el) {
+    el.classList.toggle('checked');
+  }
+
+  // Phone formatting
+  document.getElementById('phone').addEventListener('input', function(e) {
+    let val = e.target.value.replace(/\D/g, '').substring(0, 10);
+    if (val.length >= 6) {
+      val = '(' + val.substring(0,3) + ') ' + val.substring(3,6) + '-' + val.substring(6);
+    } else if (val.length >= 3) {
+      val = '(' + val.substring(0,3) + ') ' + val.substring(3);
+    }
+    e.target.value = val;
+  });
+
+  // Submit
+  function submitApplication() {
+    const required = ['firstName','lastName','email','phone','state'];
+    let valid = true;
+
+    required.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el.value.trim()) {
+        el.style.borderColor = '#c0392b';
+        el.style.boxShadow = '0 0 0 3px rgba(192,57,43,0.12)';
+        valid = false;
+        el.addEventListener('input', () => {
+          el.style.borderColor = '';
+          el.style.boxShadow = '';
+        }, { once: true });
+      }
+    });
+
+    // Check at least one radio per required group
+    const radioGroups = ['licensedGroup','experienceGroup','arrangementGroup'];
+    radioGroups.forEach(gid => {
+      const group = document.getElementById(gid);
+      if (!group.querySelector('.selected')) {
+        group.style.outline = '2px solid rgba(192,57,43,0.4)';
+        group.style.borderRadius = '6px';
+        group.style.padding = '0.5rem';
+        valid = false;
+        setTimeout(() => {
+          group.style.outline = '';
+          group.style.padding = '';
+        }, 2500);
+      }
+    });
+
+    if (!valid) return;
+
+    // Show success
+    document.getElementById('formContent').style.display = 'none';
+    document.getElementById('formSuccess').style.display = 'block';
+    document.getElementById('apply').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+</script>
+
+</body>
+</html>

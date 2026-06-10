@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>IUL | Brown Agency</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      padding: 9rem 5% 5rem;
+      background: linear-gradient(150deg, #FFF8F0 0%, #f5e8d8 60%, #ecdcc8 100%);
+      border-bottom: 1px solid var(--parchment-mid);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 420px; height: 420px;
+      border-radius: 50%;
+      border: 1px solid rgba(192,133,82,0.12);
+    }
+
+    .page-hero::after {
+      content: '';
+      position: absolute;
+      top: -30px; right: -30px;
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      border: 1px solid rgba(140,90,60,0.08);
+    }
+
+    .page-hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 660px;
+    }
+
+    .page-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--saddle);
+      margin-bottom: 1.25rem;
+    }
+
+    .page-eyebrow::before {
+      content: '';
+      display: block;
+      width: 28px; height: 1px;
+      background: var(--saddle);
+    }
+
+    .page-hero h1 {
+      font-family: 'Raleway', sans-serif;
+      font-size: clamp(2.4rem, 4.5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--espresso);
+      margin-bottom: 1.25rem;
+    }
+
+    .page-hero h1 span { color: var(--cognac); }
+
+    .page-hero p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      max-width: 540px;
+    }
+
+    /* ── PRODUCT CONTENT ── */
+    .product-content {
+      padding: 5rem 5%;
+      background: var(--parchment);
+      display: grid;
+      grid-template-columns: 1fr 1.8fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    /* LEFT SIDEBAR */
+    .product-sidebar {
+      position: sticky;
+      top: 100px;
+    }
+
+    .sidebar-tag {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--cognac);
+      border: 1px solid rgba(192,133,82,0.35);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      border-left: 2px solid var(--parchment-mid);
+    }
+
+    .sidebar-nav li { }
+
+    .sidebar-nav a {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-light);
+      text-decoration: none;
+      padding: 0.5rem 0 0.5rem 1.25rem;
+      border-left: 2px solid transparent;
+      margin-left: -2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .sidebar-nav a:hover {
+      color: var(--cognac);
+      border-left-color: var(--cognac);
+    }
+
+    .sidebar-divider {
+      height: 1px;
+      background: var(--parchment-mid);
+      margin: 1.5rem 0;
+    }
+
+    .sidebar-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-light);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .sidebar-back:hover { color: var(--cognac); }
+
+    /* RIGHT CONTENT */
+    .product-body { }
+
+    /* SECTION BLOCKS */
+    .content-block {
+      margin-bottom: 3.5rem;
+      padding-bottom: 3.5rem;
+      border-bottom: 1px solid var(--parchment-mid);
+    }
+
+    .content-block:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .block-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--saddle);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .block-label::before {
+      content: '';
+      display: block;
+      width: 16px; height: 1px;
+      background: var(--saddle);
+    }
+
+    .content-block h2 {
+      font-family: 'Raleway', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--espresso);
+      margin-bottom: 1rem;
+    }
+
+    .content-block p {
+      font-size: 0.975rem;
+      color: var(--text-secondary);
+      line-height: 1.85;
+      margin-bottom: 1rem;
+    }
+
+    .content-block p:last-child { margin-bottom: 0; }
+
+    /* WHO ITS FOR — highlighted box */
+    .who-box {
+      background: var(--white);
+      border-left: 3px solid var(--cognac);
+      border-radius: 0 6px 6px 0;
+      padding: 1.25rem 1.5rem;
+    }
+
+    .who-box p {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      margin: 0;
+    }
+
+    /* BENEFITS LIST */
+    .benefits-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .benefit-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--parchment-mid);
+    }
+
+    .benefit-row:last-child { border-bottom: none; }
+
+    .benefit-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--cognac);
+      flex-shrink: 0;
+      margin-top: 0.5rem;
+    }
+
+    .benefit-row p {
+      font-size: 0.925rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .benefit-row strong {
+      color: var(--espresso);
+      font-weight: 600;
+    }
+
+    /* FAQ */
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .faq-item {
+      background: var(--white);
+      border: 1px solid var(--parchment-mid);
+      border-radius: 8px;
+      padding: 1.5rem;
+      transition: border-color 0.2s;
+    }
+
+    .faq-item:hover { border-color: rgba(192,133,82,0.3); }
+
+    .faq-q {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.975rem;
+      font-weight: 700;
+      color: var(--espresso);
+      margin-bottom: 0.6rem;
+    }
+
+    .faq-a {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      margin: 0;
+    }
+
+    /* ── BOTTOM CTA ── */
+    .page-cta {
+      padding: 5.5rem 5%;
+      background: var(--espresso);
+      text-align: center;
+    }
+
+    .page-cta h2 {
+      font-family: 'Raleway', sans-serif;
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 0.75rem;
+    }
+
+    .page-cta h2 span { color: var(--cognac); }
+
+    .page-cta p {
+      font-size: 1rem;
+      color: rgba(255,248,240,0.6);
+      margin-bottom: 2rem;
+      max-width: 460px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+
+    /* IUL MECHANIC PYRAMID */
+    .mechanic-pyramid {
+      margin: 2rem 0 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    /* Row 1 — two cards side by side */
+    .mechanic-row {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      width: 100%;
+    }
+
+    .mechanic-row.row-top    { width: 100%; }
+    .mechanic-row.row-bottom { width: 55%; }
+
+    /* Connector arrow between rows */
+    .mechanic-connector {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 2rem;
+      color: var(--cognac);
+    }
+
+    .mechanic-connector svg {
+      stroke: var(--cognac);
+    }
+
+    /* Individual cards */
+    .mechanic-card {
+      flex: 1;
+      background: linear-gradient(145deg, #fff 0%, #fdf3e9 100%);
+      border: 1px solid rgba(192,133,82,0.25);
+      border-top: 3px solid var(--cognac);
+      border-radius: 8px;
+      padding: 1.4rem 1.25rem 1.25rem;
+      text-align: center;
+      box-shadow: 0 2px 12px rgba(75,46,43,0.06);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .mechanic-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(75,46,43,0.1);
+    }
+
+    /* Bottom (apex) card — slightly richer */
+    .mechanic-row.row-bottom .mechanic-card {
+      background: linear-gradient(145deg, #fdf3e9 0%, #f5e4cc 100%);
+      border-top-color: var(--saddle);
+    }
+
+    .mechanic-card .mc-icon {
+      width: 36px;
+      height: 36px;
+      margin: 0 auto 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(192,133,82,0.12);
+      border-radius: 50%;
+      color: var(--cognac);
+    }
+
+    .mechanic-card .mc-icon svg {
+      stroke: var(--cognac);
+    }
+
+    .mechanic-card .mc-label {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--saddle);
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+
+    .mechanic-card .mc-desc {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .iul-callout {
+      background: linear-gradient(135deg, rgba(192,133,82,0.08) 0%, rgba(140,90,60,0.05) 100%);
+      border: 1px solid rgba(192,133,82,0.2);
+      border-left: 3px solid var(--cognac);
+      border-radius: 0 6px 6px 0;
+      padding: 1.1rem 1.4rem;
+      margin-top: 1.25rem;
+    }
+
+    .iul-callout p {
+      font-size: 0.9rem !important;
+      color: var(--espresso) !important;
+      font-style: italic;
+      margin: 0 !important;
+      line-height: 1.65 !important;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .product-content {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+      .product-sidebar { position: static; }
+      .mechanic-row.row-bottom { width: 100%; }
+    }
+
+    /* WHO BENEFITS — profile cards */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+
+    .profile-card {
+      background: var(--white);
+      border: 1px solid var(--parchment-mid);
+      border-radius: 8px;
+      padding: 1.35rem 1.35rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .profile-card:hover {
+      border-color: rgba(192,133,82,0.35);
+      box-shadow: 0 3px 14px rgba(75,46,43,0.07);
+    }
+
+    .profile-card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .profile-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: rgba(192,133,82,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--cognac);
+    }
+
+    .profile-icon svg { stroke: var(--cognac); }
+
+    .profile-card strong {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--espresso);
+      line-height: 1.3;
+    }
+
+    .profile-card p {
+      font-size: 0.855rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .profile-card .profile-tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--saddle);
+      background: rgba(140,90,60,0.08);
+      padding: 0.2rem 0.55rem;
+      border-radius: 20px;
+      align-self: flex-start;
+    }
+
+    @media (max-width: 600px) {
+      .profile-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── COMPARISON TABLE ── */
+    .compare-wrap {
+      margin-top: 1.5rem;
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 1px solid var(--parchment-mid);
+      box-shadow: 0 2px 16px rgba(75,46,43,0.07);
+    }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      min-width: 560px;
+    }
+
+    .compare-table thead tr {
+      background: var(--espresso);
+    }
+
+    .compare-table thead th {
+      padding: 1rem 1.1rem;
+      text-align: left;
+      font-family: 'Raleway', sans-serif;
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,248,240,0.55);
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .compare-table thead th:last-child { border-right: none; }
+
+    .compare-table thead th.col-iul {
+      color: var(--cognac);
+      background: rgba(192,133,82,0.15);
+    }
+
+    .compare-table tbody tr {
+      border-bottom: 1px solid var(--parchment-mid);
+      transition: background 0.15s;
+    }
+
+    .compare-table tbody tr:last-child { border-bottom: none; }
+
+    .compare-table tbody tr:hover td { background: rgba(192,133,82,0.03); }
+
+    .compare-table tbody td {
+      padding: 0.95rem 1.1rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      border-right: 1px solid var(--parchment-mid);
+      vertical-align: top;
+    }
+
+    .compare-table tbody td:last-child { border-right: none; }
+
+    .compare-table tbody td:first-child {
+      font-family: 'Raleway', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--espresso);
+      white-space: nowrap;
+      background: #fdf6ee;
+    }
+
+    .compare-table tbody td.col-iul {
+      background: rgba(192,133,82,0.06);
+      color: var(--espresso);
+      font-weight: 500;
+    }
+
+    .ct-win, .ct-mid, .ct-loss {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.55rem;
+      border-radius: 20px;
+      margin-bottom: 0.35rem;
+      white-space: nowrap;
+    }
+
+    .ct-win  { background: rgba(74,158,98,0.12);  color: #2d7a4f; }
+    .ct-mid  { background: rgba(192,133,82,0.12); color: var(--saddle); }
+    .ct-loss { background: rgba(180,60,60,0.09);  color: #9b3a3a; }
+
+    .ct-win::before  { content: '✓'; }
+    .ct-mid::before  { content: '~'; }
+    .ct-loss::before { content: '✕'; }
+
+    /* FAQ ACCORDION */
+    .faq-accordion .faq-q {
+      all: unset;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      cursor: pointer;
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.975rem;
+      font-weight: 700;
+      color: var(--espresso);
+      box-sizing: border-box;
+      gap: 1rem;
+    }
+
+    .faq-accordion .faq-q:focus-visible {
+      outline: 2px solid var(--cognac);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+
+    .faq-chevron {
+      stroke: var(--cognac);
+      flex-shrink: 0;
+      transition: transform 0.25s ease;
+    }
+
+    .faq-accordion.open .faq-chevron {
+      transform: rotate(180deg);
+    }
+
+    .faq-body {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.28s ease;
+    }
+
+    .faq-accordion.open .faq-body {
+      grid-template-rows: 1fr;
+    }
+
+    .faq-body > * {
+      overflow: hidden;
+    }
+
+    .faq-body .faq-a {
+      padding-top: 0.75rem;
+      margin: 0;
+    }
+
+    .compare-note {
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: var(--text-light);
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-logo">Brown<span>Agency</span></a>
+    <ul class="nav-links">
+      <li><a href="about.html">About Us</a></li>
+      <li class="nav-dropdown">
+        <a href="products.html" class="nav-dropdown-toggle">Products ▾</a>
+        <ul class="dropdown-menu">
+          <li><a href="mortgage_protection.html">Mortgage Protection</a></li>
+          <li><a href="term_life.html">Term Life</a></li>
+          <li><a href="whole_life.html">Whole Life</a></li>
+          <li><a href="final_expense.html">Final Expense</a></li>
+          <li><a href="iul.html">IUL / Wealth Building</a></li>
+          <li><a href="living_benefits.html">Living Benefits</a></li>
+        </ul>
+      </li>
+      <li><a href="careers.html">Careers</a></li>
+      <li><a href="qualify.html" class="nav-cta">See If You Qualify</a></li>
+    </ul>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <div class="page-hero">
+    <div class="page-hero-inner">
+      <div class="page-eyebrow">Wealth Building</div>
+      <h1>Life Insurance That <span>Builds Wealth</span></h1>
+      <p>An Indexed Universal Life policy gives you permanent death benefit coverage while your cash value grows tax-advantaged — tied to market performance, but protected from market losses.</p>
+    </div>
+  </div>
+
+  <!-- PRODUCT CONTENT -->
+  <div class="product-content">
+
+    <!-- SIDEBAR -->
+    <aside class="product-sidebar">
+      <div class="sidebar-tag">Wealth Building</div>
+      <ul class="sidebar-nav">
+        <li><a href="#what-it-is">What It Is</a></li>
+        <li><a href="#who-its-for">Who Benefits & Why</a></li>
+        <li><a href="#comparison">How It Compares</a></li>
+        <li><a href="#faq">Common Questions</a></li>
+      </ul>
+      <div class="sidebar-divider"></div>
+      <a href="products.html" class="sidebar-back">← All Products</a>
+    </aside>
+
+    <!-- BODY -->
+    <div class="product-body">
+
+      <!-- WHAT IT IS -->
+      <div class="content-block" id="what-it-is">
+        <div class="block-label">What It Is</div>
+        <h2>Permanent Coverage With a <span>Tax-Advantaged</span> Growth Component</h2>
+        <p>An Indexed Universal Life policy — IUL for short — is a type of permanent life insurance that combines a death benefit with a cash value account. Unlike term life, which expires after a set period, an IUL is designed to last your entire life as long as the policy is funded. The cash value component is what sets it apart: it grows over time on a tax-advantaged basis, and the growth rate is linked to the performance of a stock market index — typically the S&P 500.</p>
+        <p>The key distinction from actually investing in the market is how risk is managed. With an IUL, your cash value participates in market gains up to a cap rate set by the carrier — but if the index performs negatively in a given year, your cash value does not decrease. A floor, typically 0%, protects against losses. This means you can benefit from years when the market climbs, while sitting out the years it falls. You never directly own stocks or mutual funds — the index is simply used as a benchmark to calculate interest credited to your account.</p>
+
+        <!-- MECHANIC PYRAMID -->
+        <div class="mechanic-pyramid">
+
+          <!-- Row 1: Floor + Index Growth -->
+          <div class="mechanic-row row-top">
+            <div class="mechanic-card">
+              <div class="mc-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>
+                  <line x1="2" y1="20" x2="22" y2="20"/>
+                </svg>
+              </div>
+              <span class="mc-label">The Floor</span>
+              <p class="mc-desc">If the index drops, your cash value stays flat. You never lose ground — the floor is 0%.</p>
+            </div>
+            <div class="mechanic-card">
+              <div class="mc-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
+                </svg>
+              </div>
+              <span class="mc-label">Index Growth</span>
+              <p class="mc-desc">When the S&amp;P 500 rises, your account is credited — up to the carrier's annual cap rate.</p>
+            </div>
+          </div>
+
+          <!-- Connector -->
+          <div class="mechanic-connector">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>
+            </svg>
+          </div>
+
+          <!-- Row 2: Cash Value (apex) -->
+          <div class="mechanic-row row-bottom">
+            <div class="mechanic-card">
+              <div class="mc-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                </svg>
+              </div>
+              <span class="mc-label">Cash Value</span>
+              <p class="mc-desc">Grows tax-deferred over time. Access it via policy loans — generally income-tax-free when structured correctly.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <p>The cash value inside an IUL grows tax-deferred, meaning you don't owe taxes on the growth year over year. When you're ready to access it — whether for retirement income, a major expense, or an emergency — you can take policy loans against the cash value. Loans taken from a properly structured IUL are generally income-tax-free, which is one of the primary reasons the product is used as a retirement planning tool by people who've already maxed out their 401(k) or IRA contributions.</p>
+        <p>Flexibility is another defining feature. Unlike whole life insurance, where premiums are fixed, an IUL allows you to adjust your premium payments within limits set by the policy. You can pay more in high-income years to accelerate cash value growth, or reduce payments during tighter periods. This makes it adaptable to income that varies over time, which suits business owners and commission-based earners particularly well.</p>
+        <p>IUL is not a one-size-fits-all product. It is most effective when properly funded and held long-term. Underfunding a policy or surrendering it early can result in reduced benefits and potential tax consequences. The structure and quality of a policy depends heavily on the carrier and how the policy is designed — which is why working with an independent agent who isn't tied to a single company matters significantly here.</p>
+
+        <div class="iul-callout">
+          <p>"Think of an IUL as life insurance and a tax-advantaged savings vehicle in one. The death benefit protects your family. The cash value works for you while you're alive."</p>
+        </div>
+      </div>
+
+      <!-- WHO BENEFITS & WHY -->
+      <div class="content-block" id="who-its-for">
+        <div class="block-label">Who Benefits & Why</div>
+        <h2>Is an IUL <span>Right for You?</span></h2>
+        <p>An IUL isn't the right fit for everyone — but for certain people, it's the most powerful financial tool available. The common thread is someone who wants their money working while they're alive, not just paying out when they're gone.</p>
+
+        <div class="profile-grid">
+
+          <!-- Card 1 -->
+          <div class="profile-card">
+            <div class="profile-card-header">
+              <div class="profile-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+              </div>
+              <strong>High Earners Who've Maxed Their Retirement Accounts</strong>
+            </div>
+            <span class="profile-tag">Tax Strategy</span>
+            <p>If you've already maxed out your 401(k) and IRA for the year, an IUL gives you another bucket of tax-advantaged growth with no IRS contribution limits. Policy loans taken in retirement are generally not counted as taxable income, making this a meaningful supplement to traditional retirement vehicles.</p>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="profile-card">
+            <div class="profile-card-header">
+              <div class="profile-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+                </svg>
+              </div>
+              <strong>Strong Earners Without a Retirement Plan Behind Them</strong>
+            </div>
+            <span class="profile-tag">Wealth Accumulation</span>
+            <p>Not everyone with a solid income has a clear path to retirement. If you're self-employed, work outside a traditional benefits structure, or simply haven't found a vehicle that fits how you earn and spend, an IUL fills that gap. You set the contribution pace, the cash value grows shielded from market downturns, and you can draw on it tax-free later — on your timeline, not an employer's.</p>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="profile-card">
+            <div class="profile-card-header">
+              <div class="profile-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+                </svg>
+              </div>
+              <strong>Young Professionals Starting Early</strong>
+            </div>
+            <span class="profile-tag">Long-Term Growth</span>
+            <p>The earlier an IUL is funded, the more time the cash value has to compound. A 28-year-old who consistently funds a well-structured policy for 25 to 30 years can build a substantial tax-free income stream in retirement — one that doesn't depend on market conditions at the moment they need to withdraw. Starting young also locks in lower insurance costs, keeping more of each premium working as cash value.</p>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="profile-card">
+            <div class="profile-card-header">
+              <div class="profile-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+              </div>
+              <strong>Families Who Want Coverage That Does More</strong>
+            </div>
+            <span class="profile-tag">Dual Purpose</span>
+            <p>For families who need permanent life insurance anyway, an IUL means the premium isn't just a cost — it's building something. The death benefit protects dependents. The cash value can be accessed for college tuition, a home purchase, a business opportunity, or retirement income. It's coverage that earns its keep while the policyholder is still alive, rather than existing solely as a payout in the event of death.</p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- COMPARISON TABLE -->
+      <div class="content-block" id="comparison">
+        <div class="block-label">How It Compares</div>
+        <h2>IUL vs. <span>Your Other Options</span></h2>
+        <p>Most people weighing an IUL are also considering simpler alternatives — a savings account, a brokerage account, or just leaving money where it is. Each vehicle has real advantages. Here's an honest look at how they stack up across the factors that matter most for long-term wealth building.</p>
+
+        <div class="compare-wrap">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Savings Account</th>
+                <th>Index Fund / Brokerage</th>
+                <th class="col-iul">Indexed Universal Life</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Tax Treatment</td>
+                <td>
+                  <div class="ct-loss">Taxable</div>
+                  Interest earned is taxed as ordinary income each year, even if you don't withdraw it.
+                </td>
+                <td>
+                  <div class="ct-mid">Partial</div>
+                  Growth is taxed on gains when you sell. Dividends taxed annually. No shelter unless inside a Roth or IRA.
+                </td>
+                <td class="col-iul">
+                  <div class="ct-win">Advantaged</div>
+                  Cash value grows tax-deferred. Policy loans are generally income-tax-free when the policy is properly structured.
+                </td>
+              </tr>
+              <tr>
+                <td>Market Risk</td>
+                <td>
+                  <div class="ct-win">None</div>
+                  FDIC-insured up to $250K. Balance never decreases due to market activity.
+                </td>
+                <td>
+                  <div class="ct-loss">Full Exposure</div>
+                  Subject to full market volatility. A bad year before retirement can meaningfully reduce what's available to you.
+                </td>
+                <td class="col-iul">
+                  <div class="ct-win">Protected</div>
+                  A 0% floor means your cash value cannot decrease due to a down market year, while still participating in index gains up to a cap.
+                </td>
+              </tr>
+              <tr>
+                <td>Growth Potential</td>
+                <td>
+                  <div class="ct-loss">Low</div>
+                  Rates typically track near the federal funds rate. Often loses ground to inflation over time.
+                </td>
+                <td>
+                  <div class="ct-win">High</div>
+                  Historically the highest long-term returns of any common vehicle. No cap on upside — but no floor on downside either.
+                </td>
+                <td class="col-iul">
+                  <div class="ct-mid">Moderate – Capped</div>
+                  Participation in index gains up to a carrier-set cap (typically 9–12% annually). Consistently positive in good years; flat in bad ones.
+                </td>
+              </tr>
+              <tr>
+                <td>Contribution Limits</td>
+                <td>
+                  <div class="ct-win">None</div>
+                  No IRS restrictions on how much you can deposit.
+                </td>
+                <td>
+                  <div class="ct-mid">Varies</div>
+                  Taxable brokerage accounts have no limits. IRAs and 401(k)s are capped annually by the IRS.
+                </td>
+                <td class="col-iul">
+                  <div class="ct-win">No IRS Cap</div>
+                  No government contribution limit. Policy funding limits are set by the carrier and policy design, not the IRS.
+                </td>
+              </tr>
+              <tr>
+                <td>Access to Funds</td>
+                <td>
+                  <div class="ct-win">Immediate</div>
+                  Withdraw anytime with no penalty, no tax event, no conditions.
+                </td>
+                <td>
+                  <div class="ct-mid">Flexible w/ Conditions</div>
+                  Taxable accounts are accessible anytime. IRAs and 401(k)s carry penalties and taxes for early withdrawal before age 59½.
+                </td>
+                <td class="col-iul">
+                  <div class="ct-mid">After Build-Up Period</div>
+                  Cash value becomes meaningful after several years of funding. Policy loans are flexible once it's established — no age restrictions or IRS penalties.
+                </td>
+              </tr>
+              <tr>
+                <td>Death Benefit</td>
+                <td>
+                  <div class="ct-loss">None</div>
+                  Account balance transfers to heirs through probate. No insurance component.
+                </td>
+                <td>
+                  <div class="ct-loss">None</div>
+                  Assets pass to beneficiaries through the estate, subject to probate and potential estate taxes depending on size.
+                </td>
+                <td class="col-iul">
+                  <div class="ct-win">Included</div>
+                  A permanent death benefit is built into the policy. Beneficiaries receive a tax-free payout regardless of the cash value balance at the time of death.
+                </td>
+              </tr>
+              <tr>
+                <td>Complexity</td>
+                <td>
+                  <div class="ct-win">Simple</div>
+                  Open an account, deposit money. No decisions beyond choosing a bank.
+                </td>
+                <td>
+                  <div class="ct-mid">Moderate</div>
+                  Requires choosing funds, managing allocation, and understanding tax implications — especially across account types.
+                </td>
+                <td class="col-iul">
+                  <div class="ct-loss">Higher</div>
+                  Policy design, carrier selection, and funding strategy all matter significantly. Best results come from working with an independent agent who understands how to structure it correctly.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="compare-note">This comparison reflects general characteristics of each vehicle. Individual results vary based on carrier, policy design, market conditions, and personal tax situation. This is educational content, not financial or tax advice.</p>
+      </div>
+
+      <!-- FAQ -->
+      <div class="content-block" id="faq">
+      <!-- FAQ -->
+      <div class="content-block" id="faq">
+        <div class="block-label">Common Questions</div>
+        <h2>Questions Worth <span>Asking</span></h2>
+        <p>IUL generates more skepticism than most insurance products — some of it warranted, some of it based on misconceptions. Here are the questions we hear most often, answered plainly.</p>
+
+        <div class="faq-list">
+
+          <div class="faq-item faq-accordion">
+            <button class="faq-q faq-toggle" aria-expanded="false">
+              Isn't an IUL just a way for insurance companies to make money off me?
+              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-body">
+              <p class="faq-a">The insurance company does make money on an IUL — that's not a secret. They profit from the spread between what the index returns and the cap rate they credit you, and from the cost of insurance built into the policy. That said, the same is true of every financial product: banks profit on savings accounts, brokerages profit on funds, and advisors charge fees. The relevant question isn't whether the company profits — it's whether the product still creates meaningful value for you after those costs. A well-structured IUL, properly funded and held long-term, has a strong track record of doing exactly that. A poorly structured one, or one sold by a captive agent pushing a single carrier, is a different story — which is why independent guidance matters here.</p>
+            </div>
+          </div>
+
+          <div class="faq-item faq-accordion">
+            <button class="faq-q faq-toggle" aria-expanded="false">
+              Why not just invest in an index fund instead? The returns are higher.
+              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-body">
+              <p class="faq-a">On raw returns alone, a well-diversified index fund will likely outperform an IUL over a long time horizon — and the comparison table on this page says exactly that. Where an IUL differs is in what surrounds the growth: the floor that eliminates down-year losses, the tax-free access to cash in retirement, the absence of IRS contribution limits, and the permanent death benefit. For someone who has already maxed out their tax-advantaged accounts and wants another vehicle that won't be exposed to a bad market year right before they retire, the IUL's capped-but-protected growth profile is a deliberate tradeoff — not a consolation prize. For someone who hasn't yet maxed their 401(k) or Roth IRA, those should typically come first.</p>
+            </div>
+          </div>
+
+          <div class="faq-item faq-accordion">
+            <button class="faq-q faq-toggle" aria-expanded="false">
+              What happens if I can't keep up with the premiums?
+              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-body">
+              <p class="faq-a">This is one of the most important questions to ask before getting into an IUL. Because it's a universal life policy, premiums are flexible — you can reduce payments during difficult periods as long as there's enough cash value to cover the internal cost of insurance. However, if the policy is underfunded for too long or the cash value is depleted, the policy can lapse, which may trigger a taxable event on any gains. The risk of lapsing is real, and it's one reason policy design and realistic funding projections matter so much upfront. A policy built around a premium you can genuinely sustain over decades performs very differently from one sized around your best-case income year.</p>
+            </div>
+          </div>
+
+          <div class="faq-item faq-accordion">
+            <button class="faq-q faq-toggle" aria-expanded="false">
+              How is the interest actually calculated — what does "linked to the index" mean in practice?
+              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-body">
+              <p class="faq-a">At the end of each crediting period — typically one year — the carrier looks at how much the chosen index (usually the S&P 500) moved. If it went up, your cash value is credited interest at a rate up to the policy's cap (for example, 10%). If it went flat or down, you're credited 0% — you don't gain, but you don't lose. You're not actually invested in the index; the carrier uses options contracts to provide this exposure while guaranteeing the floor. This also means you don't receive dividends from the index — only price movement is tracked. The cap rate and participation rate (what percentage of the index gain you receive) vary by carrier and can change over the life of the policy, which is an important detail to review before committing to a specific product.</p>
+            </div>
+          </div>
+
+          <div class="faq-item faq-accordion">
+            <button class="faq-q faq-toggle" aria-expanded="false">
+              Is the death benefit affected if I take loans against my cash value?
+              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-body">
+              <p class="faq-a">Yes — any outstanding loan balance at the time of death is subtracted from the death benefit paid to your beneficiaries. If you've borrowed $40,000 against a $300,000 policy and haven't repaid it, your beneficiaries would receive $260,000. Loans don't require repayment on a fixed schedule the way a bank loan does, but the balance does accrue interest. Carrying a large unpaid loan balance for an extended period can erode both the cash value and the eventual death benefit. This is a tradeoff most policyholders accept when using an IUL as a retirement income vehicle — but it's worth understanding clearly before drawing on the policy.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <section class="page-cta">
+    <h2>Think this might be <span>right for you?</span></h2>
+    <p>Answer a few quick questions and we'll confirm whether this product fits your situation — no pressure, no obligation.</p>
+    <a href="qualify.html" class="btn-primary">See If You Qualify &nbsp;→</a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">Brown<span>Agency</span></a>
+        <p>Independent life insurance brokerage serving families across the U.S. We work for you — not the carriers.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Products</h4>
+        <ul>
+          <li><a href="mortgage_protection.html">Mortgage Protection</a></li>
+          <li><a href="term_life.html">Term Life</a></li>
+          <li><a href="whole_life.html">Whole Life</a></li>
+          <li><a href="iul.html">IUL / Wealth</a></li>
+          <li><a href="final_expense.html">Final Expense</a></li>
+          <li><a href="living_benefits.html">Living Benefits</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="careers.html">Careers</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Get Started</h4>
+        <ul>
+          <li><a href="qualify.html">See If You Qualify</a></li>
+          <li><a href="careers.html">Join Our Team</a></li>
+          <li><a href="#">Agent Portal</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Brown Agency LLC. All rights reserved.</span>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Disclaimers</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-accordion');
+        const isOpen = item.classList.contains('open');
+
+        // Close all
+        document.querySelectorAll('.faq-accordion').forEach(el => {
+          el.classList.remove('open');
+          el.querySelector('.faq-toggle').setAttribute('aria-expanded', 'false');
+        });
+
+        // Open clicked if it was closed
+        if (!isOpen) {
+          item.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

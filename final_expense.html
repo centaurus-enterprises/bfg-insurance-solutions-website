@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>Final Expense | Brown Agency</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      padding: 9rem 5% 5rem;
+      background: linear-gradient(150deg, #FFF8F0 0%, #f5e8d8 60%, #ecdcc8 100%);
+      border-bottom: 1px solid var(--parchment-mid);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle decorative rings */
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 420px; height: 420px;
+      border-radius: 50%;
+      border: 1px solid rgba(192,133,82,0.12);
+    }
+
+    .page-hero::after {
+      content: '';
+      position: absolute;
+      top: -30px; right: -30px;
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      border: 1px solid rgba(140,90,60,0.08);
+    }
+
+    /* Hero two-column layout */
+    .page-hero-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 3rem;
+      align-items: center;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .page-hero-text { max-width: 560px; }
+
+    .page-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--saddle);
+      margin-bottom: 1.25rem;
+    }
+
+    .page-eyebrow::before {
+      content: '';
+      display: block;
+      width: 28px; height: 1px;
+      background: var(--saddle);
+    }
+
+    .page-hero h1 {
+      font-family: 'Raleway', sans-serif;
+      font-size: clamp(2.2rem, 4vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--espresso);
+      margin-bottom: 1.25rem;
+    }
+
+    .page-hero h1 span { color: var(--cognac); }
+
+    .page-hero p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      max-width: 500px;
+    }
+
+    /* Hero SVG illustration container */
+    .hero-svg-wrap {
+      flex-shrink: 0;
+      width: 240px;
+      opacity: 0.92;
+    }
+
+    @media (max-width: 780px) {
+      .page-hero-inner { grid-template-columns: 1fr; }
+      .hero-svg-wrap { display: none; }
+    }
+
+    /* ── PAGE LAYOUT — sidebar + content ── */
+    .product-content {
+      padding: 5rem 5%;
+      background: var(--parchment);
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 5rem;
+      align-items: start;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* LEFT SIDEBAR */
+    .product-sidebar {
+      position: sticky;
+      top: 100px;
+    }
+
+    .sidebar-tag {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--cognac);
+      border: 1px solid rgba(192,133,82,0.35);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      border-left: 2px solid var(--parchment-mid);
+    }
+
+    .sidebar-nav a {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-light);
+      text-decoration: none;
+      padding: 0.5rem 0 0.5rem 1.25rem;
+      border-left: 2px solid transparent;
+      margin-left: -2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .sidebar-nav a:hover {
+      color: var(--cognac);
+      border-left-color: var(--cognac);
+    }
+
+    .sidebar-divider {
+      height: 1px;
+      background: var(--parchment-mid);
+      margin: 1.5rem 0;
+    }
+
+    .sidebar-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-light);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .sidebar-back:hover { color: var(--cognac); }
+
+    /* ── CONTENT BLOCKS ── */
+    .content-block {
+      margin-bottom: 3.5rem;
+      padding-bottom: 3.5rem;
+      border-bottom: 1px solid var(--parchment-mid);
+    }
+
+    .content-block:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .block-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--saddle);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .block-label::before {
+      content: '';
+      display: block;
+      width: 16px; height: 1px;
+      background: var(--saddle);
+    }
+
+    .content-block h2 {
+      font-family: 'Raleway', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--espresso);
+      margin-bottom: 1rem;
+    }
+
+    .content-block h2 span { color: var(--cognac); }
+
+    .content-block p {
+      font-size: 0.975rem;
+      color: var(--text-secondary);
+      line-height: 1.85;
+      margin-bottom: 1rem;
+    }
+
+    .content-block p:last-child { margin-bottom: 0; }
+
+    /* ── IDEAL CLIENT — profile cards ── */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+
+    .profile-card {
+      background: var(--white);
+      border: 1px solid var(--parchment-mid);
+      border-radius: 8px;
+      padding: 1.35rem 1.35rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .profile-card:hover {
+      border-color: rgba(192,133,82,0.35);
+      box-shadow: 0 3px 14px rgba(75,46,43,0.07);
+    }
+
+    .profile-card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .profile-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: rgba(192,133,82,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .profile-icon svg { stroke: var(--cognac); }
+
+    .profile-card strong {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--espresso);
+      line-height: 1.3;
+    }
+
+    .profile-card p {
+      font-size: 0.855rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    /* ── COVERAGE AMOUNT SVG CHART ── */
+    .coverage-chart-wrap {
+      margin: 1.75rem 0;
+      background: var(--white);
+      border: 1px solid var(--parchment-mid);
+      border-radius: 10px;
+      padding: 1.75rem 2rem;
+    }
+
+    .coverage-chart-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--saddle);
+      margin-bottom: 1.25rem;
+    }
+
+    /* ── BENEFITS — icon rows ── */
+    .benefits-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 1.25rem;
+    }
+
+    .benefit-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1.1rem 0;
+      border-bottom: 1px solid var(--parchment-mid);
+    }
+
+    .benefit-row:last-child { border-bottom: none; }
+
+    .benefit-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(192,133,82,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .benefit-icon svg { stroke: var(--cognac); }
+
+    .benefit-text strong {
+      display: block;
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--espresso);
+      margin-bottom: 0.3rem;
+    }
+
+    .benefit-text p {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    /* ── CALLOUT BOX ── */
+    .fe-callout {
+      background: linear-gradient(135deg, rgba(192,133,82,0.08) 0%, rgba(140,90,60,0.05) 100%);
+      border: 1px solid rgba(192,133,82,0.2);
+      border-left: 3px solid var(--cognac);
+      border-radius: 0 6px 6px 0;
+      padding: 1.1rem 1.4rem;
+      margin-top: 1.5rem;
+    }
+
+    .fe-callout p {
+      font-size: 0.9rem !important;
+      color: var(--espresso) !important;
+      font-style: italic;
+      margin: 0 !important;
+      line-height: 1.65 !important;
+    }
+
+    /* ── CARRIER CARDS ── */
+    .carrier-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-top: 1.25rem;
+    }
+
+    .carrier-card {
+      background: var(--white);
+      border: 1px solid var(--parchment-mid);
+      border-top: 3px solid var(--cognac);
+      border-radius: 0 0 8px 8px;
+      padding: 1.4rem 1.35rem;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .carrier-card:hover {
+      box-shadow: 0 4px 18px rgba(75,46,43,0.09);
+      transform: translateY(-2px);
+    }
+
+    .carrier-name {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--espresso);
+      margin-bottom: 0.3rem;
+    }
+
+    .carrier-type {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cognac);
+      margin-bottom: 0.75rem;
+    }
+
+    .carrier-card p {
+      font-size: 0.855rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin: 0 0 0.75rem;
+    }
+
+    .carrier-card p:last-child { margin: 0; }
+
+    .carrier-bullet {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      font-size: 0.83rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 0.4rem;
+    }
+
+    .carrier-bullet::before {
+      content: '';
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--cognac);
+      flex-shrink: 0;
+      margin-top: 0.55rem;
+    }
+
+    /* ── FAQ ACCORDION ── */
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+
+    .faq-item {
+      background: var(--white);
+      border: 1px solid var(--parchment-mid);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .faq-item:hover { border-color: rgba(192,133,82,0.3); }
+
+    .faq-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.25rem 1.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--espresso);
+      text-align: left;
+      line-height: 1.4;
+    }
+
+    .faq-chevron {
+      flex-shrink: 0;
+      stroke: var(--cognac);
+      transition: transform 0.25s;
+    }
+
+    .faq-accordion.open .faq-chevron {
+      transform: rotate(180deg);
+    }
+
+    .faq-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .faq-accordion.open .faq-body {
+      max-height: 600px;
+    }
+
+    .faq-body-inner {
+      padding: 0 1.5rem 1.25rem;
+      border-top: 1px solid var(--parchment-mid);
+    }
+
+    .faq-body-inner p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin: 1rem 0 0;
+    }
+
+    /* ── BOTTOM CTA ── */
+    .page-cta {
+      padding: 5.5rem 5%;
+      background: var(--espresso);
+      text-align: center;
+    }
+
+    .page-cta h2 {
+      font-family: 'Raleway', sans-serif;
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 0.75rem;
+    }
+
+    .page-cta h2 span { color: var(--cognac); }
+
+    .page-cta p {
+      font-size: 1rem;
+      color: rgba(255,248,240,0.6);
+      margin-bottom: 2rem;
+      max-width: 460px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .product-content {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+        padding: 3rem 5%;
+      }
+      .product-sidebar { position: static; }
+      .profile-grid,
+      .carrier-grid { grid-template-columns: 1fr; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-logo">Brown<span>Agency</span></a>
+    <ul class="nav-links">
+      <li><a href="about.html">About Us</a></li>
+      <li class="nav-dropdown">
+        <a href="products.html" class="nav-dropdown-toggle">Products ▾</a>
+        <ul class="dropdown-menu">
+          <li><a href="mortgage_protection.html">Mortgage Protection</a></li>
+          <li><a href="term_life.html">Term Life</a></li>
+          <li><a href="whole_life.html">Whole Life</a></li>
+          <li><a href="final_expense.html">Final Expense</a></li>
+          <li><a href="iul.html">IUL / Wealth Building</a></li>
+          <li><a href="living_benefits.html">Living Benefits</a></li>
+        </ul>
+      </li>
+      <li><a href="careers.html">Careers</a></li>
+      <li><a href="qualify.html" class="nav-cta">See If You Qualify</a></li>
+    </ul>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <div class="page-hero">
+    <div class="page-hero-inner">
+
+      <div class="page-hero-text">
+        <div class="page-eyebrow">Final Expense</div>
+        <h1>Leave a <span>Legacy,</span><br>Not a Burden</h1>
+        <p>Final expense insurance covers end-of-life costs so your family can focus on each other — not the bills that follow. Simple coverage, low premiums, and no medical exam required for most applicants.</p>
+      </div>
+
+      <!-- SVG: Peace-of-mind candle / legacy illustration -->
+      <div class="hero-svg-wrap">
+        <svg viewBox="0 0 240 280" xmlns="http://www.w3.org/2000/svg" fill="none">
+
+          <!-- Background soft circle -->
+          <circle cx="120" cy="150" r="110" fill="rgba(192,133,82,0.07)" />
+          <circle cx="120" cy="150" r="80"  fill="rgba(192,133,82,0.06)" />
+
+          <!-- Outer ring arc (legacy / continuity) -->
+          <path d="M 50 195 A 80 80 0 1 1 190 195"
+                stroke="#C08552" stroke-width="1.5" stroke-dasharray="4 5"
+                stroke-linecap="round" opacity="0.4"/>
+
+          <!-- Hands / family base shape -->
+          <!-- Left hand -->
+          <path d="M 70 210 Q 65 195 78 188 Q 90 182 95 190 L 100 205"
+                stroke="#8C5A3C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Right hand -->
+          <path d="M 170 210 Q 175 195 162 188 Q 150 182 145 190 L 140 205"
+                stroke="#8C5A3C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Hands cradling base -->
+          <path d="M 70 210 Q 120 225 170 210"
+                stroke="#8C5A3C" stroke-width="2.5" stroke-linecap="round"/>
+
+          <!-- House silhouette (family home) -->
+          <!-- Roof -->
+          <polygon points="95,155 120,128 145,155"
+                   fill="rgba(192,133,82,0.18)" stroke="#C08552" stroke-width="2" stroke-linejoin="round"/>
+          <!-- Chimney -->
+          <rect x="130" y="132" width="7" height="14" rx="1"
+                fill="rgba(192,133,82,0.2)" stroke="#C08552" stroke-width="1.5"/>
+          <!-- Walls -->
+          <rect x="97" y="155" width="46" height="36" rx="2"
+                fill="rgba(192,133,82,0.12)" stroke="#C08552" stroke-width="2"/>
+          <!-- Door -->
+          <rect x="113" y="172" width="14" height="19" rx="2"
+                fill="rgba(140,90,60,0.2)" stroke="#8C5A3C" stroke-width="1.5"/>
+          <!-- Window left -->
+          <rect x="101" y="160" width="11" height="9" rx="1"
+                fill="rgba(192,133,82,0.25)" stroke="#C08552" stroke-width="1.2"/>
+          <!-- Window right -->
+          <rect x="128" y="160" width="11" height="9" rx="1"
+                fill="rgba(192,133,82,0.25)" stroke="#C08552" stroke-width="1.2"/>
+
+          <!-- Heart above house -->
+          <path d="M 120 118 C 120 118 108 107 108 100 C 108 95 113 91 120 97 C 127 91 132 95 132 100 C 132 107 120 118 120 118 Z"
+                fill="rgba(192,133,82,0.25)" stroke="#C08552" stroke-width="1.8"/>
+
+          <!-- Three small people / family silhouettes below house -->
+          <!-- Parent left -->
+          <circle cx="98" cy="200" r="5.5" fill="#8C5A3C" opacity="0.5"/>
+          <path d="M 98 205 L 98 218" stroke="#8C5A3C" stroke-width="3" stroke-linecap="round"/>
+          <path d="M 91 209 L 98 207 L 105 209" stroke="#8C5A3C" stroke-width="2.2" stroke-linecap="round"/>
+          <!-- Child center -->
+          <circle cx="120" cy="203" r="4" fill="#C08552" opacity="0.6"/>
+          <path d="M 120 207 L 120 218" stroke="#C08552" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M 114 211 L 120 209 L 126 211" stroke="#C08552" stroke-width="1.8" stroke-linecap="round"/>
+          <!-- Parent right -->
+          <circle cx="142" cy="200" r="5.5" fill="#8C5A3C" opacity="0.5"/>
+          <path d="M 142 205 L 142 218" stroke="#8C5A3C" stroke-width="3" stroke-linecap="round"/>
+          <path d="M 135 209 L 142 207 L 149 209" stroke="#8C5A3C" stroke-width="2.2" stroke-linecap="round"/>
+
+          <!-- Small sparkles / stars top -->
+          <circle cx="86"  cy="85" r="2" fill="#C08552" opacity="0.5"/>
+          <circle cx="155" cy="78" r="2.5" fill="#C08552" opacity="0.4"/>
+          <circle cx="170" cy="105" r="1.5" fill="#8C5A3C" opacity="0.4"/>
+          <circle cx="68"  cy="110" r="1.5" fill="#8C5A3C" opacity="0.4"/>
+
+          <!-- Label at bottom -->
+          <text x="120" y="258" text-anchor="middle"
+                font-family="Raleway, sans-serif" font-size="9.5" font-weight="700"
+                letter-spacing="2" fill="#8C5A3C" opacity="0.7">PROTECTING WHAT MATTERS</text>
+        </svg>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PRODUCT CONTENT -->
+  <div class="product-content">
+
+    <!-- LEFT SIDEBAR NAV -->
+    <aside class="product-sidebar">
+      <div class="sidebar-tag">Final Expense</div>
+      <ul class="sidebar-nav">
+        <li><a href="#what-it-is">What It Is</a></li>
+        <li><a href="#who-benefits">Ideal Clients</a></li>
+        <li><a href="#coverage">Coverage & Costs</a></li>
+        <li><a href="#benefits">Key Benefits</a></li>
+        <li><a href="#carriers">Our Carriers</a></li>
+        <li><a href="#faq">Common Questions</a></li>
+      </ul>
+      <div class="sidebar-divider"></div>
+      <a href="products.html" class="sidebar-back">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        All Products
+      </a>
+    </aside>
+
+    <!-- RIGHT CONTENT BODY -->
+    <div class="product-body">
+
+      <!-- WHAT IT IS -->
+      <div class="content-block" id="what-it-is">
+        <div class="block-label">What It Is</div>
+        <h2>Whole Life Coverage Built for <span>End-of-Life Costs</span></h2>
+        <p>Final expense insurance — sometimes called burial insurance or funeral insurance — is a type of whole life policy designed to cover the costs that arise when someone passes away. Unlike traditional life insurance, it isn't meant to replace an income or pay off a mortgage. Its purpose is narrower and more immediate: give the family a lump sum to cover funeral arrangements, medical bills, outstanding debts, and other end-of-life expenses without forcing anyone to dip into savings or go out of pocket.</p>
+        <p>Funeral costs alone can run between $7,000 and $12,000 or more when burial, casket, service fees, flowers, and travel are factored in. Add outstanding credit card balances, medical copays from a final illness, and probate costs, and the total burden on a surviving spouse or adult children can climb well past that. Final expense policies typically offer coverage amounts between $2,000 and $35,000 — sized to handle those specific costs rather than provide long-term income replacement.</p>
+        <p>Because these policies are whole life, they do not expire. As long as premiums are paid, the coverage remains in force for the rest of the insured's life. Premiums are fixed at issuance and never increase with age or health changes. The policy also builds a small cash value over time that can be borrowed against if needed.</p>
+        <div class="fe-callout">
+          <p>The single most important thing a family can do is take care of this decision before it becomes urgent. Final expense policies get more expensive with age, and some health conditions that are insurable today may disqualify a person later. Acting while healthy and in your 50s or 60s locks in the lowest possible rate.</p>
+        </div>
+      </div>
+
+      <!-- WHO IT'S FOR -->
+      <div class="content-block" id="who-benefits">
+        <div class="block-label">Ideal Clients</div>
+        <h2>Who Is This <span>Right For?</span></h2>
+        <p>Final expense insurance serves a specific kind of client: someone who is older, on a fixed income, and looking for a simple, affordable policy that guarantees their family won't be left with a financial mess. Here's what that typically looks like.</p>
+
+        <div class="profile-grid">
+
+          <div class="profile-card">
+            <div class="profile-card-header">
+              <div class="profile-icon">
+                <!-- Person / senior icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                     fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+                </svg>
+              </div>
+              <strong>Adults Ages 50–85</strong>
+            </div>
+            <p>Final expense policies are designed for this age range. Premiums are still manageable in the 50s and early 60s, and most carriers will issue coverage up to age 85. Outside this window, options narrow significantly.</p>
+          </div>
+
+          <div class="profile-card">
+            <div class="profile-card-header">
+              <div class="profile-icon">
+                <!-- Dollar / fixed income icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                     fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+              </div>
+              <strong>Fixed Income Households</strong>
+            </div>
+            <p>Monthly premiums for final expense coverage are typically between $30 and $100 for most applicants — low enough to fit into a Social Security or pension budget without straining monthly finances.</p>
+          </div>
+
+          <div class="profile-card">
+            <div class="profile-card-header">
+              <div class="profile-icon">
+                <!-- Health / heart icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                     fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+              </div>
+              <strong>People With Health History</strong>
+            </div>
+            <p>Final expense is one of the most accessible forms of life insurance for people with pre-existing conditions. Most policies use simplified underwriting with just a few health questions — no blood draws, no paramedical exams, and guaranteed issue options exist for those who can't qualify otherwise.</p>
+          </div>
+
+          <div class="profile-card">
+            <div class="profile-card-header">
+              <div class="profile-icon">
+                <!-- No coverage / X icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                     fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+              </div>
+              <strong>Those Without Existing Coverage</strong>
+            </div>
+            <p>Many people in their 60s and 70s let term policies lapse after children grew up or mortgages were paid off. If there's no life insurance in place and no liquid assets earmarked for final costs, a final expense policy fills that gap directly.</p>
+          </div>
+
+          <div class="profile-card">
+            <div class="profile-card-header">
+              <div class="profile-icon">
+                <!-- Family / protect icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                     fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+              </div>
+              <strong>Parents of Adult Children</strong>
+            </div>
+            <p>Adult children are frequently the ones who end up paying for a parent's funeral when no plan is in place. A final expense policy is often framed as a gift — a parent ensuring their children aren't blindsided by unexpected costs during an already difficult time.</p>
+          </div>
+
+          <div class="profile-card">
+            <div class="profile-card-header">
+              <div class="profile-icon">
+                <!-- Clipboard / plan icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                     fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+                </svg>
+              </div>
+              <strong>Pre-Planning Clients</strong>
+            </div>
+            <p>Some clients aren't facing imminent health concerns — they simply want to have the conversation early, while options are open and premiums are lowest. Pre-planning is often the most financially sound approach.</p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- COVERAGE & COSTS SVG CHART -->
+      <div class="content-block" id="coverage">
+        <div class="block-label">Coverage & Costs</div>
+        <h2>How Much Coverage Do <span>You Need?</span></h2>
+        <p>Final expense policies are intentionally modest in size. The goal isn't to replace a lifetime of income — it's to handle a specific, predictable set of expenses. Here's a breakdown of what most families are actually covering.</p>
+
+        <!-- SVG horizontal bar chart of typical end-of-life costs -->
+        <div class="coverage-chart-wrap">
+          <div class="coverage-chart-label">Typical End-of-Life Expenses</div>
+          <svg viewBox="0 0 560 260" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans, sans-serif">
+
+            <!-- Y-axis labels & bars -->
+
+            <!-- Row 1: Funeral & Burial -->
+            <text x="148" y="30" text-anchor="end" font-size="11.5" fill="#6b4c3b">Funeral &amp; Burial</text>
+            <rect x="155" y="16" width="280" height="18" rx="3" fill="rgba(192,133,82,0.15)"/>
+            <rect x="155" y="16" width="280" height="18" rx="3" fill="url(#barGrad1)"/>
+            <text x="442" y="29" font-size="10.5" fill="#4B2E2B" font-weight="600">$7,000 – $12,000</text>
+
+            <!-- Row 2: Medical Bills -->
+            <text x="148" y="72" text-anchor="end" font-size="11.5" fill="#6b4c3b">Outstanding Medical</text>
+            <rect x="155" y="58" width="200" height="18" rx="3" fill="rgba(192,133,82,0.15)"/>
+            <rect x="155" y="58" width="200" height="18" rx="3" fill="url(#barGrad2)"/>
+            <text x="362" y="71" font-size="10.5" fill="#4B2E2B" font-weight="600">$2,000 – $8,000</text>
+
+            <!-- Row 3: Legal & Probate -->
+            <text x="148" y="114" text-anchor="end" font-size="11.5" fill="#6b4c3b">Legal &amp; Probate</text>
+            <rect x="155" y="100" width="130" height="18" rx="3" fill="rgba(192,133,82,0.15)"/>
+            <rect x="155" y="100" width="130" height="18" rx="3" fill="url(#barGrad3)"/>
+            <text x="292" y="113" font-size="10.5" fill="#4B2E2B" font-weight="600">$1,500 – $5,000</text>
+
+            <!-- Row 4: Credit Card Debt -->
+            <text x="148" y="156" text-anchor="end" font-size="11.5" fill="#6b4c3b">Credit Card / Debt</text>
+            <rect x="155" y="142" width="170" height="18" rx="3" fill="rgba(192,133,82,0.15)"/>
+            <rect x="155" y="142" width="170" height="18" rx="3" fill="url(#barGrad2)"/>
+            <text x="332" y="155" font-size="10.5" fill="#4B2E2B" font-weight="600">Varies</text>
+
+            <!-- Row 5: Travel & Misc -->
+            <text x="148" y="198" text-anchor="end" font-size="11.5" fill="#6b4c3b">Travel &amp; Misc.</text>
+            <rect x="155" y="184" width="90" height="18" rx="3" fill="rgba(192,133,82,0.15)"/>
+            <rect x="155" y="184" width="90" height="18" rx="3" fill="url(#barGrad3)"/>
+            <text x="252" y="197" font-size="10.5" fill="#4B2E2B" font-weight="600">$500 – $3,000</text>
+
+            <!-- Divider line -->
+            <line x1="155" y1="218" x2="500" y2="218" stroke="#e8d8c4" stroke-width="1"/>
+
+            <!-- Total note -->
+            <text x="155" y="240" font-size="12" fill="#4B2E2B" font-weight="700">Common policy range: </text>
+            <text x="310" y="240" font-size="12" fill="#C08552" font-weight="700">$10,000 – $25,000</text>
+
+            <!-- Gradients -->
+            <defs>
+              <linearGradient id="barGrad1" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#C08552" stop-opacity="0.75"/>
+                <stop offset="100%" stop-color="#C08552" stop-opacity="0.4"/>
+              </linearGradient>
+              <linearGradient id="barGrad2" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#8C5A3C" stop-opacity="0.65"/>
+                <stop offset="100%" stop-color="#8C5A3C" stop-opacity="0.3"/>
+              </linearGradient>
+              <linearGradient id="barGrad3" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#C08552" stop-opacity="0.55"/>
+                <stop offset="100%" stop-color="#C08552" stop-opacity="0.25"/>
+              </linearGradient>
+            </defs>
+
+          </svg>
+        </div>
+
+        <p>Most final expense policies are available in face amounts from $2,000 to $35,000. A standard $10,000 policy for a healthy 65-year-old woman might run between $35 and $55 per month depending on the carrier. Rates for men are slightly higher, and costs increase meaningfully with each passing year — which is why timing matters. The conversation is almost always worth having sooner.</p>
+      </div>
+
+      <!-- KEY BENEFITS -->
+      <div class="content-block" id="benefits">
+        <div class="block-label">Key Benefits</div>
+        <h2>What Makes Final Expense <span>Different</span></h2>
+        <p>Final expense policies are designed to be simple, accessible, and permanent. Here's what sets them apart from other types of coverage.</p>
+
+        <div class="benefits-list">
+
+          <div class="benefit-row">
+            <div class="benefit-icon">
+              <!-- Checkmark / simplified underwriting -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                   fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </div>
+            <div class="benefit-text">
+              <strong>No Medical Exam Required</strong>
+              <p>Most final expense policies use simplified underwriting — approval is based on a short health questionnaire, not a blood draw or physical. Guaranteed issue options are available for applicants who can't qualify with even simplified underwriting, though these typically include a two-year graded benefit period.</p>
+            </div>
+          </div>
+
+          <div class="benefit-row">
+            <div class="benefit-icon">
+              <!-- Lock / fixed premiums -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                   fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </div>
+            <div class="benefit-text">
+              <strong>Premiums Fixed for Life</strong>
+              <p>Your premium is set the day the policy is issued and will never increase due to age, health changes, or inflation. This makes budgeting straightforward for clients on fixed incomes — the monthly cost stays exactly the same from year one to year thirty.</p>
+            </div>
+          </div>
+
+          <div class="benefit-row">
+            <div class="benefit-icon">
+              <!-- Infinity / permanent coverage -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                   fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 12c-2-2.5-4-4-6-4a4 4 0 0 0 0 8c2 0 4-1.5 6-4z"/>
+                <path d="M12 12c2 2.5 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.5-6 4z"/>
+              </svg>
+            </div>
+            <div class="benefit-text">
+              <strong>Coverage Never Expires</strong>
+              <p>As a whole life policy, final expense coverage doesn't have a term. It doesn't lapse after 20 years or when you reach a certain age. As long as premiums are paid, the death benefit will be paid — even if that's 30 years from now.</p>
+            </div>
+          </div>
+
+          <div class="benefit-row">
+            <div class="benefit-icon">
+              <!-- Piggy bank / cash value -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                   fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+            </div>
+            <div class="benefit-text">
+              <strong>Builds Cash Value</strong>
+              <p>Every whole life policy, including final expense, accumulates a small cash value over time on a tax-deferred basis. This can be borrowed against during the policyholder's lifetime if needed — providing a modest safety net in addition to the death benefit.</p>
+            </div>
+          </div>
+
+          <div class="benefit-row">
+            <div class="benefit-icon">
+              <!-- Fast approval / clock -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                   fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </div>
+            <div class="benefit-text">
+              <strong>Quick Approval Process</strong>
+              <p>Without a medical exam requirement, the underwriting process is significantly faster than traditional life insurance. Many policies are approved within days, and some carriers offer same-day coverage decisions for simplified issue applicants.</p>
+            </div>
+          </div>
+
+          <div class="benefit-row">
+            <div class="benefit-icon">
+              <!-- Tax-free / shield -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                   fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <div class="benefit-text">
+              <strong>Tax-Free Death Benefit</strong>
+              <p>Like all life insurance, the death benefit paid to beneficiaries is income tax-free under current federal law. The family receives the full face amount — not a reduced sum after taxes — and can use it immediately to cover costs.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- CARRIERS -->
+      <div class="content-block" id="carriers">
+        <div class="block-label">Our Carriers</div>
+        <h2>Products We <span>Recommend</span></h2>
+        <p>As an independent agency, we aren't tied to any single carrier. For final expense, we work with several highly-rated companies that offer strong products for this market. Here are a few standouts.</p>
+
+        <div class="carrier-grid">
+
+          <div class="carrier-card">
+            <div class="carrier-name">Mutual of Omaha</div>
+            <div class="carrier-type">Simplified Issue Whole Life</div>
+            <p>One of the most recognized names in final expense insurance, with a long track record of paying claims promptly. Their Living Promise product is widely regarded as one of the most competitive simplified issue policies available.</p>
+            <div class="carrier-bullet">Issue ages 45–85</div>
+            <div class="carrier-bullet">Coverage $2,000 – $25,000</div>
+            <div class="carrier-bullet">Level and graded benefit options</div>
+            <div class="carrier-bullet">A+ AM Best rating</div>
+          </div>
+
+          <div class="carrier-card">
+            <div class="carrier-name">Foresters Financial</div>
+            <div class="carrier-type">Simplified Issue Whole Life</div>
+            <p>Known for competitive rates and member benefits that extend beyond the policy itself. Their PlanRight product offers strong underwriting flexibility and is often a good fit for clients with moderate health history.</p>
+            <div class="carrier-bullet">Issue ages 50–85</div>
+            <div class="carrier-bullet">Coverage $2,000 – $35,000</div>
+            <div class="carrier-bullet">Built-in member benefits</div>
+            <div class="carrier-bullet">A rating AM Best</div>
+          </div>
+
+          <div class="carrier-card">
+            <div class="carrier-name">Americo</div>
+            <div class="carrier-type">Simplified &amp; Guaranteed Issue</div>
+            <p>Americo offers both simplified issue and guaranteed issue final expense options, making them a strong choice for clients who have been declined elsewhere. Their underwriting is among the most lenient in the market for simplified issue.</p>
+            <div class="carrier-bullet">Issue ages 50–85</div>
+            <div class="carrier-bullet">Coverage $2,000 – $30,000</div>
+            <div class="carrier-bullet">Guaranteed issue available</div>
+            <div class="carrier-bullet">A rating AM Best</div>
+          </div>
+
+          <div class="carrier-card">
+            <div class="carrier-name">Royal Neighbors</div>
+            <div class="carrier-type">Simplified Issue Whole Life</div>
+            <p>An often overlooked carrier with competitive rates and a straightforward approval process. Royal Neighbors performs particularly well for female applicants and offers strong coverage options in the $10,000–$20,000 range.</p>
+            <div class="carrier-bullet">Issue ages 50–80</div>
+            <div class="carrier-bullet">Coverage $5,000 – $20,000</div>
+            <div class="carrier-bullet">Competitive female rates</div>
+            <div class="carrier-bullet">A- rating AM Best</div>
+          </div>
+
+        </div>
+
+        <div class="fe-callout" style="margin-top: 1.75rem;">
+          <p>Carrier selection matters more than most people realize. Two policies that look identical on paper can have meaningfully different underwriting standards, payout timelines, and rate stability. We review your specific health profile and budget against multiple carriers before making a recommendation — never the other way around.</p>
+        </div>
+      </div>
+
+      <!-- FAQ ACCORDION -->
+      <div class="content-block" id="faq">
+        <div class="block-label">Common Questions</div>
+        <h2>Questions We <span>Hear Most Often</span></h2>
+        <p>Final expense is one of the simpler products in the life insurance space, but a few questions come up consistently. Here they are, answered directly.</p>
+
+        <div class="faq-list">
+
+          <div class="faq-item faq-accordion">
+            <button class="faq-toggle" aria-expanded="false">
+              What's the difference between simplified issue and guaranteed issue?
+              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                   viewBox="0 0 24 24" fill="none" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+            <div class="faq-body">
+              <div class="faq-body-inner">
+                <p>Simplified issue means the applicant answers a short series of health questions — typically 10 to 20 — and approval is based on those answers without any medical exam. Most applicants with common health conditions like diabetes, high blood pressure, or past cancer qualify, though certain conditions may push someone to a graded benefit option or disqualify them altogether.</p>
+                <p>Guaranteed issue means no health questions are asked and no one can be turned down. These policies are available to anyone in the eligible age range, period. The trade-off is that guaranteed issue policies almost always include a two-year waiting period: if the insured dies within the first two years of the policy from natural causes, beneficiaries receive only the premiums paid back plus interest, not the full death benefit. After two years, full coverage kicks in. Accidental death is typically covered from day one.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item faq-accordion">
+            <button class="faq-toggle" aria-expanded="false">
+              Is final expense the same as pre-paying a funeral home?
+              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                   viewBox="0 0 24 24" fill="none" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+            <div class="faq-body">
+              <div class="faq-body-inner">
+                <p>No — and the distinction matters. Pre-need funeral arrangements are contracts made directly with a funeral home that lock in specific services at today's prices. The money is typically placed in trust or used to purchase a life insurance policy assigned to the funeral home. The limitation is that those funds are tied to a specific provider. If you move, if the funeral home closes or is sold, or if your family's wishes change, that contract can be complicated to unwind.</p>
+                <p>Final expense insurance pays a tax-free lump sum directly to your named beneficiary. They can use it however they choose — toward any funeral home, for medical bills, for travel, or for anything else the family needs in that period. It's more flexible, often more affordable per dollar of coverage, and puts the family in control of the funds rather than a third-party provider.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item faq-accordion">
+            <button class="faq-toggle" aria-expanded="false">
+              What if I already have some life insurance — do I still need this?
+              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                   viewBox="0 0 24 24" fill="none" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+            <div class="faq-body">
+              <div class="faq-body-inner">
+                <p>It depends on what that coverage is and what it's intended for. If you have a term life policy designed to cover a mortgage or replace income for dependents, that coverage likely serves a different purpose than what final expense addresses. If the term expires before you pass away — which is the statistical reality for most policyholders — your family is left without anything to cover end-of-life costs.</p>
+                <p>Final expense is commonly purchased as a standalone supplement, not a replacement. Even clients with group life insurance through an employer often add a final expense policy because group coverage doesn't follow you into retirement — and that's exactly when the costs it would cover become most relevant.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item faq-accordion">
+            <button class="faq-toggle" aria-expanded="false">
+              Will my premiums ever go up?
+              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                   viewBox="0 0 24 24" fill="none" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+            <div class="faq-body">
+              <div class="faq-body-inner">
+                <p>No. Final expense policies are whole life products, and whole life premiums are fixed at the time of issuance. The carrier cannot raise your rate because you got older, because your health changed, or because they need to adjust their pricing for new applicants. The premium you agree to on day one is the premium you'll pay for the life of the policy — which is a significant advantage for anyone on a predictable monthly budget.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item faq-accordion">
+            <button class="faq-toggle" aria-expanded="false">
+              Can I buy a policy for a parent or another family member?
+              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                   viewBox="0 0 24 24" fill="none" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+            <div class="faq-body">
+              <div class="faq-body-inner">
+                <p>Yes, with one important requirement: insurable interest. You must have a legitimate financial or familial connection to the person being insured — which is almost always the case for spouses, parents, and children. The insured person must also consent to the policy and sign the application themselves.</p>
+                <p>Adult children purchasing final expense coverage on a parent's behalf is one of the most common situations we encounter. The child may pay the premium and be named as beneficiary, while the parent is the insured. This is a straightforward arrangement that most carriers accommodate without issue.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- end product-body -->
+  </div><!-- end product-content -->
+
+  <!-- CTA -->
+  <section class="page-cta">
+    <h2>Think this might be <span>right for you?</span></h2>
+    <p>Answer a few quick questions and we'll help you find the right coverage at the right price — no pressure, no obligation.</p>
+    <a href="qualify.html" class="btn-primary">See If You Qualify &nbsp;→</a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">Brown<span>Agency</span></a>
+        <p>Independent life insurance brokerage serving families across the U.S. We work for you — not the carriers.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Products</h4>
+        <ul>
+          <li><a href="mortgage_protection.html">Mortgage Protection</a></li>
+          <li><a href="term_life.html">Term Life</a></li>
+          <li><a href="whole_life.html">Whole Life</a></li>
+          <li><a href="iul.html">IUL / Wealth</a></li>
+          <li><a href="final_expense.html">Final Expense</a></li>
+          <li><a href="living_benefits.html">Living Benefits</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="careers.html">Careers</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Get Started</h4>
+        <ul>
+          <li><a href="qualify.html">See If You Qualify</a></li>
+          <li><a href="careers.html">Join Our Team</a></li>
+          <li><a href="#">Agent Portal</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Brown Agency LLC. All rights reserved.</span>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Disclaimers</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // FAQ accordion
+    document.querySelectorAll('.faq-accordion').forEach(item => {
+      const btn = item.querySelector('.faq-toggle');
+      btn.addEventListener('click', () => {
+        const isOpen = item.classList.contains('open');
+
+        // Close all
+        document.querySelectorAll('.faq-accordion').forEach(el => {
+          el.classList.remove('open');
+          el.querySelector('.faq-toggle').setAttribute('aria-expanded', 'false');
+        });
+
+        // Toggle clicked
+        if (!isOpen) {
+          item.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,813 @@
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session
+from flask_cors import CORS
+from datetime import datetime, timedelta
+from db import get_connection
+import hashlib
+import os
+import secrets
+from dotenv import load_dotenv
+
+load_dotenv()
+
+app = Flask(__name__)
+CORS(app)
+app.secret_key = os.getenv("SECRET_KEY", secrets.token_hex(32))
+
+
+# ─────────────────────────────────────────────
+# HELPERS
+# ─────────────────────────────────────────────
+
+def verify_password(stored_hash: str, password: str) -> bool:
+    try:
+        salt, hashed = stored_hash.split(":")
+        return hashed == hashlib.sha256((salt + password).encode()).hexdigest()
+    except Exception:
+        return False
+
+
+def get_current_agent():
+    """Returns the logged-in agent row or None."""
+    agent_id = session.get("agent_id")
+    if not agent_id:
+        return None
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        cur.execute(
+            "SELECT id, full_name, email, username, is_admin FROM agents WHERE id = %s AND is_active = TRUE",
+            (agent_id,)
+        )
+        agent = cur.fetchone()
+        cur.close()
+        conn.close()
+        return agent
+    except Exception:
+        return None
+
+
+def send_lead_notification(data: dict):
+    """
+    Sends a new lead alert email to all agents with notify_on_lead = TRUE.
+    Fires after a successful form submission. Failures are silent so a mail
+    issue never blocks a lead from being saved.
+    """
+    import smtplib
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
+
+    sender   = os.getenv("MAIL_SENDER")
+    password = os.getenv("MAIL_PASSWORD")
+
+    if not sender or not password:
+        return  # Email not configured — skip silently
+
+    # Fetch all agents with notifications enabled
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        cur.execute(
+            "SELECT email, full_name FROM agents WHERE notify_on_lead = TRUE AND is_active = TRUE"
+        )
+        recipients = cur.fetchall()
+        cur.close()
+        conn.close()
+    except Exception:
+        return
+
+    if not recipients:
+        return
+
+    PRODUCT_LABELS = {
+        'mortgage-protection': 'Mortgage Protection',
+        'final-expense':       'Final Expense',
+        'term-life':           'Term Life',
+        'whole-life':          'Whole Life',
+        'iul':                 'IUL / Wealth Building',
+        'living-benefits':     'Living Benefits',
+    }
+
+    first        = data.get("first_name", "")
+    last         = data.get("last_name", "")
+    product      = PRODUCT_LABELS.get(data.get("product_type", ""), data.get("product_type", "Unknown"))
+    mobile       = data.get("mobile_phone", "—")
+    email        = data.get("email", "—")
+    state        = data.get("state", "—")
+    contact_pref = "Call Me" if data.get("contact_preference") == "call_me" else "Book Appointment"
+    best_time    = data.get("best_time", "—")
+    submitted    = datetime.now().strftime("%B %d, %Y at %I:%M %p")
+
+    subject = f"New Lead: {first} {last} — {product}"
+
+    html_body = f"""
+    <div style="font-family:'DM Sans',Arial,sans-serif;max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #e8d5c0;border-radius:8px;overflow:hidden">
+      <div style="background:#4B2E2B;padding:1.25rem 1.5rem">
+        <p style="font-family:Arial,sans-serif;font-size:1.15rem;font-weight:800;color:#ffffff;margin:0">
+          Brown<span style="color:#C08552">Agency</span>
+        </p>
+        <p style="font-size:0.75rem;color:#c8a882;margin:0.2rem 0 0;letter-spacing:0.08em;text-transform:uppercase">New Lead Notification</p>
+      </div>
+      <div style="padding:1.5rem">
+        <h2 style="font-size:1.1rem;color:#4B2E2B;margin:0 0 0.25rem">{first} {last}</h2>
+        <p style="font-size:0.85rem;color:#8C5A3C;margin:0 0 1.5rem;font-weight:600">{product}</p>
+
+        <table style="width:100%;border-collapse:collapse;font-size:0.875rem">
+          <tr style="border-bottom:1px solid #f0e4d4">
+            <td style="padding:0.6rem 0;color:#9a7a6a;width:140px;font-weight:600">Mobile</td>
+            <td style="padding:0.6rem 0;color:#2C1810">{mobile}</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0e4d4">
+            <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">Email</td>
+            <td style="padding:0.6rem 0;color:#2C1810">{email}</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0e4d4">
+            <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">State</td>
+            <td style="padding:0.6rem 0;color:#2C1810">{state}</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0e4d4">
+            <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">Contact Pref</td>
+            <td style="padding:0.6rem 0;color:#2C1810">{contact_pref}</td>
+          </tr>
+          <tr>
+            <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">Best Time</td>
+            <td style="padding:0.6rem 0;color:#2C1810">{best_time}</td>
+          </tr>
+        </table>
+
+        <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid #f0e4d4">
+          <a href="http://localhost:5000/admin"
+             style="display:inline-block;background:#C08552;color:#ffffff;font-weight:700;font-size:0.875rem;padding:0.65rem 1.4rem;border-radius:6px;text-decoration:none">
+            View in Dashboard →
+          </a>
+        </div>
+
+        <p style="font-size:0.75rem;color:#c8a882;margin-top:1.25rem">Submitted {submitted}</p>
+      </div>
+    </div>
+    """
+
+    text_body = f"""New lead submitted — Brown Agency
+
+Name:         {first} {last}
+Product:      {product}
+Mobile:       {mobile}
+Email:        {email}
+State:        {state}
+Contact Pref: {contact_pref}
+Best Time:    {best_time}
+Submitted:    {submitted}
+
+View in dashboard: http://localhost:5000/admin
+"""
+
+    try:
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(sender, password)
+
+        for recipient_email, recipient_name in recipients:
+            msg = MIMEMultipart("alternative")
+            msg["Subject"] = subject
+            msg["From"]    = f"Brown Agency <{sender}>"
+            msg["To"]      = recipient_email
+
+            msg.attach(MIMEText(text_body, "plain"))
+            msg.attach(MIMEText(html_body, "html"))
+            server.sendmail(sender, recipient_email, msg.as_string())
+
+        server.quit()
+    except Exception:
+        pass  # Never block a lead save due to email failure
+
+
+def login_required(f):
+    """Decorator that redirects to login if no active session."""
+    from functools import wraps
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not get_current_agent():
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return decorated
+
+
+def admin_required(f):
+    """Decorator that requires is_admin = TRUE."""
+    from functools import wraps
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        agent = get_current_agent()
+        if not agent:
+            return redirect(url_for("login"))
+        if not agent[4]:  # is_admin
+            return jsonify({"status": "error", "message": "Admin access required."}), 403
+        return f(*args, **kwargs)
+    return decorated
+
+
+# ─────────────────────────────────────────────
+# TEST ROUTES
+# ─────────────────────────────────────────────
+
+@app.route("/ping")
+def ping():
+    return jsonify({"status": "ok", "message": "Flask is running."})
+
+
+@app.route("/db-test")
+def db_test():
+    try:
+        conn = get_connection()
+        conn.close()
+        return jsonify({"status": "ok", "message": "Database connection successful."})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+# ─────────────────────────────────────────────
+# AUTH — LOGIN / LOGOUT
+# ─────────────────────────────────────────────
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    # Already logged in — go straight to dashboard
+    if get_current_agent():
+        return redirect(url_for("dashboard"))
+
+    error = None
+
+    if request.method == "POST":
+        username = request.form.get("username", "").strip().lower()
+        password = request.form.get("password", "").strip()
+
+        try:
+            conn = get_connection()
+            cur  = conn.cursor()
+            cur.execute(
+                "SELECT id, full_name, password_hash, is_active FROM agents WHERE username = %s",
+                (username,)
+            )
+            agent = cur.fetchone()
+            cur.close()
+            conn.close()
+
+            if not agent:
+                error = "Invalid username or password."
+            elif not agent[3]:  # is_active
+                error = "This account has been deactivated. Contact an admin."
+            elif not verify_password(agent[2], password):
+                error = "Invalid username or password."
+            else:
+                session.permanent = True
+                app.permanent_session_lifetime = timedelta(hours=8)
+                session["agent_id"]   = agent[0]
+                session["agent_name"] = agent[1]
+                return redirect(url_for("dashboard"))
+
+        except Exception as e:
+            error = f"Database error: {str(e)}"
+
+    return render_template("login.html", error=error)
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
+
+
+# ─────────────────────────────────────────────
+# DASHBOARD (placeholder — full UI coming next)
+# ─────────────────────────────────────────────
+
+@app.route("/admin")
+@login_required
+def dashboard():
+    agent = get_current_agent()
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        cur.execute("""
+            SELECT id, submitted_at, product_type, first_name, last_name,
+                   state, contact_preference, status
+            FROM leads
+            ORDER BY submitted_at DESC
+        """)
+        leads = cur.fetchall()
+        cur.close()
+        conn.close()
+    except Exception as e:
+        leads = []
+
+    return render_template("dashboard.html", agent=agent, leads=leads)
+
+
+# ─────────────────────────────────────────────
+# LEAD ROUTES
+# ─────────────────────────────────────────────
+
+@app.route("/lead/<int:lead_id>")
+@login_required
+def get_lead(lead_id):
+    """Returns all fields for a single lead as JSON (for inline expansion)."""
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        cur.execute("SELECT * FROM leads WHERE id = %s", (lead_id,))
+        row = cur.fetchone()
+        cols = [desc[0] for desc in cur.description]
+        cur.close()
+        conn.close()
+
+        if not row:
+            return jsonify({"status": "error", "message": "Lead not found."}), 404
+
+        lead = {}
+        for i, col in enumerate(cols):
+            val = row[i]
+            if isinstance(val, datetime):
+                val = val.strftime("%B %d, %Y at %I:%M %p")
+            lead[col] = val
+
+        return jsonify({"status": "ok", "lead": lead})
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/lead/<int:lead_id>/status", methods=["POST"])
+@login_required
+def update_status(lead_id):
+    """Updates the status and/or notes for a lead."""
+    data       = request.get_json()
+    new_status = data.get("status")
+    new_notes  = data.get("notes")
+
+    valid_statuses = ["new", "follow_up", "does_not_pick_up", "sale", "no_sale"]
+    if new_status and new_status not in valid_statuses:
+        return jsonify({"status": "error", "message": "Invalid status value."}), 400
+
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+
+        if new_status and new_notes is not None:
+            cur.execute(
+                "UPDATE leads SET status = %s, notes = %s WHERE id = %s",
+                (new_status, new_notes, lead_id)
+            )
+        elif new_status:
+            cur.execute(
+                "UPDATE leads SET status = %s WHERE id = %s",
+                (new_status, lead_id)
+            )
+        elif new_notes is not None:
+            cur.execute(
+                "UPDATE leads SET notes = %s WHERE id = %s",
+                (new_notes, lead_id)
+            )
+
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({"status": "ok"})
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/lead/<int:lead_id>/delete", methods=["POST"])
+@login_required
+def delete_lead(lead_id):
+    """Permanently deletes a lead from the database."""
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        cur.execute("DELETE FROM leads WHERE id = %s", (lead_id,))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({"status": "ok"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+# ─────────────────────────────────────────────
+# EXPORT
+# ─────────────────────────────────────────────
+
+# Display-friendly label maps for export
+PRODUCT_LABELS = {
+    'mortgage-protection': 'Mortgage Protection',
+    'final-expense':       'Final Expense',
+    'term-life':           'Term Life',
+    'whole-life':          'Whole Life',
+    'iul':                 'IUL / Wealth Building',
+    'living-benefits':     'Living Benefits',
+}
+
+STATUS_LABELS = {
+    'new':                'New',
+    'follow_up':          'Follow Up',
+    'does_not_pick_up':   'Does Not Pick Up',
+    'sale':               'Sale',
+    'no_sale':            'No Sale',
+}
+
+CONTACT_LABELS = {
+    'call_me':           'Call Me',
+    'book_appointment':  'Book Appointment',
+}
+
+def format_export_value(col, val):
+    """Converts raw DB values to clean human-readable strings for export."""
+    if val is None:
+        return ''
+    if col == 'submitted_at' and isinstance(val, datetime):
+        return val.strftime('%b %d, %Y %I:%M %p')
+    if col == 'product_type':
+        return PRODUCT_LABELS.get(str(val), str(val))
+    if col == 'status':
+        return STATUS_LABELS.get(str(val), str(val))
+    if col == 'contact_preference':
+        return CONTACT_LABELS.get(str(val), str(val))
+    return str(val)
+
+
+@app.route("/export", methods=["POST"])
+@login_required
+def export_leads():
+    """
+    Exports selected leads as CSV or XLSX.
+    Expects JSON: { "ids": [1,2,3], "columns": ["first_name","email",...], "format": "csv" }
+    """
+    import csv
+    import io
+    from flask import Response, send_file
+
+    try:
+        import openpyxl
+        from openpyxl.styles import Font, PatternFill, Alignment
+        openpyxl_available = True
+    except ImportError:
+        openpyxl_available = False
+
+    data    = request.get_json()
+    ids     = data.get("ids", [])
+    columns = data.get("columns", [])
+    fmt     = data.get("format", "csv")
+
+    if not ids or not columns:
+        return jsonify({"status": "error", "message": "No leads or columns selected."}), 400
+
+    if fmt == "xlsx" and not openpyxl_available:
+        return jsonify({"status": "error", "message": "openpyxl not installed. Run: pip install openpyxl"}), 500
+
+    # Whitelist columns to prevent SQL injection
+    all_columns = [
+        "id", "submitted_at", "product_type", "first_name", "last_name",
+        "age", "email", "mobile_phone", "home_phone", "city", "state", "zip",
+        "coverage_amount", "budget", "currently_insured", "beneficiary", "beneficiary_rel",
+        "mp_lender", "mp_balance", "mp_monthly", "mp_years_remaining", "mp_purchase_year",
+        "term_length", "term_reason", "term_annual_income", "wl_goal",
+        "iul_annual_income", "iul_goal", "iul_investment_exp",
+        "lb_concern", "lb_family_history",
+        "tobacco", "height_ft", "height_in", "weight",
+        "major_conditions", "minor_conditions", "medications",
+        "contact_preference", "best_time", "hobby",
+        "assigned_agent", "status", "notes"
+    ]
+    safe_columns = [c for c in columns if c in all_columns]
+
+    if not safe_columns:
+        return jsonify({"status": "error", "message": "No valid columns selected."}), 400
+
+    col_str      = ", ".join(safe_columns)
+    placeholders = ", ".join(["%s"] * len(ids))
+
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        cur.execute(
+            f"SELECT {col_str} FROM leads WHERE id IN ({placeholders}) ORDER BY submitted_at DESC",
+            ids
+        )
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+    # Format all values for clean export output
+    formatted_rows = [
+        [format_export_value(safe_columns[i], val) for i, val in enumerate(row)]
+        for row in rows
+    ]
+
+    header_labels = [c.replace("_", " ").title() for c in safe_columns]
+
+    if fmt == "xlsx":
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Leads"
+
+        header_font = Font(bold=True, color="FFFFFF")
+        header_fill = PatternFill("solid", fgColor="4B2E2B")
+
+        for col_i, label in enumerate(header_labels, start=1):
+            cell = ws.cell(row=1, column=col_i, value=label)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = Alignment(horizontal="center")
+
+        for row_i, row in enumerate(formatted_rows, start=2):
+            for col_i, val in enumerate(row, start=1):
+                ws.cell(row=row_i, column=col_i, value=val)
+
+        # Auto-size columns
+        for col in ws.columns:
+            max_len = max((len(str(cell.value or '')) for cell in col), default=10)
+            ws.column_dimensions[col[0].column_letter].width = min(max_len + 4, 40)
+
+        output = io.BytesIO()
+        wb.save(output)
+        output.seek(0)
+        return send_file(
+            output,
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            as_attachment=True,
+            download_name="brown_agency_leads.xlsx"
+        )
+
+    else:
+        # CSV with UTF-8 BOM so Excel opens it cleanly without encoding issues
+        output = io.StringIO()
+        output.write('\ufeff')  # UTF-8 BOM
+        writer = csv.writer(output)
+        writer.writerow(header_labels)
+        writer.writerows(formatted_rows)
+        output.seek(0)
+        return Response(
+            output.getvalue(),
+            mimetype="text/csv; charset=utf-8-sig",
+            headers={"Content-Disposition": "attachment; filename=brown_agency_leads.csv"}
+        )
+
+
+# ─────────────────────────────────────────────
+# AGENT MANAGEMENT (admin only)
+# ─────────────────────────────────────────────
+
+@app.route("/agents")
+@admin_required
+def list_agents():
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        cur.execute("SELECT id, full_name, email, username, is_admin, notify_on_lead, is_active, created_at FROM agents ORDER BY created_at ASC")
+        agents = cur.fetchall()
+        cur.close()
+        conn.close()
+        return jsonify({"status": "ok", "agents": [
+            {
+                "id": a[0], "full_name": a[1], "email": a[2],
+                "username": a[3], "is_admin": a[4],
+                "notify_on_lead": a[5], "is_active": a[6],
+                "created_at": a[7].strftime("%B %d, %Y") if a[7] else ""
+            }
+            for a in agents
+        ]})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/agents/add", methods=["POST"])
+@admin_required
+def add_agent():
+    import hashlib, secrets as sec
+    data      = request.get_json()
+    full_name = data.get("full_name", "").strip()
+    email     = data.get("email", "").strip().lower()
+    username  = data.get("username", "").strip().lower()
+    password  = data.get("password", "").strip()
+    is_admin  = data.get("is_admin", False)
+    notify    = data.get("notify_on_lead", True)
+
+    if not all([full_name, email, username, password]):
+        return jsonify({"status": "error", "message": "All fields are required."}), 400
+
+    salt      = sec.token_hex(16)
+    pw_hash   = f"{salt}:{hashlib.sha256((salt + password).encode()).hexdigest()}"
+
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        cur.execute(
+            "SELECT id FROM agents WHERE username = %s OR email = %s",
+            (username, email)
+        )
+        if cur.fetchone():
+            cur.close()
+            conn.close()
+            return jsonify({"status": "error", "message": "Username or email already exists."}), 400
+
+        cur.execute("""
+            INSERT INTO agents (full_name, email, username, password_hash, is_admin, notify_on_lead, is_active)
+            VALUES (%s, %s, %s, %s, %s, %s, TRUE)
+        """, (full_name, email, username, pw_hash, is_admin, notify))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({"status": "ok", "message": f"Agent {full_name} created."})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/agents/<int:agent_id>/toggle-notify", methods=["POST"])
+@admin_required
+def toggle_notify(agent_id):
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        cur.execute(
+            "UPDATE agents SET notify_on_lead = NOT notify_on_lead WHERE id = %s RETURNING notify_on_lead",
+            (agent_id,)
+        )
+        result = cur.fetchone()
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({"status": "ok", "notify_on_lead": result[0]})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/agents/<int:agent_id>/deactivate", methods=["POST"])
+@admin_required
+def deactivate_agent(agent_id):
+    current = get_current_agent()
+    if current and current[0] == agent_id:
+        return jsonify({"status": "error", "message": "You cannot deactivate your own account."}), 400
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        cur.execute("UPDATE agents SET is_active = FALSE WHERE id = %s", (agent_id,))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({"status": "ok"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/agents/<int:agent_id>/reactivate", methods=["POST"])
+@admin_required
+def reactivate_agent(agent_id):
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        cur.execute("UPDATE agents SET is_active = TRUE WHERE id = %s", (agent_id,))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({"status": "ok"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+# ─────────────────────────────────────────────
+# SETTINGS PAGE
+# ─────────────────────────────────────────────
+
+@app.route("/settings")
+@admin_required
+def settings():
+    agent           = get_current_agent()
+    mail_configured = bool(os.getenv("MAIL_SENDER") and os.getenv("MAIL_PASSWORD"))
+    return render_template("settings.html", agent=agent, mail_configured=mail_configured)
+
+
+# ─────────────────────────────────────────────
+# FORM SUBMISSION (public)
+# ─────────────────────────────────────────────
+
+@app.route("/submit", methods=["POST"])
+def submit():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"status": "error", "message": "No data received."}), 400
+
+        conn = get_connection()
+        cur  = conn.cursor()
+
+        cur.execute("""
+            INSERT INTO leads (
+                product_type,
+                first_name, last_name, age, email,
+                mobile_phone, home_phone, city, state, zip,
+                coverage_amount, budget, currently_insured,
+                beneficiary, beneficiary_rel,
+                mp_lender, mp_balance, mp_monthly,
+                mp_years_remaining, mp_purchase_year,
+                term_length, term_reason, term_annual_income,
+                wl_goal,
+                iul_annual_income, iul_goal, iul_investment_exp,
+                lb_concern, lb_family_history,
+                tobacco, height_ft, height_in, weight,
+                major_conditions, minor_conditions, medications,
+                contact_preference, best_time, hobby
+            ) VALUES (
+                %(product_type)s,
+                %(first_name)s, %(last_name)s, %(age)s, %(email)s,
+                %(mobile_phone)s, %(home_phone)s, %(city)s, %(state)s, %(zip)s,
+                %(coverage_amount)s, %(budget)s, %(currently_insured)s,
+                %(beneficiary)s, %(beneficiary_rel)s,
+                %(mp_lender)s, %(mp_balance)s, %(mp_monthly)s,
+                %(mp_years_remaining)s, %(mp_purchase_year)s,
+                %(term_length)s, %(term_reason)s, %(term_annual_income)s,
+                %(wl_goal)s,
+                %(iul_annual_income)s, %(iul_goal)s, %(iul_investment_exp)s,
+                %(lb_concern)s, %(lb_family_history)s,
+                %(tobacco)s, %(height_ft)s, %(height_in)s, %(weight)s,
+                %(major_conditions)s, %(minor_conditions)s, %(medications)s,
+                %(contact_preference)s, %(best_time)s, %(hobby)s
+            )
+        """, {
+            "product_type":       data.get("product_type"),
+            "first_name":         data.get("first_name"),
+            "last_name":          data.get("last_name"),
+            "age":                int(data["age"]) if data.get("age") else None,
+            "email":              data.get("email"),
+            "mobile_phone":       data.get("mobile_phone"),
+            "home_phone":         data.get("home_phone"),
+            "city":               data.get("city"),
+            "state":              data.get("state"),
+            "zip":                data.get("zip"),
+            "coverage_amount":    (
+                data.get("fe_coverage_amount") or data.get("term_coverage_amount") or
+                data.get("wl_coverage_amount") or data.get("lb_coverage_amount")
+            ),
+            "budget":             (
+                data.get("fe_budget") or data.get("wl_budget") or data.get("iul_budget")
+            ),
+            "currently_insured":  (
+                data.get("mp_insured") or data.get("fe_insured") or data.get("term_insured") or
+                data.get("wl_insured") or data.get("lb_insured")
+            ),
+            "beneficiary":        (
+                data.get("mp_beneficiary") or data.get("fe_beneficiary") or
+                data.get("term_beneficiary") or data.get("wl_beneficiary") or
+                data.get("iul_beneficiary") or data.get("lb_beneficiary")
+            ),
+            "beneficiary_rel":    (
+                data.get("mp_beneficiary_relationship") or data.get("fe_beneficiary_relationship") or
+                data.get("term_beneficiary_relationship") or data.get("wl_beneficiary_relationship") or
+                data.get("lb_beneficiary_relationship")
+            ),
+            "mp_lender":          data.get("mp_lender"),
+            "mp_balance":         data.get("mp_balance"),
+            "mp_monthly":         data.get("mp_monthly"),
+            "mp_years_remaining": data.get("mp_years_remaining"),
+            "mp_purchase_year":   int(data["mp_purchase_year"]) if data.get("mp_purchase_year") else None,
+            "term_length":        data.get("term_length"),
+            "term_reason":        data.get("term_reason"),
+            "term_annual_income": data.get("term_annual_income"),
+            "wl_goal":            data.get("wl_goal"),
+            "iul_annual_income":  data.get("iul_annual_income"),
+            "iul_goal":           data.get("iul_goal"),
+            "iul_investment_exp": data.get("iul_investment_exp"),
+            "lb_concern":         data.get("lb_concern"),
+            "lb_family_history":  data.get("lb_family_history"),
+            "tobacco":            data.get("tobacco"),
+            "height_ft":          int(data["height_ft"]) if data.get("height_ft") else None,
+            "height_in":          int(data["height_in"]) if data.get("height_in") else None,
+            "weight":             int(data["weight"]) if data.get("weight") else None,
+            "major_conditions":   data.get("major_conditions"),
+            "minor_conditions":   data.get("minor_conditions"),
+            "medications":        data.get("medications"),
+            "contact_preference": data.get("contact_preference"),
+            "best_time":          data.get("best_time"),
+            "hobby":              data.get("hobby"),
+        })
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        # Fire notification email to all agents with notify_on_lead = TRUE
+        # Runs after DB commit so a mail failure never blocks the save
+        send_lead_notification(data)
+
+        return jsonify({"status": "ok", "message": "Lead saved successfully."})
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+# ─────────────────────────────────────────────
+# ENTRY POINT
+# ─────────────────────────────────────────────
+
+if __name__ == "__main__":
+    app.run(port=5000, debug=True)

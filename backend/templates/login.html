@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agent Login | Brown Agency</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --espresso:     #4B2E2B;
+      --cognac:       #C08552;
+      --saddle:       #8C5A3C;
+      --parchment:    #FFF8F0;
+      --parchment-mid:#E8D5C0;
+      --white:        #FFFFFF;
+      --text-primary: #2C1810;
+      --text-secondary:#5C3D2E;
+      --text-light:   #9a7a6a;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--espresso);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .login-card {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 3rem 2.5rem;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+    }
+
+    .login-logo {
+      font-family: 'Raleway', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--espresso);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .login-logo span { color: var(--cognac); }
+
+    .login-sub {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 2.5rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .field label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--espresso);
+    }
+
+    .field input {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.925rem;
+      color: var(--text-primary);
+      background: var(--parchment);
+      border: 1.5px solid var(--parchment-mid);
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .field input:focus {
+      border-color: var(--cognac);
+      box-shadow: 0 0 0 3px rgba(192,133,82,0.15);
+    }
+
+    .error-msg {
+      background: rgba(192,50,50,0.08);
+      border: 1px solid rgba(192,50,50,0.25);
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      color: #8B1A1A;
+      margin-bottom: 1.25rem;
+    }
+
+    .btn-login {
+      width: 100%;
+      background: var(--cognac);
+      color: var(--white);
+      font-family: 'Raleway', sans-serif;
+      font-weight: 700;
+      font-size: 0.975rem;
+      padding: 0.875rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      margin-top: 0.5rem;
+    }
+
+    .btn-login:hover {
+      background: var(--saddle);
+      transform: translateY(-1px);
+    }
+
+    .login-footer {
+      text-align: center;
+      margin-top: 1.75rem;
+      font-size: 0.78rem;
+      color: var(--text-light);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-card">
+    <a class="login-logo" href="#">Brown<span>Agency</span></a>
+    <p class="login-sub">Agent Portal</p>
+
+    {% if error %}
+    <div class="error-msg">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="/login">
+      <div class="field">
+        <label>Username</label>
+        <input type="text" name="username" autocomplete="username" autofocus required/>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" name="password" autocomplete="current-password" required/>
+      </div>
+      <button type="submit" class="btn-login">Sign In</button>
+    </form>
+
+    <p class="login-footer">Access restricted to Brown Agency agents.<br/>Contact an admin if you need access.</p>
+  </div>
+
+</body>
+</html>

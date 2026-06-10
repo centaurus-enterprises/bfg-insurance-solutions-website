@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard | Brown Agency</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-base:       #0f0f0f;
+      --bg-surface:    #1a1a1a;
+      --bg-elevated:   #222222;
+      --bg-hover:      #2a2a2a;
+      --border:        #2e2e2e;
+      --border-light:  #3a3a3a;
+
+      --cognac:        #C08552;
+      --cognac-dim:    rgba(192,133,82,0.15);
+      --cognac-hover:  #d4975f;
+      --saddle:        #8C5A3C;
+      --espresso:      #4B2E2B;
+
+      --text-primary:  #f0f0f0;
+      --text-secondary:#a0a0a0;
+      --text-muted:    #666666;
+
+      --status-new:         #3b82f6;
+      --status-follow-up:   #f59e0b;
+      --status-no-pickup:   #8b5cf6;
+      --status-sale:        #22c55e;
+      --status-no-sale:     #ef4444;
+
+      --radius:  8px;
+      --radius-sm: 5px;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── LAYOUT ── */
+    .app {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      height: 56px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      flex-shrink: 0;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .topbar-logo {
+      font-family: 'Raleway', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .topbar-logo span { color: var(--cognac); }
+
+    .topbar-divider {
+      width: 1px;
+      height: 20px;
+      background: var(--border-light);
+    }
+
+    .topbar-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .topbar-agent {
+      font-size: 0.825rem;
+      color: var(--text-secondary);
+    }
+
+    .topbar-agent strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .btn-icon {
+      background: none;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      padding: 0.4rem 0.75rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-icon:hover {
+      border-color: var(--cognac);
+      color: var(--cognac);
+    }
+
+    /* ── MAIN CONTENT ── */
+    .main {
+      flex: 1;
+      padding: 1.5rem;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* ── STATS ROW ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .stat-card:hover, .stat-card.active {
+      border-color: var(--cognac);
+      background: var(--cognac-dim);
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .stat-value {
+      font-family: 'Raleway', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+
+    .stat-card.active .stat-value { color: var(--cognac); }
+
+    /* ── TOOLBAR ── */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex: 1;
+    }
+
+    .search-input {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
+      padding: 0.5rem 0.875rem;
+      outline: none;
+      width: 240px;
+      transition: border-color 0.15s;
+    }
+
+    .search-input::placeholder { color: var(--text-muted); }
+    .search-input:focus { border-color: var(--cognac); }
+
+    .filter-select {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.825rem;
+      padding: 0.5rem 0.75rem;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.15s;
+      appearance: none;
+      padding-right: 1.75rem;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.6rem center;
+    }
+
+    .filter-select:focus { border-color: var(--cognac); }
+
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-primary {
+      background: var(--cognac);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      font-size: 0.825rem;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: background 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-primary:hover { background: var(--cognac-hover); }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .btn-danger {
+      background: rgba(239,68,68,0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      font-size: 0.825rem;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-danger:hover { background: rgba(239,68,68,0.2); }
+    .btn-danger:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .selected-count {
+      font-size: 0.8rem;
+      color: var(--cognac);
+      font-weight: 600;
+      display: none;
+    }
+
+    /* ── TABLE ── */
+    .table-wrap {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    th.sortable { cursor: pointer; }
+    th.sortable:hover { color: var(--text-secondary); }
+
+    th input[type="checkbox"],
+    td input[type="checkbox"] {
+      accent-color: var(--cognac);
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--bg-hover); }
+    tbody tr.selected { background: var(--cognac-dim); }
+    tbody tr.expanded { background: var(--bg-elevated); }
+
+    td {
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      vertical-align: middle;
+    }
+
+    td.name-cell {
+      font-weight: 600;
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+
+    td.name-cell:hover { color: var(--cognac); }
+
+    /* STATUS BADGE */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 0.25rem 0.6rem;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .status-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      flex-shrink: 0;
+    }
+
+    .badge-new            { color: var(--status-new);       background: rgba(59,130,246,0.12); }
+    .badge-follow_up      { color: var(--status-follow-up); background: rgba(245,158,11,0.12); }
+    .badge-does_not_pick_up { color: var(--status-no-pickup); background: rgba(139,92,246,0.12); }
+    .badge-sale           { color: var(--status-sale);      background: rgba(34,197,94,0.12);  }
+    .badge-no_sale        { color: var(--status-no-sale);   background: rgba(239,68,68,0.12);  }
+
+    /* PRODUCT TAG */
+    .product-tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--cognac);
+      background: var(--cognac-dim);
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    /* CONTACT PREF */
+    .pref-tag {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* ── EXPANDED ROW ── */
+    .expand-row { display: none; }
+    .expand-row.open { display: table-row; }
+
+    .expand-cell {
+      padding: 0 !important;
+      background: var(--bg-elevated);
+      border-bottom: 2px solid var(--cognac) !important;
+    }
+
+    .expand-inner {
+      padding: 1.5rem;
+    }
+
+    .expand-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .expand-section h4 {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cognac);
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .expand-field {
+      margin-bottom: 0.6rem;
+    }
+
+    .expand-field-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.15rem;
+    }
+
+    .expand-field-value {
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      line-height: 1.4;
+    }
+
+    .expand-field-value.empty { color: var(--text-muted); font-style: italic; }
+
+    .expand-actions {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .expand-action-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .expand-action-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .status-select {
+      background: var(--bg-base);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      padding: 0.45rem 2rem 0.45rem 0.75rem;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.6rem center;
+      min-width: 180px;
+    }
+
+    .status-select:focus { border-color: var(--cognac); }
+
+    .notes-textarea {
+      background: var(--bg-base);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      padding: 0.5rem 0.75rem;
+      outline: none;
+      resize: vertical;
+      min-height: 72px;
+      min-width: 280px;
+      line-height: 1.5;
+    }
+
+    .notes-textarea:focus { border-color: var(--cognac); }
+
+    .expand-action-buttons {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      margin-top: auto;
+      padding-top: 1.4rem;
+    }
+
+    .btn-save {
+      background: var(--cognac);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      font-size: 0.8rem;
+      padding: 0.45rem 1rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-save:hover { background: var(--cognac-hover); }
+
+    .btn-delete-lead {
+      background: none;
+      color: #ef4444;
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      font-size: 0.8rem;
+      padding: 0.45rem 1rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-delete-lead:hover { background: rgba(239,68,68,0.1); }
+
+    .save-feedback {
+      font-size: 0.78rem;
+      color: #22c55e;
+      display: none;
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .empty-state p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* ── EXPORT MODAL ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius);
+      padding: 2rem;
+      width: 100%;
+      max-width: 560px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal h3 {
+      font-family: 'Raleway', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 0.35rem;
+    }
+
+    .modal-sub {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .column-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.4rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .col-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 0.3rem 0.5rem;
+      border-radius: 4px;
+      transition: background 0.1s;
+    }
+
+    .col-checkbox:hover { background: var(--bg-hover); }
+
+    .col-checkbox input {
+      accent-color: var(--cognac);
+      cursor: pointer;
+    }
+
+    .modal-format-row {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      align-items: center;
+    }
+
+    .format-option input[type="radio"] { display: none; }
+
+    .format-option label {
+      background: var(--bg-elevated);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.45rem 1.1rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .format-option input[type="radio"]:checked + label {
+      border-color: var(--cognac);
+      color: var(--cognac);
+      background: var(--cognac-dim);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .btn-ghost {
+      background: none;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.825rem;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-ghost:hover { border-color: var(--text-secondary); color: var(--text-primary); }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius);
+      padding: 0.75rem 1.25rem;
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      z-index: 300;
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { border-color: rgba(34,197,94,0.4); }
+    .toast.error   { border-color: rgba(239,68,68,0.4); }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <a class="topbar-logo" href="/admin">Brown<span>Agency</span></a>
+      <div class="topbar-divider"></div>
+      <span class="topbar-title">Agent Dashboard</span>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-agent">Signed in as <strong>{{ agent[3] }}</strong></span>
+      {% if agent[4] %}
+      <a href="/settings" class="btn-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </a>
+      {% endif %}
+      <a href="/logout" class="btn-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </a>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- STATS ROW -->
+    <div class="stats-row">
+      <div class="stat-card active" id="stat-all" onclick="filterByStatus('all')">
+        <div class="stat-label">All Leads</div>
+        <div class="stat-value" id="count-all">{{ leads | length }}</div>
+      </div>
+      <div class="stat-card" id="stat-new" onclick="filterByStatus('new')">
+        <div class="stat-label">New</div>
+        <div class="stat-value" id="count-new">0</div>
+      </div>
+      <div class="stat-card" id="stat-follow_up" onclick="filterByStatus('follow_up')">
+        <div class="stat-label">Follow Up</div>
+        <div class="stat-value" id="count-follow_up">0</div>
+      </div>
+      <div class="stat-card" id="stat-does_not_pick_up" onclick="filterByStatus('does_not_pick_up')">
+        <div class="stat-label">No Pickup</div>
+        <div class="stat-value" id="count-does_not_pick_up">0</div>
+      </div>
+      <div class="stat-card" id="stat-sale" onclick="filterByStatus('sale')">
+        <div class="stat-label">Sales</div>
+        <div class="stat-value" id="count-sale">0</div>
+      </div>
+      <div class="stat-card" id="stat-no_sale" onclick="filterByStatus('no_sale')">
+        <div class="stat-label">No Sale</div>
+        <div class="stat-value" id="count-no_sale">0</div>
+      </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <input class="search-input" type="text" id="searchInput" placeholder="Search by name, email, state..." oninput="applyFilters()"/>
+        <select class="filter-select" id="productFilter" onchange="applyFilters()">
+          <option value="">All Products</option>
+          <option value="mortgage-protection">Mortgage Protection</option>
+          <option value="final-expense">Final Expense</option>
+          <option value="term-life">Term Life</option>
+          <option value="whole-life">Whole Life</option>
+          <option value="iul">IUL / Wealth</option>
+          <option value="living-benefits">Living Benefits</option>
+        </select>
+        <span class="selected-count" id="selectedCount"></span>
+      </div>
+      <div class="toolbar-right">
+        <button class="btn-danger" id="btnDeleteSelected" disabled onclick="deleteSelected()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+          Delete Selected
+        </button>
+        <button class="btn-primary" id="btnExport" disabled onclick="openExportModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export
+        </button>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <table id="leadsTable">
+        <thead>
+          <tr>
+            <th style="width:40px"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"/></th>
+            <th class="sortable" onclick="sortTable('date')">Date ↕</th>
+            <th class="sortable" onclick="sortTable('name')">Name ↕</th>
+            <th>Product</th>
+            <th>State</th>
+            <th>Contact Pref</th>
+            <th>Status</th>
+            <th style="width:40px"></th>
+          </tr>
+        </thead>
+        <tbody id="leadsBody">
+          {% for lead in leads %}
+          <tr class="lead-row"
+              data-id="{{ lead[0] }}"
+              data-status="{{ lead[7] }}"
+              data-product="{{ lead[2] or '' }}"
+              data-name="{{ (lead[3] or '') ~ ' ' ~ (lead[4] or '') }}"
+              data-state="{{ lead[5] or '' }}"
+              data-date="{{ lead[1] }}">
+            <td><input type="checkbox" class="row-check" onchange="updateSelection()"/></td>
+            <td>{{ lead[1].strftime('%b %d, %Y') }}</td>
+            <td class="name-cell" onclick="toggleExpand({{ lead[0] }}, this)">{{ lead[3] }} {{ lead[4] }}</td>
+            <td><span class="product-tag">{{ lead[2] | replace('-', ' ') | title if lead[2] else '—' }}</span></td>
+            <td>{{ lead[5] or '—' }}</td>
+            <td><span class="pref-tag">{{ '📞 Call' if lead[6] == 'call_me' else ('📅 Book' if lead[6] == 'book_appointment' else '—') }}</span></td>
+            <td><span class="status-badge badge-{{ lead[7] }}">{{ lead[7] | replace('_', ' ') | title }}</span></td>
+            <td>
+              <button class="btn-icon" style="padding:0.3rem 0.5rem" onclick="toggleExpand({{ lead[0] }}, this)" title="Expand">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+            </td>
+          </tr>
+          <tr class="expand-row" id="expand-{{ lead[0] }}">
+            <td class="expand-cell" colspan="8">
+              <div class="expand-inner" id="expand-content-{{ lead[0] }}">
+                <div style="color:var(--text-muted);font-size:0.85rem">Loading...</div>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% if not leads %}
+      <div class="empty-state">
+        <p>No leads yet. Submissions from the qualify form will appear here.</p>
+      </div>
+      {% endif %}
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- EXPORT MODAL -->
+<div class="modal-overlay" id="exportModal">
+  <div class="modal">
+    <h3>Export Leads</h3>
+    <p class="modal-sub" id="exportModalSub">Select columns to include in the export.</p>
+
+    <div class="modal-section-label">Columns</div>
+    <div style="display:flex;gap:0.5rem;margin-bottom:0.75rem">
+      <button class="btn-ghost" style="font-size:0.75rem;padding:0.3rem 0.75rem" onclick="selectAllCols(true)">Select All</button>
+      <button class="btn-ghost" style="font-size:0.75rem;padding:0.3rem 0.75rem" onclick="selectAllCols(false)">Clear</button>
+    </div>
+    <div class="column-grid" id="columnGrid"></div>
+
+    <div class="modal-section-label">Format</div>
+    <div class="modal-format-row">
+      <div class="format-option">
+        <input type="radio" name="exportFmt" id="fmt-csv" value="csv" checked/>
+        <label for="fmt-csv">CSV</label>
+      </div>
+      <div class="format-option">
+        <input type="radio" name="exportFmt" id="fmt-xlsx" value="xlsx"/>
+        <label for="fmt-xlsx">Excel (.xlsx)</label>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeExportModal()">Cancel</button>
+      <button class="btn-primary" onclick="runExport()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── DATA FROM FLASK ──────────────────────────────────
+  const ALL_LEADS = [
+    {% for lead in leads %}
+    { id: {{ lead[0] }}, status: "{{ lead[7] }}", product: "{{ lead[2] or '' }}",
+      name: "{{ lead[3] or '' }} {{ lead[4] or '' }}", state: "{{ lead[5] or '' }}",
+      date: "{{ lead[1] }}" },
+    {% endfor %}
+  ];
+
+  const EXPORT_COLUMNS = [
+    {key:"id",label:"ID"}, {key:"submitted_at",label:"Date"},
+    {key:"product_type",label:"Product"}, {key:"first_name",label:"First Name"},
+    {key:"last_name",label:"Last Name"}, {key:"age",label:"Age"},
+    {key:"email",label:"Email"}, {key:"mobile_phone",label:"Mobile Phone"},
+    {key:"home_phone",label:"Home Phone"}, {key:"city",label:"City"},
+    {key:"state",label:"State"}, {key:"zip",label:"Zip"},
+    {key:"coverage_amount",label:"Coverage Amount"}, {key:"budget",label:"Budget"},
+    {key:"currently_insured",label:"Insured?"}, {key:"beneficiary",label:"Beneficiary"},
+    {key:"mp_lender",label:"MP Lender"}, {key:"mp_balance",label:"MP Balance"},
+    {key:"mp_monthly",label:"MP Monthly"}, {key:"mp_years_remaining",label:"MP Years Left"},
+    {key:"term_length",label:"Term Length"}, {key:"term_reason",label:"Term Reason"},
+    {key:"wl_goal",label:"WL Goal"}, {key:"iul_goal",label:"IUL Goal"},
+    {key:"lb_concern",label:"LB Concern"}, {key:"tobacco",label:"Tobacco"},
+    {key:"height_ft",label:"Height Ft"}, {key:"height_in",label:"Height In"},
+    {key:"weight",label:"Weight"}, {key:"major_conditions",label:"Major Conditions"},
+    {key:"minor_conditions",label:"Minor Conditions"}, {key:"medications",label:"Medications"},
+    {key:"contact_preference",label:"Contact Pref"}, {key:"best_time",label:"Best Time"},
+    {key:"hobby",label:"Security Q"}, {key:"assigned_agent",label:"Agent"},
+    {key:"status",label:"Status"}, {key:"notes",label:"Notes"},
+  ];
+
+  // ── STATE ────────────────────────────────────────────
+  let activeFilter  = 'all';
+  let activeProduct = '';
+  let searchTerm    = '';
+  let selectedIds   = new Set();
+  let sortCol       = 'date';
+  let sortAsc       = false;
+  let expandedId    = null;
+
+  // ── INIT ─────────────────────────────────────────────
+  function init() {
+    updateStatCounts();
+    buildColumnGrid();
+  }
+
+  function updateStatCounts() {
+    const counts = { new:0, follow_up:0, does_not_pick_up:0, sale:0, no_sale:0 };
+    ALL_LEADS.forEach(l => { if (counts[l.status] !== undefined) counts[l.status]++; });
+    Object.keys(counts).forEach(k => {
+      const el = document.getElementById('count-' + k);
+      if (el) el.textContent = counts[k];
+    });
+  }
+
+  // ── FILTERING ────────────────────────────────────────
+  function filterByStatus(status) {
+    activeFilter = status;
+    document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active'));
+    document.getElementById('stat-' + status)?.classList.add('active');
+    applyFilters();
+  }
+
+  function applyFilters() {
+    searchTerm    = document.getElementById('searchInput').value.toLowerCase();
+    activeProduct = document.getElementById('productFilter').value;
+
+    document.querySelectorAll('.lead-row').forEach(row => {
+      const id      = parseInt(row.dataset.id);
+      const lead    = ALL_LEADS.find(l => l.id === id);
+      if (!lead) return;
+
+      const matchStatus  = activeFilter === 'all' || lead.status === activeFilter;
+      const matchProduct = !activeProduct || lead.product === activeProduct;
+      const matchSearch  = !searchTerm ||
+        lead.name.toLowerCase().includes(searchTerm) ||
+        lead.state.toLowerCase().includes(searchTerm);
+
+      const visible = matchStatus && matchProduct && matchSearch;
+      row.style.display = visible ? '' : 'none';
+
+      const expandRow = document.getElementById('expand-' + id);
+      if (expandRow && !visible) expandRow.style.display = 'none';
+    });
+  }
+
+  // ── SORT ─────────────────────────────────────────────
+  function sortTable(col) {
+    if (sortCol === col) sortAsc = !sortAsc;
+    else { sortCol = col; sortAsc = true; }
+
+    const tbody = document.getElementById('leadsBody');
+    const rows  = Array.from(tbody.querySelectorAll('.lead-row'));
+
+    rows.sort((a, b) => {
+      let aVal = col === 'name' ? a.dataset.name : a.dataset.date;
+      let bVal = col === 'name' ? b.dataset.name : b.dataset.date;
+      return sortAsc ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+    });
+
+    rows.forEach(row => {
+      const expandRow = document.getElementById('expand-' + row.dataset.id);
+      tbody.appendChild(row);
+      if (expandRow) tbody.appendChild(expandRow);
+    });
+  }
+
+  // ── SELECTION ────────────────────────────────────────
+  function toggleSelectAll(cb) {
+    document.querySelectorAll('.row-check').forEach(check => {
+      const row = check.closest('.lead-row');
+      if (row.style.display !== 'none') {
+        check.checked = cb.checked;
+      }
+    });
+    updateSelection();
+  }
+
+  function updateSelection() {
+    selectedIds.clear();
+    document.querySelectorAll('.row-check:checked').forEach(check => {
+      selectedIds.add(parseInt(check.closest('.lead-row').dataset.id));
+    });
+
+    const count   = selectedIds.size;
+    const countEl = document.getElementById('selectedCount');
+    countEl.style.display = count > 0 ? 'block' : 'none';
+    countEl.textContent   = `${count} selected`;
+
+    document.getElementById('btnExport').disabled        = count === 0;
+    document.getElementById('btnDeleteSelected').disabled = count === 0;
+  }
+
+  // ── EXPAND ROW ───────────────────────────────────────
+  async function toggleExpand(id, triggerEl) {
+    const expandRow = document.getElementById('expand-' + id);
+    const isOpen    = expandRow.classList.contains('open');
+
+    // Close any open row first
+    document.querySelectorAll('.expand-row.open').forEach(r => {
+      r.classList.remove('open');
+      r.previousElementSibling?.classList.remove('expanded');
+    });
+
+    if (isOpen) { expandedId = null; return; }
+
+    expandedId = id;
+    expandRow.classList.add('open');
+    expandRow.previousElementSibling.classList.add('expanded');
+
+    const contentEl = document.getElementById('expand-content-' + id);
+
+    // Only fetch if not already loaded
+    if (contentEl.dataset.loaded) return;
+
+    try {
+      const res  = await fetch('/lead/' + id);
+      const data = await res.json();
+      if (data.status !== 'ok') throw new Error(data.message);
+      renderExpandContent(contentEl, data.lead);
+      contentEl.dataset.loaded = '1';
+    } catch (e) {
+      contentEl.innerHTML = `<p style="color:var(--text-muted)">Failed to load lead: ${e.message}</p>`;
+    }
+  }
+
+  function val(v) {
+    if (v === null || v === undefined || v === '' || v === 'None') {
+      return '<span class="expand-field-value empty">—</span>';
+    }
+    return `<span class="expand-field-value">${v}</span>`;
+  }
+
+  function field(label, value) {
+    return `<div class="expand-field"><div class="expand-field-label">${label}</div>${val(value)}</div>`;
+  }
+
+  function renderExpandContent(el, lead) {
+    el.innerHTML = `
+      <div class="expand-grid">
+        <div class="expand-section">
+          <h4>Personal</h4>
+          ${field('Name', lead.first_name + ' ' + lead.last_name)}
+          ${field('Age', lead.age)}
+          ${field('Email', lead.email)}
+          ${field('Mobile', lead.mobile_phone)}
+          ${field('Home Phone', lead.home_phone)}
+          ${field('City', lead.city)}
+          ${field('State', lead.state)}
+          ${field('Zip', lead.zip)}
+        </div>
+        <div class="expand-section">
+          <h4>Coverage — ${(lead.product_type || '').replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase())}</h4>
+          ${field('Coverage Amount', lead.coverage_amount)}
+          ${field('Budget', lead.budget)}
+          ${field('Currently Insured', lead.currently_insured)}
+          ${field('Beneficiary', lead.beneficiary)}
+          ${field('Beneficiary Rel.', lead.beneficiary_rel)}
+          ${lead.product_type === 'mortgage-protection' ? `
+            ${field('Lender', lead.mp_lender)}
+            ${field('Balance', lead.mp_balance)}
+            ${field('Monthly Pmt', lead.mp_monthly)}
+            ${field('Years Left', lead.mp_years_remaining)}
+            ${field('Purchase Year', lead.mp_purchase_year)}
+          ` : ''}
+          ${lead.product_type === 'term-life' ? `
+            ${field('Term Length', lead.term_length)}
+            ${field('Reason', lead.term_reason)}
+            ${field('Annual Income', lead.term_annual_income)}
+          ` : ''}
+          ${lead.product_type === 'whole-life' ? field('Goal', lead.wl_goal) : ''}
+          ${lead.product_type === 'iul' ? `
+            ${field('Annual Income', lead.iul_annual_income)}
+            ${field('Goal', lead.iul_goal)}
+            ${field('Invest. Exp.', lead.iul_investment_exp)}
+          ` : ''}
+          ${lead.product_type === 'living-benefits' ? `
+            ${field('Primary Concern', lead.lb_concern)}
+            ${field('Family History', lead.lb_family_history)}
+          ` : ''}
+        </div>
+        <div class="expand-section">
+          <h4>Medical</h4>
+          ${field('Tobacco', lead.tobacco)}
+          ${field('Height', lead.height_ft && lead.height_in !== null ? lead.height_ft + "'" + lead.height_in + '"' : null)}
+          ${field('Weight', lead.weight ? lead.weight + ' lbs' : null)}
+          ${field('Major Conditions', lead.major_conditions)}
+          ${field('Minor Conditions', lead.minor_conditions)}
+          ${field('Medications', lead.medications)}
+        </div>
+        <div class="expand-section">
+          <h4>Contact</h4>
+          ${field('Preference', lead.contact_preference === 'call_me' ? 'Call Me' : 'Book Appointment')}
+          ${field('Best Time', lead.best_time)}
+          ${field('Security Q', lead.hobby)}
+          ${field('Submitted', lead.submitted_at)}
+        </div>
+      </div>
+
+      <div class="expand-actions">
+        <div class="expand-action-group">
+          <div class="expand-action-label">Status</div>
+          <select class="status-select" id="status-select-${lead.id}">
+            <option value="new"               ${lead.status==='new'?'selected':''}>New</option>
+            <option value="follow_up"         ${lead.status==='follow_up'?'selected':''}>Follow Up</option>
+            <option value="does_not_pick_up"  ${lead.status==='does_not_pick_up'?'selected':''}>Does Not Pick Up</option>
+            <option value="sale"              ${lead.status==='sale'?'selected':''}>Sale</option>
+            <option value="no_sale"           ${lead.status==='no_sale'?'selected':''}>No Sale</option>
+          </select>
+        </div>
+        <div class="expand-action-group" style="flex:1">
+          <div class="expand-action-label">Notes</div>
+          <textarea class="notes-textarea" id="notes-${lead.id}" placeholder="Add call notes...">${lead.notes || ''}</textarea>
+        </div>
+        <div class="expand-action-buttons">
+          <button class="btn-save" onclick="saveLead(${lead.id})">Save</button>
+          <span class="save-feedback" id="save-feedback-${lead.id}">✓ Saved</span>
+          <button class="btn-delete-lead" onclick="deleteLead(${lead.id})">Delete</button>
+        </div>
+      </div>
+    `;
+  }
+
+  // ── SAVE LEAD ─────────────────────────────────────────
+  async function saveLead(id) {
+    const status = document.getElementById('status-select-' + id)?.value;
+    const notes  = document.getElementById('notes-' + id)?.value;
+
+    try {
+      const res  = await fetch('/lead/' + id + '/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status, notes })
+      });
+      const data = await res.json();
+      if (data.status !== 'ok') throw new Error(data.message);
+
+      // Update local data
+      const lead = ALL_LEADS.find(l => l.id === id);
+      if (lead) lead.status = status;
+
+      // Update badge in table row
+      const row   = document.querySelector(`.lead-row[data-id="${id}"]`);
+      const badge = row?.querySelector('.status-badge');
+      if (badge) {
+        badge.className = `status-badge badge-${status}`;
+        badge.textContent = status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      }
+
+      row.dataset.status = status;
+      updateStatCounts();
+
+      const fb = document.getElementById('save-feedback-' + id);
+      if (fb) { fb.style.display = 'inline'; setTimeout(() => fb.style.display = 'none', 2000); }
+
+      showToast('Lead updated.', 'success');
+    } catch(e) {
+      showToast('Error: ' + e.message, 'error');
+    }
+  }
+
+  // ── DELETE LEAD ───────────────────────────────────────
+  async function deleteLead(id) {
+    if (!confirm('Permanently delete this lead? This cannot be undone.')) return;
+    try {
+      const res  = await fetch('/lead/' + id + '/delete', { method: 'POST' });
+      const data = await res.json();
+      if (data.status !== 'ok') throw new Error(data.message);
+
+      document.querySelector(`.lead-row[data-id="${id}"]`)?.remove();
+      document.getElementById('expand-' + id)?.remove();
+
+      const idx = ALL_LEADS.findIndex(l => l.id === id);
+      if (idx > -1) ALL_LEADS.splice(idx, 1);
+
+      document.getElementById('count-all').textContent = ALL_LEADS.length;
+      updateStatCounts();
+      showToast('Lead deleted.', 'success');
+    } catch(e) {
+      showToast('Error: ' + e.message, 'error');
+    }
+  }
+
+  async function deleteSelected() {
+    if (selectedIds.size === 0) return;
+    if (!confirm(`Permanently delete ${selectedIds.size} lead(s)? This cannot be undone.`)) return;
+    for (const id of selectedIds) await deleteLead(id);
+    selectedIds.clear();
+    updateSelection();
+  }
+
+  // ── EXPORT MODAL ──────────────────────────────────────
+  function buildColumnGrid() {
+    const grid = document.getElementById('columnGrid');
+    grid.innerHTML = EXPORT_COLUMNS.map(c => `
+      <label class="col-checkbox">
+        <input type="checkbox" value="${c.key}" checked/>
+        ${c.label}
+      </label>
+    `).join('');
+  }
+
+  function selectAllCols(checked) {
+    document.querySelectorAll('#columnGrid input[type="checkbox"]').forEach(cb => cb.checked = checked);
+  }
+
+  function openExportModal() {
+    const sub = document.getElementById('exportModalSub');
+    sub.textContent = `Exporting ${selectedIds.size} selected lead(s).`;
+    document.getElementById('exportModal').classList.add('open');
+  }
+
+  function closeExportModal() {
+    document.getElementById('exportModal').classList.remove('open');
+  }
+
+  async function runExport() {
+    const columns = Array.from(document.querySelectorAll('#columnGrid input:checked')).map(cb => cb.value);
+    const fmt     = document.querySelector('input[name="exportFmt"]:checked').value;
+
+    if (columns.length === 0) { showToast('Select at least one column.', 'error'); return; }
+
+    try {
+      const res = await fetch('/export', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: Array.from(selectedIds), columns, format: fmt })
+      });
+
+      if (!res.ok) { const d = await res.json(); throw new Error(d.message); }
+
+      const blob     = await res.blob();
+      const url      = URL.createObjectURL(blob);
+      const a        = document.createElement('a');
+      a.href         = url;
+      a.download     = `brown_agency_leads.${fmt}`;
+      a.click();
+      URL.revokeObjectURL(url);
+      closeExportModal();
+      showToast('Export downloaded.', 'success');
+    } catch(e) {
+      showToast('Export error: ' + e.message, 'error');
+    }
+  }
+
+  // ── TOAST ─────────────────────────────────────────────
+  let toastTimer;
+  function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className   = `toast ${type} show`;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // ── RUN ───────────────────────────────────────────────
+  init();
+</script>
+</body>
+</html>

@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Settings | Brown Agency</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-base:       #0f0f0f;
+      --bg-surface:    #1a1a1a;
+      --bg-elevated:   #222222;
+      --bg-hover:      #2a2a2a;
+      --border:        #2e2e2e;
+      --border-light:  #3a3a3a;
+      --cognac:        #C08552;
+      --cognac-dim:    rgba(192,133,82,0.15);
+      --cognac-hover:  #d4975f;
+      --saddle:        #8C5A3C;
+      --text-primary:  #f0f0f0;
+      --text-secondary:#a0a0a0;
+      --text-muted:    #666666;
+      --radius:        8px;
+      --radius-sm:     5px;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .app { display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      height: 56px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      flex-shrink: 0;
+    }
+
+    .topbar-left { display: flex; align-items: center; gap: 1rem; }
+
+    .topbar-logo {
+      font-family: 'Raleway', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .topbar-logo span { color: var(--cognac); }
+
+    .topbar-divider { width: 1px; height: 20px; background: var(--border-light); }
+
+    .topbar-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .topbar-right { display: flex; align-items: center; gap: 1rem; }
+
+    .topbar-agent { font-size: 0.825rem; color: var(--text-secondary); }
+    .topbar-agent strong { color: var(--text-primary); font-weight: 600; }
+
+    .btn-icon {
+      background: none;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      padding: 0.4rem 0.75rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-icon:hover { border-color: var(--cognac); color: var(--cognac); }
+
+    /* ── MAIN ── */
+    .main {
+      flex: 1;
+      padding: 2rem 1.5rem;
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-header h1 {
+      font-family: 'Raleway', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .page-header p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* ── SECTION ── */
+    .settings-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+
+    .section-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .section-header-text h2 {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.15rem;
+    }
+
+    .section-header-text p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* ── AGENT TABLE ── */
+    .agent-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .agent-table th {
+      text-align: left;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .agent-table td {
+      padding: 1rem 1.5rem;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .agent-table tr:last-child td { border-bottom: none; }
+    .agent-table tr:hover td { background: var(--bg-hover); }
+
+    .agent-name {
+      font-weight: 600;
+      color: var(--text-primary);
+      display: block;
+      margin-bottom: 0.1rem;
+    }
+
+    .agent-username {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* BADGES */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 0.2rem 0.55rem;
+      border-radius: 20px;
+    }
+
+    .badge-admin   { color: var(--cognac); background: var(--cognac-dim); }
+    .badge-agent   { color: var(--text-muted); background: var(--bg-elevated); }
+    .badge-active  { color: #22c55e; background: rgba(34,197,94,0.1); }
+    .badge-inactive{ color: #ef4444; background: rgba(239,68,68,0.1); }
+
+    /* TOGGLE */
+    .toggle-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .toggle {
+      position: relative;
+      width: 36px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .toggle input { opacity: 0; width: 0; height: 0; }
+
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: var(--border-light);
+      border-radius: 20px;
+      transition: background 0.2s;
+    }
+
+    .toggle input:checked ~ .toggle-track { background: var(--cognac); }
+
+    .toggle-thumb {
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 14px; height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+
+    .toggle input:checked ~ .toggle-thumb { transform: translateX(16px); }
+
+    .toggle-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* ACTION BUTTONS */
+    .row-actions { display: flex; gap: 0.5rem; align-items: center; }
+
+    .btn-deactivate {
+      background: none;
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #ef4444;
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.35rem 0.75rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-deactivate:hover { background: rgba(239,68,68,0.1); }
+    .btn-deactivate:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .btn-reactivate {
+      background: none;
+      border: 1px solid rgba(34,197,94,0.3);
+      color: #22c55e;
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.35rem 0.75rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-reactivate:hover { background: rgba(34,197,94,0.1); }
+
+    /* ── ADD AGENT FORM ── */
+    .add-agent-form {
+      padding: 1.5rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .form-field label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .form-field input,
+    .form-field select {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
+      padding: 0.6rem 0.875rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .form-field input::placeholder { color: var(--text-muted); }
+
+    .form-field input:focus,
+    .form-field select:focus { border-color: var(--cognac); }
+
+    .form-field select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      padding-right: 2rem;
+      cursor: pointer;
+    }
+
+    .form-checkboxes {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .form-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .form-checkbox input {
+      accent-color: var(--cognac);
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+    }
+
+    .form-actions { display: flex; align-items: center; gap: 1rem; }
+
+    .btn-primary {
+      background: var(--cognac);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      font-size: 0.875rem;
+      padding: 0.6rem 1.25rem;
+      cursor: pointer;
+      transition: background 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-primary:hover { background: var(--cognac-hover); }
+
+    .form-error {
+      font-size: 0.8rem;
+      color: #ef4444;
+      display: none;
+    }
+
+    .form-success {
+      font-size: 0.8rem;
+      color: #22c55e;
+      display: none;
+    }
+
+    /* ── EMAIL SETTINGS ── */
+    .email-settings { padding: 1.5rem; }
+
+    .email-info {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .email-info-icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
+
+    .email-info p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .email-info code {
+      font-size: 0.8rem;
+      background: var(--bg-base);
+      padding: 0.1rem 0.4rem;
+      border-radius: 3px;
+      color: var(--cognac);
+    }
+
+    .env-fields { display: flex; flex-direction: column; gap: 0.75rem; }
+
+    .env-field {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .env-field label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      width: 160px;
+      flex-shrink: 0;
+    }
+
+    .env-value {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-family: monospace;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.45rem 0.875rem;
+      flex: 1;
+    }
+
+    .env-status {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+    }
+
+    .env-set   { color: #22c55e; background: rgba(34,197,94,0.1); }
+    .env-unset { color: #ef4444; background: rgba(239,68,68,0.1); }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius);
+      padding: 0.75rem 1.25rem;
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      z-index: 300;
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.25s ease;
+    }
+
+    .toast.show   { transform: translateY(0); opacity: 1; }
+    .toast.success { border-color: rgba(34,197,94,0.4); }
+    .toast.error   { border-color: rgba(239,68,68,0.4); }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <a class="topbar-logo" href="/admin">Brown<span>Agency</span></a>
+      <div class="topbar-divider"></div>
+      <span class="topbar-title">Settings</span>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-agent">Signed in as <strong>{{ agent[3] }}</strong></span>
+      <a href="/admin" class="btn-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a href="/logout" class="btn-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </a>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <div class="page-header">
+      <h1>Settings</h1>
+      <p>Manage agents, notification preferences, and email configuration.</p>
+    </div>
+
+    <!-- ── AGENT ROSTER ── -->
+    <div class="settings-section">
+      <div class="section-header">
+        <div class="section-header-text">
+          <h2>Agent Roster</h2>
+          <p>All accounts with access to this dashboard</p>
+        </div>
+      </div>
+      <table class="agent-table" id="agentTable">
+        <thead>
+          <tr>
+            <th>Agent</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Lead Notifications</th>
+            <th>Added</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="agentTableBody">
+          <tr><td colspan="7" style="color:var(--text-muted);text-align:center;padding:2rem">Loading agents...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── ADD AGENT ── -->
+    <div class="settings-section">
+      <div class="section-header">
+        <div class="section-header-text">
+          <h2>Add New Agent</h2>
+          <p>Create a login for a new team member</p>
+        </div>
+      </div>
+      <div class="add-agent-form">
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Full Name</label>
+            <input type="text" id="new-name" placeholder="Jane Smith"/>
+          </div>
+          <div class="form-field">
+            <label>Email</label>
+            <input type="email" id="new-email" placeholder="jane@brownagency.com"/>
+          </div>
+          <div class="form-field">
+            <label>Username</label>
+            <input type="text" id="new-username" placeholder="jsmith"/>
+          </div>
+          <div class="form-field">
+            <label>Temporary Password</label>
+            <input type="text" id="new-password" placeholder="They can change this later"/>
+          </div>
+        </div>
+        <div class="form-checkboxes">
+          <label class="form-checkbox">
+            <input type="checkbox" id="new-admin"/>
+            Admin access
+          </label>
+          <label class="form-checkbox">
+            <input type="checkbox" id="new-notify" checked/>
+            Receive new lead notifications
+          </label>
+        </div>
+        <div class="form-actions">
+          <button class="btn-primary" onclick="addAgent()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Agent
+          </button>
+          <span class="form-error"  id="addError"></span>
+          <span class="form-success" id="addSuccess"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── EMAIL SETTINGS ── -->
+    <div class="settings-section">
+      <div class="section-header">
+        <div class="section-header-text">
+          <h2>Email Notifications</h2>
+          <p>Gmail SMTP configuration for new lead alerts</p>
+        </div>
+      </div>
+      <div class="email-settings">
+        <div class="email-info">
+          <div class="email-info-icon">💡</div>
+          <p>
+            Email notifications are configured via your <code>.env</code> file.
+            Add the following variables, then restart Flask. Use a Gmail account
+            with a <strong>Google App Password</strong> — not your regular Gmail password.
+            Generate one at <strong>myaccount.google.com → Security → App Passwords</strong>.
+          </p>
+        </div>
+        <div class="env-fields">
+          <div class="env-field">
+            <label>MAIL_SENDER</label>
+            <div class="env-value">your.email@gmail.com</div>
+            <span class="env-status {{ 'env-set' if mail_configured else 'env-unset' }}">
+              {{ 'Set' if mail_configured else 'Not Set' }}
+            </span>
+          </div>
+          <div class="env-field">
+            <label>MAIL_PASSWORD</label>
+            <div class="env-value">your-app-password</div>
+            <span class="env-status {{ 'env-set' if mail_configured else 'env-unset' }}">
+              {{ 'Set' if mail_configured else 'Not Set' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  const CURRENT_AGENT_ID = {{ agent[0] }};
+
+  // ── LOAD AGENTS ───────────────────────────────────────
+  async function loadAgents() {
+    try {
+      const res  = await fetch('/agents');
+      const data = await res.json();
+      if (data.status !== 'ok') throw new Error(data.message);
+      renderAgents(data.agents);
+    } catch(e) {
+      document.getElementById('agentTableBody').innerHTML =
+        `<tr><td colspan="7" style="color:#ef4444;text-align:center;padding:2rem">Failed to load agents: ${e.message}</td></tr>`;
+    }
+  }
+
+  function renderAgents(agents) {
+    const tbody = document.getElementById('agentTableBody');
+    if (!agents.length) {
+      tbody.innerHTML = `<tr><td colspan="7" style="color:var(--text-muted);text-align:center;padding:2rem">No agents found.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = agents.map(a => `
+      <tr id="agent-row-${a.id}">
+        <td>
+          <span class="agent-name">${a.full_name}</span>
+          <span class="agent-username">@${a.username}</span>
+        </td>
+        <td>${a.email}</td>
+        <td>
+          <span class="badge ${a.is_admin ? 'badge-admin' : 'badge-agent'}">
+            ${a.is_admin ? 'Admin' : 'Agent'}
+          </span>
+        </td>
+        <td>
+          <span class="badge ${a.is_active ? 'badge-active' : 'badge-inactive'}" id="status-badge-${a.id}">
+            ${a.is_active ? 'Active' : 'Inactive'}
+          </span>
+        </td>
+        <td>
+          <label class="toggle" title="Toggle lead notifications">
+            <input type="checkbox" ${a.notify_on_lead ? 'checked' : ''}
+              onchange="toggleNotify(${a.id}, this)"/>
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </td>
+        <td>${a.created_at}</td>
+        <td>
+          <div class="row-actions">
+            ${a.is_active
+              ? `<button class="btn-deactivate" onclick="deactivateAgent(${a.id})"
+                   ${a.id === CURRENT_AGENT_ID ? 'disabled title="Cannot deactivate yourself"' : ''}>
+                   Deactivate
+                 </button>`
+              : `<button class="btn-reactivate" onclick="reactivateAgent(${a.id})">
+                   Reactivate
+                 </button>`
+            }
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  // ── TOGGLE NOTIFICATIONS ──────────────────────────────
+  async function toggleNotify(id, cb) {
+    try {
+      const res  = await fetch(`/agents/${id}/toggle-notify`, { method: 'POST' });
+      const data = await res.json();
+      if (data.status !== 'ok') throw new Error(data.message);
+      showToast(`Notifications ${data.notify_on_lead ? 'enabled' : 'disabled'}.`, 'success');
+    } catch(e) {
+      cb.checked = !cb.checked; // revert toggle on error
+      showToast('Error: ' + e.message, 'error');
+    }
+  }
+
+  // ── DEACTIVATE ────────────────────────────────────────
+  async function deactivateAgent(id) {
+    if (!confirm('Deactivate this agent? They will no longer be able to log in.')) return;
+    try {
+      const res  = await fetch(`/agents/${id}/deactivate`, { method: 'POST' });
+      const data = await res.json();
+      if (data.status !== 'ok') throw new Error(data.message);
+      showToast('Agent deactivated.', 'success');
+      loadAgents();
+    } catch(e) {
+      showToast('Error: ' + e.message, 'error');
+    }
+  }
+
+  // ── REACTIVATE ────────────────────────────────────────
+  async function reactivateAgent(id) {
+    try {
+      const res  = await fetch(`/agents/${id}/reactivate`, { method: 'POST' });
+      const data = await res.json();
+      if (data.status !== 'ok') throw new Error(data.message);
+      showToast('Agent reactivated.', 'success');
+      loadAgents();
+    } catch(e) {
+      showToast('Error: ' + e.message, 'error');
+    }
+  }
+
+  // ── ADD AGENT ─────────────────────────────────────────
+  async function addAgent() {
+    const errEl = document.getElementById('addError');
+    const sucEl = document.getElementById('addSuccess');
+    errEl.style.display = 'none';
+    sucEl.style.display = 'none';
+
+    const payload = {
+      full_name:      document.getElementById('new-name').value.trim(),
+      email:          document.getElementById('new-email').value.trim(),
+      username:       document.getElementById('new-username').value.trim(),
+      password:       document.getElementById('new-password').value.trim(),
+      is_admin:       document.getElementById('new-admin').checked,
+      notify_on_lead: document.getElementById('new-notify').checked,
+    };
+
+    if (!payload.full_name || !payload.email || !payload.username || !payload.password) {
+      errEl.textContent   = 'All fields are required.';
+      errEl.style.display = 'inline';
+      return;
+    }
+
+    try {
+      const res  = await fetch('/agents/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.status !== 'ok') throw new Error(data.message);
+
+      // Clear form
+      ['new-name','new-email','new-username','new-password'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('new-admin').checked  = false;
+      document.getElementById('new-notify').checked = true;
+
+      sucEl.textContent   = `✓ ${payload.full_name} added successfully.`;
+      sucEl.style.display = 'inline';
+      setTimeout(() => sucEl.style.display = 'none', 3000);
+
+      showToast(`Agent ${payload.full_name} created.`, 'success');
+      loadAgents();
+    } catch(e) {
+      errEl.textContent   = e.message;
+      errEl.style.display = 'inline';
+    }
+  }
+
+  // ── TOAST ─────────────────────────────────────────────
+  let toastTimer;
+  function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className   = `toast ${type} show`;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // ── INIT ──────────────────────────────────────────────
+  loadAgents();
+</script>
+</body>
+</html>

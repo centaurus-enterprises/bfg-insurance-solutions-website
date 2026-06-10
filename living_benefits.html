@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Living Benefits | Brown Agency</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      padding: 9rem 5% 4.5rem;
+      background: linear-gradient(150deg, #FFF8F0 0%, #f5e8d8 60%, #ecdcc8 100%);
+      border-bottom: 1px solid var(--parchment-mid);
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 3rem;
+    }
+
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 420px; height: 420px;
+      border-radius: 50%;
+      border: 1px solid rgba(192,133,82,0.12);
+      pointer-events: none;
+    }
+
+    .page-hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 600px;
+    }
+
+    .page-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--saddle);
+      margin-bottom: 1.25rem;
+    }
+
+    .page-eyebrow::before {
+      content: '';
+      display: block;
+      width: 28px; height: 1px;
+      background: var(--saddle);
+    }
+
+    .page-hero h1 {
+      font-family: 'Raleway', sans-serif;
+      font-size: clamp(2.2rem, 4.2vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--espresso);
+      margin-bottom: 1.25rem;
+    }
+
+    .page-hero h1 span { color: var(--cognac); }
+
+    .page-hero p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      max-width: 520px;
+    }
+
+    .hero-svg-wrap {
+      position: relative;
+      z-index: 1;
+      width: 240px;
+      flex-shrink: 0;
+    }
+
+    .hero-svg-wrap svg {
+      width: 100%;
+      height: auto;
+    }
+
+    @media (max-width: 860px) {
+      .page-hero { grid-template-columns: 1fr; }
+      .hero-svg-wrap { display: none; }
+    }
+
+    /* ── PRODUCT CONTENT ── */
+    .product-content {
+      padding: 5rem 5%;
+      background: var(--parchment);
+      display: grid;
+      grid-template-columns: 1fr 1.8fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    /* SIDEBAR */
+    .product-sidebar {
+      position: sticky;
+      top: 100px;
+    }
+
+    .sidebar-tag {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--cognac);
+      border: 1px solid rgba(192,133,82,0.35);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      border-left: 2px solid var(--parchment-mid);
+    }
+
+    .sidebar-nav a {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-light);
+      text-decoration: none;
+      padding: 0.5rem 0 0.5rem 1.25rem;
+      border-left: 2px solid transparent;
+      margin-left: -2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .sidebar-nav a:hover {
+      color: var(--cognac);
+      border-left-color: var(--cognac);
+    }
+
+    .sidebar-divider {
+      height: 1px;
+      background: var(--parchment-mid);
+      margin: 1.5rem 0;
+    }
+
+    .sidebar-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-light);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .sidebar-back:hover { color: var(--cognac); }
+
+    /* SECTION BLOCKS */
+    .content-block {
+      margin-bottom: 3.5rem;
+      padding-bottom: 3.5rem;
+      border-bottom: 1px solid var(--parchment-mid);
+    }
+
+    .content-block:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .block-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--saddle);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .block-label::before {
+      content: '';
+      display: block;
+      width: 16px; height: 1px;
+      background: var(--saddle);
+    }
+
+    .content-block h2 {
+      font-family: 'Raleway', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--espresso);
+      margin-bottom: 1rem;
+    }
+
+    .content-block h2 span { color: var(--cognac); }
+
+    .content-block > p {
+      font-size: 0.975rem;
+      color: var(--text-secondary);
+      line-height: 1.85;
+      margin-bottom: 1rem;
+    }
+
+    .content-block > p:last-child { margin-bottom: 0; }
+
+    /* ── ILLNESS TYPE CARDS (3-column grid) ── */
+    .illness-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .illness-card {
+      background: var(--white);
+      border: 1px solid var(--parchment-mid);
+      border-top: 3px solid var(--cognac);
+      border-radius: 8px;
+      padding: 1.4rem 1.25rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .illness-card:hover {
+      border-color: rgba(192,133,82,0.4);
+      box-shadow: 0 4px 16px rgba(75,46,43,0.08);
+    }
+
+    .illness-card.tier-2 { border-top-color: var(--saddle); }
+    .illness-card.tier-3 { border-top-color: var(--espresso); }
+
+    .illness-card-icon {
+      width: 38px;
+      height: 38px;
+      background: rgba(192,133,82,0.1);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .illness-card-icon [data-lucide] {
+      width: 19px;
+      height: 19px;
+      stroke: var(--cognac);
+      stroke-width: 1.75;
+    }
+
+    .illness-card.tier-2 .illness-card-icon { background: rgba(140,90,60,0.1); }
+    .illness-card.tier-2 .illness-card-icon [data-lucide] { stroke: var(--saddle); }
+    .illness-card.tier-3 .illness-card-icon { background: rgba(75,46,43,0.09); }
+    .illness-card.tier-3 .illness-card-icon [data-lucide] { stroke: var(--espresso); }
+
+    .illness-type-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--cognac);
+    }
+
+    .illness-card.tier-2 .illness-type-label { color: var(--saddle); }
+    .illness-card.tier-3 .illness-type-label { color: var(--espresso); }
+
+    .illness-card h3 {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.975rem;
+      font-weight: 800;
+      color: var(--espresso);
+      margin: 0;
+    }
+
+    .illness-card p {
+      font-size: 0.845rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin: 0;
+      flex: 1;
+    }
+
+    .illness-examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      margin-top: 0.25rem;
+    }
+
+    .illness-pill {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--saddle);
+      background: rgba(140,90,60,0.07);
+      border: 1px solid rgba(140,90,60,0.15);
+      padding: 0.18rem 0.5rem;
+      border-radius: 20px;
+    }
+
+    @media (max-width: 700px) {
+      .illness-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── PLANS THAT INCLUDE LIVING BENEFITS ── */
+    .plans-section {
+      margin-top: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .plan-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      background: var(--white);
+      border: 1px solid var(--parchment-mid);
+      border-radius: 8px;
+      padding: 1.2rem 1.35rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .plan-row:hover {
+      border-color: rgba(192,133,82,0.3);
+      box-shadow: 0 3px 12px rgba(75,46,43,0.06);
+    }
+
+    .plan-row-icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(192,133,82,0.1);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .plan-row-icon [data-lucide] {
+      width: 18px;
+      height: 18px;
+      stroke: var(--cognac);
+      stroke-width: 1.75;
+    }
+
+    .plan-row-body { flex: 1; }
+
+    .plan-row-body strong {
+      display: block;
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--espresso);
+      margin-bottom: 0.3rem;
+    }
+
+    .plan-row-body p {
+      font-size: 0.855rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .plan-badge {
+      display: inline-block;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--cognac);
+      background: rgba(192,133,82,0.1);
+      border: 1px solid rgba(192,133,82,0.25);
+      padding: 0.18rem 0.55rem;
+      border-radius: 20px;
+      margin-top: 0.5rem;
+      align-self: flex-start;
+      white-space: nowrap;
+    }
+
+    .plan-badge.built-in {
+      color: #2e7d32;
+      background: rgba(46,125,50,0.07);
+      border-color: rgba(46,125,50,0.2);
+    }
+
+    .plan-badge.rider {
+      color: var(--saddle);
+      background: rgba(140,90,60,0.08);
+      border-color: rgba(140,90,60,0.2);
+    }
+
+    /* ── CALLOUT BOX ── */
+    .lb-callout {
+      background: linear-gradient(135deg, rgba(192,133,82,0.08) 0%, rgba(140,90,60,0.05) 100%);
+      border: 1px solid rgba(192,133,82,0.2);
+      border-left: 3px solid var(--cognac);
+      border-radius: 0 6px 6px 0;
+      padding: 1.1rem 1.4rem;
+      margin-top: 1.5rem;
+    }
+
+    .lb-callout p {
+      font-size: 0.9rem;
+      color: var(--espresso);
+      font-style: italic;
+      margin: 0;
+      line-height: 1.7;
+    }
+
+    /* ── WHO BENEFITS — profile cards ── */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+
+    .profile-card {
+      background: var(--white);
+      border: 1px solid var(--parchment-mid);
+      border-radius: 8px;
+      padding: 1.35rem 1.35rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .profile-card:hover {
+      border-color: rgba(192,133,82,0.35);
+      box-shadow: 0 3px 14px rgba(75,46,43,0.07);
+    }
+
+    .profile-card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .profile-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: rgba(192,133,82,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .profile-icon [data-lucide] {
+      width: 17px;
+      height: 17px;
+      stroke: var(--cognac);
+      stroke-width: 1.75;
+    }
+
+    .profile-card strong {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--espresso);
+      line-height: 1.3;
+    }
+
+    .profile-card p {
+      font-size: 0.845rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .profile-tag {
+      display: inline-block;
+      font-size: 0.64rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--saddle);
+      background: rgba(140,90,60,0.08);
+      padding: 0.2rem 0.55rem;
+      border-radius: 20px;
+      align-self: flex-start;
+    }
+
+    .profile-tag.urgent {
+      color: #b71c1c;
+      background: rgba(183,28,28,0.07);
+    }
+
+    @media (max-width: 600px) {
+      .profile-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── STAT ROW ── */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin: 1.75rem 0;
+    }
+
+    .stat-box {
+      background: var(--white);
+      border: 1px solid var(--parchment-mid);
+      border-radius: 8px;
+      padding: 1.25rem;
+      text-align: center;
+    }
+
+    .stat-box .stat-number {
+      font-family: 'Raleway', sans-serif;
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--cognac);
+      display: block;
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+
+    .stat-box .stat-label {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    @media (max-width: 600px) {
+      .stat-row { grid-template-columns: 1fr; }
+    }
+
+    /* ── FAQ ACCORDION ── */
+    .faq-intro {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      margin-bottom: 1.5rem;
+    }
+
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .faq-item {
+      background: var(--white);
+      border: 1px solid var(--parchment-mid);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .faq-item:hover { border-color: rgba(192,133,82,0.3); }
+
+    .faq-accordion .faq-q {
+      all: unset;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      cursor: pointer;
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--espresso);
+      box-sizing: border-box;
+      gap: 1rem;
+      padding: 1.25rem 1.5rem;
+      line-height: 1.4;
+    }
+
+    .faq-accordion .faq-q:focus-visible {
+      outline: 2px solid var(--cognac);
+      outline-offset: 2px;
+    }
+
+    .faq-chevron {
+      stroke: var(--cognac);
+      flex-shrink: 0;
+      transition: transform 0.25s;
+    }
+
+    .faq-accordion.open .faq-chevron { transform: rotate(180deg); }
+
+    .faq-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .faq-accordion.open .faq-body { max-height: 600px; }
+
+    .faq-body-inner {
+      padding: 0 1.5rem 1.25rem;
+      border-top: 1px solid var(--parchment-mid);
+    }
+
+    .faq-body-inner p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin: 1rem 0 0;
+    }
+
+    /* ── BOTTOM CTA ── */
+    .page-cta {
+      padding: 5.5rem 5%;
+      background: var(--espresso);
+      text-align: center;
+    }
+
+    .page-cta h2 {
+      font-family: 'Raleway', sans-serif;
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 0.75rem;
+    }
+
+    .page-cta h2 span { color: var(--cognac); }
+
+    .page-cta p {
+      font-size: 1rem;
+      color: rgba(255,248,240,0.6);
+      margin-bottom: 2rem;
+      max-width: 460px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .product-content {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+      .product-sidebar { position: static; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-logo">Brown<span>Agency</span></a>
+    <ul class="nav-links">
+      <li><a href="about.html">About Us</a></li>
+      <li class="nav-dropdown">
+        <a href="products.html" class="nav-dropdown-toggle">Products & Carriers ▾</a>
+        <ul class="dropdown-menu">
+          <li><a href="mortgage_protection.html">Mortgage Protection</a></li>
+          <li><a href="term_life.html">Term Life</a></li>
+          <li><a href="whole_life.html">Whole Life</a></li>
+          <li><a href="final_expense.html">Final Expense</a></li>
+          <li><a href="iul.html">IUL / Wealth Building</a></li>
+          <li><a href="living_benefits.html">Living Benefits</a></li>
+        </ul>
+      </li>
+      <li><a href="careers.html">Careers</a></li>
+      <li><a href="qualify.html" class="nav-cta">See If You Qualify</a></li>
+    </ul>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <div class="page-hero">
+    <div class="page-hero-inner">
+      <div class="page-eyebrow">Living Benefits</div>
+      <h1>Your Policy Shouldn't Wait<br><span>Until You're Gone</span></h1>
+      <p>Living benefits let you access your own death benefit while you're still alive — if you're diagnosed with a critical, chronic, or terminal illness. It's protection that works for you in the moments you need it most.</p>
+    </div>
+
+    <!-- HERO SVG: Heartbeat / vitality illustration -->
+    <div class="hero-svg-wrap">
+      <svg viewBox="0 0 260 300" xmlns="http://www.w3.org/2000/svg" fill="none">
+
+        <!-- Background circles -->
+        <circle cx="130" cy="155" r="115" fill="rgba(192,133,82,0.06)"/>
+        <circle cx="130" cy="155" r="82"  fill="rgba(192,133,82,0.06)"/>
+
+        <!-- Outer dashed ring -->
+        <circle cx="130" cy="155" r="112"
+                stroke="#C08552" stroke-width="1" stroke-dasharray="5 6"
+                opacity="0.3"/>
+
+        <!-- ECG / heartbeat line — main pulse -->
+        <polyline
+          points="30,150 62,150 72,118 82,182 92,130 102,165 116,150 200,150 210,130 220,170 230,150 260,150"
+          stroke="#C08552" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+          opacity="0.85"/>
+
+        <!-- Heart shape centered above line -->
+        <path d="M 130 108
+                 C 130 108 112 92  112 81
+                 C 112 73 118 67   130 76
+                 C 142 67 148 73   148 81
+                 C 148 92  130 108 130 108 Z"
+              fill="rgba(192,133,82,0.22)" stroke="#C08552" stroke-width="2.2"/>
+
+        <!-- Inner heart glow -->
+        <path d="M 130 102
+                 C 130 102 118 91  118 83
+                 C 118 78 122 74   130 80
+                 C 138 74 142 78   142 83
+                 C 142 91  130 102 130 102 Z"
+              fill="rgba(192,133,82,0.18)"/>
+
+        <!-- Shield below heart -->
+        <path d="M 113 118 L 113 138 Q 113 148 130 156 Q 147 148 147 138 L 147 118 Z"
+              fill="rgba(140,90,60,0.12)" stroke="#8C5A3C" stroke-width="1.8"
+              stroke-linejoin="round"/>
+
+        <!-- Checkmark inside shield -->
+        <polyline points="122,136 128,142 138,128"
+                  stroke="#8C5A3C" stroke-width="2.2" stroke-linecap="round"
+                  stroke-linejoin="round" opacity="0.9"/>
+
+        <!-- Three small "benefit" dots below shield with labels -->
+        <!-- Critical -->
+        <circle cx="90"  cy="195" r="5" fill="rgba(192,133,82,0.7)"/>
+        <line x1="95" y1="195" x2="112" y2="195" stroke="#C08552" stroke-width="1" opacity="0.4"/>
+        <!-- Chronic -->
+        <circle cx="130" cy="195" r="5" fill="rgba(140,90,60,0.65)"/>
+        <!-- Terminal -->
+        <circle cx="170" cy="195" r="5" fill="rgba(75,46,43,0.6)"/>
+        <line x1="148" y1="195" x2="165" y2="195" stroke="#8C5A3C" stroke-width="1" opacity="0.4"/>
+
+        <!-- Labels under dots -->
+        <text x="90"  y="210" text-anchor="middle" font-family="DM Sans, sans-serif"
+              font-size="7.5" fill="#C08552" opacity="0.85">Critical</text>
+        <text x="130" y="210" text-anchor="middle" font-family="DM Sans, sans-serif"
+              font-size="7.5" fill="#8C5A3C" opacity="0.85">Chronic</text>
+        <text x="170" y="210" text-anchor="middle" font-family="DM Sans, sans-serif"
+              font-size="7.5" fill="#4B2E2B" opacity="0.75">Terminal</text>
+
+        <!-- Person silhouette (alive & standing) -->
+        <circle cx="130" cy="232" r="7" fill="#C08552" opacity="0.55"/>
+        <line x1="130" y1="239" x2="130" y2="260" stroke="#C08552" stroke-width="3.2"
+              stroke-linecap="round"/>
+        <line x1="118" y1="247" x2="130" y2="244" stroke="#C08552" stroke-width="2.2"
+              stroke-linecap="round"/>
+        <line x1="142" y1="247" x2="130" y2="244" stroke="#C08552" stroke-width="2.2"
+              stroke-linecap="round"/>
+        <line x1="123" y1="260" x2="130" y2="253" stroke="#C08552" stroke-width="2.2"
+              stroke-linecap="round"/>
+        <line x1="137" y1="260" x2="130" y2="253" stroke="#C08552" stroke-width="2.2"
+              stroke-linecap="round"/>
+
+        <!-- Caption -->
+        <text x="130" y="285" text-anchor="middle"
+              font-family="Raleway, sans-serif" font-size="9" font-weight="700"
+              letter-spacing="2" fill="#8C5A3C" opacity="0.7">COVERAGE WHILE YOU LIVE</text>
+
+      </svg>
+    </div>
+  </div>
+
+  <!-- PRODUCT CONTENT -->
+  <div class="product-content">
+
+    <!-- SIDEBAR -->
+    <aside class="product-sidebar">
+      <div class="sidebar-tag">Built Into Many Plans</div>
+      <ul class="sidebar-nav">
+        <li><a href="#what-it-is">What It Is</a></li>
+        <li><a href="#three-types">The Three Trigger Types</a></li>
+        <li><a href="#plans">Plans That Include It</a></li>
+        <li><a href="#who-needs-it">Who Needs It Most</a></li>
+        <li><a href="#faq">Common Questions</a></li>
+      </ul>
+      <div class="sidebar-divider"></div>
+      <a href="products.html" class="sidebar-back">← All Products</a>
+    </aside>
+
+    <!-- BODY -->
+    <div class="product-body">
+
+      <!-- WHAT IT IS -->
+      <div class="content-block" id="what-it-is">
+        <div class="block-label">What It Is</div>
+        <h2>Your Death Benefit — <span>Accessible While You're Alive</span></h2>
+
+        <p>Most people understand that life insurance pays out when you die. What fewer people realize is that certain policies — and optional riders attached to others — allow you to access a portion of that death benefit while you're still living, if a qualifying health event occurs.</p>
+
+        <p>These are called <strong>living benefits</strong>, and they're designed for the financial crisis that often arrives before death: a cancer diagnosis, a major stroke, a debilitating chronic condition that makes it impossible to work or care for yourself. Medical bills accumulate. Income stops. Savings drain. Living benefits exist to fill that gap.</p>
+
+        <p>This isn't a separate product you purchase in isolation — it's a feature embedded in certain policies or added as an accelerated death benefit rider. Knowing which plans carry it, and whether your family's situation warrants it, is part of what we help clients figure out.</p>
+
+        <!-- Stat Row -->
+        <div class="stat-row">
+          <div class="stat-box">
+            <span class="stat-number">1 in 3</span>
+            <span class="stat-label">Americans will face a critical illness before retirement age</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-number">66%</span>
+            <span class="stat-label">of personal bankruptcies in the U.S. are linked to medical costs</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-number">$0</span>
+            <span class="stat-label">cost to add living benefit riders to many qualifying policies</span>
+          </div>
+        </div>
+
+        <div class="lb-callout">
+          <p>Living benefits don't reduce what you leave behind unnecessarily — most carriers structure payouts so that any amount advanced is simply subtracted from the final death benefit. Your family still receives the remainder.</p>
+        </div>
+      </div>
+
+      <!-- THE THREE TYPES -->
+      <div class="content-block" id="three-types">
+        <div class="block-label">The Three Trigger Types</div>
+        <h2>What Qualifies as a <span>Covered Event?</span></h2>
+
+        <p>Living benefits are triggered by one of three illness classifications. Each has different qualifying criteria, payout structures, and levels of urgency. Understanding the difference matters — especially when choosing a policy that fits your actual health risk profile.</p>
+
+        <div class="illness-grid">
+
+          <!-- Critical Illness -->
+          <div class="illness-card">
+            <div class="illness-card-icon">
+              <i data-lucide="zap"></i>
+            </div>
+            <span class="illness-type-label">Tier 1</span>
+            <h3>Critical Illness</h3>
+            <p>Sudden, life-threatening conditions that require immediate, intensive care. Typically the highest payout acceleration — often up to 90% of the death benefit.</p>
+            <div class="illness-examples">
+              <span class="illness-pill">Heart Attack</span>
+              <span class="illness-pill">Stroke</span>
+              <span class="illness-pill">Cancer</span>
+              <span class="illness-pill">Organ Failure</span>
+            </div>
+          </div>
+
+          <!-- Chronic Illness -->
+          <div class="illness-card tier-2">
+            <div class="illness-card-icon">
+              <i data-lucide="activity"></i>
+            </div>
+            <span class="illness-type-label">Tier 2</span>
+            <h3>Chronic Illness</h3>
+            <p>Long-term conditions that permanently impair your ability to perform 2 or more Activities of Daily Living (ADLs) — or cause severe cognitive impairment.</p>
+            <div class="illness-examples">
+              <span class="illness-pill">ALS</span>
+              <span class="illness-pill">Alzheimer's</span>
+              <span class="illness-pill">Parkinson's</span>
+              <span class="illness-pill">MS</span>
+            </div>
+          </div>
+
+          <!-- Terminal Illness -->
+          <div class="illness-card tier-3">
+            <div class="illness-card-icon">
+              <i data-lucide="hourglass"></i>
+            </div>
+            <span class="illness-type-label">Tier 3</span>
+            <h3>Terminal Illness</h3>
+            <p>A diagnosis with a life expectancy of 12–24 months or less (varies by carrier). Allows early access to help cover care costs and final arrangements while there's still time.</p>
+            <div class="illness-examples">
+              <span class="illness-pill">Stage IV Cancer</span>
+              <span class="illness-pill">End-Stage Heart Disease</span>
+              <span class="illness-pill">End-Stage Renal</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="lb-callout">
+          <p>Not all policies cover all three tiers. Some only include terminal illness by default. Policies with all three tiers — critical, chronic, and terminal — offer the most comprehensive protection and are worth seeking out specifically.</p>
+        </div>
+      </div>
+
+      <!-- PLANS THAT INCLUDE IT -->
+      <div class="content-block" id="plans">
+        <div class="block-label">Plans That Include It</div>
+        <h2>Which Policies <span>Carry Living Benefits?</span></h2>
+
+        <p>Living benefits aren't automatic on every policy. Some carry them built-in at no additional cost. Others require a rider — usually added for free at time of application, or at a small premium. Here's how the products we offer compare.</p>
+
+        <div class="plans-section">
+
+          <div class="plan-row">
+            <div class="plan-row-icon"><i data-lucide="home"></i></div>
+            <div class="plan-row-body">
+              <strong>Mortgage Protection</strong>
+              <p>Many mortgage protection carriers — including Mutual of Omaha's Term Life Answers and Americo's HMS Plus — offer living benefit riders that cover critical, chronic, and terminal illness. For families relying on one income to make mortgage payments, a health crisis without this rider can be catastrophic. It's often the rider most worth adding at application.</p>
+              <span class="plan-badge rider">Available as Rider</span>
+            </div>
+          </div>
+
+          <div class="plan-row">
+            <div class="plan-row-icon"><i data-lucide="shield"></i></div>
+            <div class="plan-row-body">
+              <strong>Term Life Insurance</strong>
+              <p>Term policies can carry accelerated death benefit riders for terminal illness as a standard inclusion. Critical and chronic illness riders vary by carrier. Because term is the most affordable policy type, adding living benefit riders here tends to be the lowest-cost way to get broad coverage — especially during prime earning years.</p>
+              <span class="plan-badge rider">Rider — Varies by Carrier</span>
+            </div>
+          </div>
+
+          <div class="plan-row">
+            <div class="plan-row-icon"><i data-lucide="anchor"></i></div>
+            <div class="plan-row-body">
+              <strong>Whole Life Insurance</strong>
+              <p>Whole life policies often include terminal illness acceleration as a built-in feature. Critical and chronic riders can typically be added. Because whole life is permanent, any living benefits accessed are deducted from the guaranteed death benefit — but the policy's cash value remains intact and continues to grow.</p>
+              <span class="plan-badge built-in">Terminal — Often Built-In</span>
+            </div>
+          </div>
+
+          <div class="plan-row">
+            <div class="plan-row-icon"><i data-lucide="trending-up"></i></div>
+            <div class="plan-row-body">
+              <strong>IUL (Indexed Universal Life)</strong>
+              <p>IUL policies frequently include robust living benefit provisions as part of the base policy — making them one of the most comprehensive options for clients who want both wealth-building and illness protection in a single vehicle. Chronic and critical illness riders are common inclusions across most carriers we work with.</p>
+              <span class="plan-badge built-in">Often Built-In — All 3 Tiers</span>
+            </div>
+          </div>
+
+          <div class="plan-row">
+            <div class="plan-row-icon"><i data-lucide="heart"></i></div>
+            <div class="plan-row-body">
+              <strong>Final Expense</strong>
+              <p>Final expense policies are smaller whole life policies. Terminal illness riders are common; critical and chronic illness riders are less prevalent given the simplified underwriting process. For seniors with known health conditions, the priority is often qualifying at all — living benefits are a secondary consideration on this product type.</p>
+              <span class="plan-badge rider">Limited — Terminal Focus</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- WHO NEEDS IT MOST -->
+      <div class="content-block" id="who-needs-it">
+        <div class="block-label">Who Needs It Most</div>
+        <h2>The Clients <span>This Protects</span></h2>
+
+        <p>Living benefits matter most to clients with specific financial vulnerabilities — people for whom a sudden illness wouldn't just be a health crisis, but a financial one. The following profiles represent the highest-need situations we encounter.</p>
+
+        <div class="profile-grid">
+
+          <div class="profile-card">
+            <div class="profile-card-header">
+              <div class="profile-icon"><i data-lucide="briefcase"></i></div>
+              <strong>Single-Income Households</strong>
+            </div>
+            <p>When one paycheck covers the mortgage, utilities, and family expenses, a critical illness that ends employment can be immediately devastating. Living benefits provide a cash bridge before savings are depleted.</p>
+            <span class="profile-tag urgent">Highest Risk</span>
+          </div>
+
+          <div class="profile-card">
+            <div class="profile-card-header">
+              <div class="profile-icon"><i data-lucide="users"></i></div>
+              <strong>Families with Dependents</strong>
+            </div>
+            <p>Parents with young children or adult children still at home face compounding financial strain during a health crisis. Living benefits keep household expenses covered while caregiving demands increase.</p>
+            <span class="profile-tag urgent">Highest Risk</span>
+          </div>
+
+          <div class="profile-card">
+            <div class="profile-card-header">
+              <div class="profile-icon"><i data-lucide="dna"></i></div>
+              <strong>Family History of Serious Illness</strong>
+            </div>
+            <p>Clients with a family history of cancer, heart disease, or stroke face statistically elevated risk. For these individuals, critical illness living benefits aren't hypothetical — they're likely. Proactive coverage is far cheaper than reactive.
+            </p>
+            <span class="profile-tag">Elevated Risk</span>
+          </div>
+
+          <div class="profile-card">
+            <div class="profile-card-header">
+              <div class="profile-icon"><i data-lucide="building-2"></i></div>
+              <strong>Self-Employed / Business Owners</strong>
+            </div>
+            <p>No sick leave. No employer disability plan. No HR department to navigate FMLA. For the self-employed, income stops the moment they stop working — making living benefits one of the most critical safeguards available.</p>
+            <span class="profile-tag urgent">Highest Risk</span>
+          </div>
+
+          <div class="profile-card">
+            <div class="profile-card-header">
+              <div class="profile-icon"><i data-lucide="landmark"></i></div>
+              <strong>Clients with a Mortgage</strong>
+            </div>
+            <p>A health crisis that interrupts income can trigger missed payments and foreclosure within months. For homeowners — especially those early in a 30-year mortgage — living benefits on a mortgage protection or term policy are the first line of defense.</p>
+            <span class="profile-tag">Mortgage at Risk</span>
+          </div>
+
+          <div class="profile-card">
+            <div class="profile-card-header">
+              <div class="profile-icon"><i data-lucide="pie-chart"></i></div>
+              <strong>Near-Retirement Clients</strong>
+            </div>
+            <p>Clients in their 50s and early 60s are statistically at peak illness risk while still carrying debt, supporting dependents, and approaching — but not yet in — retirement. A chronic illness in this window can permanently derail savings goals.</p>
+            <span class="profile-tag">Critical Window</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="content-block" id="faq">
+        <div class="block-label">Common Questions</div>
+        <h2>What People <span>Ask Us</span></h2>
+        <p class="faq-intro">Living benefits raise practical questions — especially for clients who've never heard of them before or assume they're already covered. Here are the most common ones, answered plainly.</p>
+
+        <div class="faq-list">
+
+          <div class="faq-item faq-accordion">
+            <button class="faq-q faq-toggle" aria-expanded="false">
+              Does using living benefits reduce what my family receives?
+              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-body">
+              <div class="faq-body-inner">
+                <p>Yes — but in a measured way. Any amount you access early is deducted from the death benefit that will eventually be paid to your beneficiaries. However, the payout isn't dollar-for-dollar in many cases; carriers apply a discount factor that reflects the time value of money. The key point is that your family still receives whatever death benefit remains, so the policy continues to function as intended. For most families facing a serious illness, having access to funds now outweighs leaving the full amount intact.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item faq-accordion">
+            <button class="faq-q faq-toggle" aria-expanded="false">
+              Is this the same as disability insurance?
+              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-body">
+              <div class="faq-body-inner">
+                <p>No, and the distinction is important. Disability insurance replaces a percentage of your income on a monthly basis when illness or injury prevents you from working — it's tied to your earnings and continues as long as you're disabled. Living benefits, by contrast, accelerate a lump-sum or structured payout from your existing life insurance death benefit when you're diagnosed with a qualifying condition. The two products are complementary: disability insurance covers the ongoing income gap, while living benefits provide a capital reserve for major expenses like medical bills, home modifications, or paying off debt. Having both is ideal; if you can only have one, the right choice depends on your specific situation.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item faq-accordion">
+            <button class="faq-q faq-toggle" aria-expanded="false">
+              Do I have to prove financial hardship to access the benefit?
+              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-body">
+              <div class="faq-body-inner">
+                <p>Generally, no. The qualifying event is a medical diagnosis — not a financial means test. Once a physician certifies the qualifying condition, you work with the carrier to access the benefit. You're not required to prove that you've already suffered financial harm. How you use the funds is also typically unrestricted: you can pay medical bills, cover your mortgage, support your family, or handle any other expense. There are no itemized receipts required.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item faq-accordion">
+            <button class="faq-q faq-toggle" aria-expanded="false">
+              I already have health insurance. Why would I need this?
+              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-body">
+              <div class="faq-body-inner">
+                <p>Health insurance covers medical treatment. Living benefits cover everything else. A cancer diagnosis, for example, triggers not just treatment costs but lost wages, childcare gaps, home care expenses, travel for treatment, and the gradual depletion of savings accounts that were meant for retirement. Health insurance won't prevent your mortgage from falling behind. It won't cover three months of groceries while you're in treatment. Living benefits exist specifically for these non-medical financial consequences — and they're the costs most families aren't prepared for.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item faq-accordion">
+            <button class="faq-q faq-toggle" aria-expanded="false">
+              Can I add living benefits to a policy I already have?
+              <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-body">
+              <div class="faq-body-inner">
+                <p>It depends on the carrier and the policy. Riders are typically added at the time of application, not retroactively. If your current policy doesn't include living benefits and you want them, the most common path is either replacing the policy with one that carries them or taking out a supplemental policy. This is one of the reasons a policy review matters — many clients we speak with have coverage that was set up years ago without living benefits, before they became as widely available as they are today. We can help you identify what you currently have and whether it makes sense to upgrade.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <section class="page-cta">
+    <h2>Don't wait for a diagnosis<br><span>to wish you had this.</span></h2>
+    <p>Living benefits are most valuable when added before you need them. A quick conversation can confirm whether your current coverage already includes them — or whether it should.</p>
+    <a href="qualify.html" class="btn-primary">See If You Qualify &nbsp;→</a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">Brown<span>Agency</span></a>
+        <p>Independent life insurance brokerage serving families across the U.S. We work for you — not the carriers.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Products</h4>
+        <ul>
+          <li><a href="mortgage_protection.html">Mortgage Protection</a></li>
+          <li><a href="term_life.html">Term Life</a></li>
+          <li><a href="whole_life.html">Whole Life</a></li>
+          <li><a href="iul.html">IUL / Wealth</a></li>
+          <li><a href="final_expense.html">Final Expense</a></li>
+          <li><a href="living_benefits.html">Living Benefits</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="careers.html">Careers</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Get Started</h4>
+        <ul>
+          <li><a href="qualify.html">See If You Qualify</a></li>
+          <li><a href="careers.html">Join Our Team</a></li>
+          <li><a href="#">Agent Portal</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Brown Agency LLC. All rights reserved.</span>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Disclaimers</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-accordion');
+        const isOpen = item.classList.contains('open');
+
+        document.querySelectorAll('.faq-accordion').forEach(el => {
+          el.classList.remove('open');
+          el.querySelector('.faq-toggle').setAttribute('aria-expanded', 'false');
+        });
+
+        if (!isOpen) {
+          item.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
