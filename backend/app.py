@@ -49,20 +49,18 @@ def get_current_agent():
 def send_lead_notification(data: dict):
     """
     Sends a new lead alert email to all agents with notify_on_lead = TRUE.
-    Fires after a successful form submission. Failures are silent so a mail
-    issue never blocks a lead from being saved.
+    Uses SendGrid API — works on Render free tier.
+    Failures are silent so a mail issue never blocks a lead from being saved.
     """
-    import smtplib
-    from email.mime.multipart import MIMEMultipart
-    from email.mime.text import MIMEText
+    from sendgrid import SendGridAPIClient
+    from sendgrid.helpers.mail import Mail
 
-    sender   = os.getenv("MAIL_SENDER")
-    password = os.getenv("MAIL_PASSWORD")
+    api_key = os.getenv("SENDGRID_API_KEY")
+    sender  = os.getenv("MAIL_SENDER")
 
-    if not sender or not password:
-        return  # Email not configured — skip silently
+    if not api_key or not sender:
+        return
 
-    # Fetch all agents with notifications enabled
     try:
         conn = get_connection()
         cur  = conn.cursor()
@@ -135,7 +133,7 @@ def send_lead_notification(data: dict):
         </table>
 
         <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid #f0e4d4">
-          <a href="http://localhost:5000/admin"
+          <a href="https://brown-agency-website.onrender.com/admin"
              style="display:inline-block;background:#C08552;color:#ffffff;font-weight:700;font-size:0.875rem;padding:0.65rem 1.4rem;border-radius:6px;text-decoration:none">
             View in Dashboard →
           </a>
@@ -146,35 +144,16 @@ def send_lead_notification(data: dict):
     </div>
     """
 
-    text_body = f"""New lead submitted — Brown Agency
-
-Name:         {first} {last}
-Product:      {product}
-Mobile:       {mobile}
-Email:        {email}
-State:        {state}
-Contact Pref: {contact_pref}
-Best Time:    {best_time}
-Submitted:    {submitted}
-
-View in dashboard: http://localhost:5000/admin
-"""
-
     try:
-        server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
-        server.login(sender, password)
-
+        sg = SendGridAPIClient(api_key)
         for recipient_email, recipient_name in recipients:
-            msg = MIMEMultipart("alternative")
-            msg["Subject"] = subject
-            msg["From"]    = f"Brown Agency <{sender}>"
-            msg["To"]      = recipient_email
-
-            msg.attach(MIMEText(text_body, "plain"))
-            msg.attach(MIMEText(html_body, "html"))
-            server.sendmail(sender, recipient_email, msg.as_string())
-
-        server.quit()
+            message = Mail(
+                from_email=sender,
+                to_emails=recipient_email,
+                subject=subject,
+                html_content=html_body
+            )
+            sg.send(message)
     except Exception:
         pass  # Never block a lead save due to email failure
 
