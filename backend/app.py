@@ -806,6 +806,37 @@ def submit():
 
 
 # ─────────────────────────────────────────────
+# TEMPORARY SETUP ROUTE — DELETE AFTER USE
+# ─────────────────────────────────────────────
+
+@app.route("/setup-admin")
+def setup_admin():
+    import hashlib, secrets as sec
+    full_name = "Josh Brown"
+    email     = "sfg.josh.brown@gmail.com"
+    username  = "josh"
+    password  = "ChangeMe2026!"
+    salt      = sec.token_hex(16)
+    pw_hash   = f"{salt}:{hashlib.sha256((salt + password).encode()).hexdigest()}"
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        cur.execute("SELECT id FROM agents WHERE username = %s", (username,))
+        if cur.fetchone():
+            cur.close(); conn.close()
+            return "Admin account already exists."
+        cur.execute("""
+            INSERT INTO agents (full_name, email, username, password_hash, is_admin, notify_on_lead, is_active)
+            VALUES (%s, %s, %s, %s, TRUE, TRUE, TRUE)
+        """, (full_name, email, username, pw_hash))
+        conn.commit()
+        cur.close(); conn.close()
+        return "Admin account created. Username: josh / Password: ChangeMe2026! — DELETE THIS ROUTE NOW."
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+
+# ─────────────────────────────────────────────
 # ENTRY POINT
 # ─────────────────────────────────────────────
 
