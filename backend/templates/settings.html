@@ -593,6 +593,37 @@
       </div>
     </div>
 
+    <!-- ── CHANGE PASSWORD ── -->
+    <div class="settings-section">
+      <div class="section-header">
+        <div class="section-header-text">
+          <h2>Change Password</h2>
+          <p>Update the password for your own account</p>
+        </div>
+      </div>
+      <div class="add-agent-form">
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Current Password</label>
+            <input type="password" id="pw-current" placeholder="Your current password"/>
+          </div>
+          <div class="form-field">
+            <label>New Password</label>
+            <input type="password" id="pw-new" placeholder="New password"/>
+          </div>
+          <div class="form-field">
+            <label>Confirm New Password</label>
+            <input type="password" id="pw-confirm" placeholder="Repeat new password"/>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-primary" onclick="changePassword()">Update Password</button>
+          <span class="form-error"   id="pwError"></span>
+          <span class="form-success" id="pwSuccess"></span>
+        </div>
+      </div>
+    </div>
+
     <!-- ── EMAIL SETTINGS ── -->
     <div class="settings-section">
       <div class="section-header">
@@ -800,6 +831,50 @@
     t.className   = `toast ${type} show`;
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // ── CHANGE PASSWORD ──────────────────────────────────
+  async function changePassword() {
+    const errEl = document.getElementById('pwError');
+    const sucEl = document.getElementById('pwSuccess');
+    errEl.style.display = 'none';
+    sucEl.style.display = 'none';
+
+    const current = document.getElementById('pw-current').value;
+    const newPw   = document.getElementById('pw-new').value;
+    const confirm = document.getElementById('pw-confirm').value;
+
+    if (!current || !newPw || !confirm) {
+      errEl.textContent = 'All fields are required.';
+      errEl.style.display = 'inline'; return;
+    }
+    if (newPw !== confirm) {
+      errEl.textContent = 'New passwords do not match.';
+      errEl.style.display = 'inline'; return;
+    }
+    if (newPw.length < 8) {
+      errEl.textContent = 'New password must be at least 8 characters.';
+      errEl.style.display = 'inline'; return;
+    }
+
+    try {
+      const res  = await fetch('/agents/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ current_password: current, new_password: newPw })
+      });
+      const data = await res.json();
+      if (data.status !== 'ok') throw new Error(data.message);
+
+      ['pw-current','pw-new','pw-confirm'].forEach(id => document.getElementById(id).value = '');
+      sucEl.textContent = '✓ Password updated successfully.';
+      sucEl.style.display = 'inline';
+      setTimeout(() => sucEl.style.display = 'none', 3000);
+      showToast('Password updated.', 'success');
+    } catch(e) {
+      errEl.textContent = e.message;
+      errEl.style.display = 'inline';
+    }
   }
 
   // ── INIT ──────────────────────────────────────────────

@@ -679,6 +679,39 @@ def reactivate_agent(agent_id):
 # SETTINGS PAGE
 # ─────────────────────────────────────────────
 
+@app.route("/agents/change-password", methods=["POST"])
+@login_required
+def change_password():
+    import hashlib, secrets as sec
+    data         = request.get_json()
+    current_pw   = data.get("current_password", "")
+    new_pw       = data.get("new_password", "")
+
+    if not current_pw or not new_pw:
+        return jsonify({"status": "error", "message": "Both fields are required."}), 400
+    if len(new_pw) < 8:
+        return jsonify({"status": "error", "message": "Password must be at least 8 characters."}), 400
+
+    agent = get_current_agent()
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        cur.execute("SELECT password_hash FROM agents WHERE id = %s", (agent[0],))
+        row = cur.fetchone()
+        if not row or not verify_password(row[0], current_pw):
+            cur.close(); conn.close()
+            return jsonify({"status": "error", "message": "Current password is incorrect."}), 400
+
+        salt    = sec.token_hex(16)
+        pw_hash = f"{salt}:{hashlib.sha256((salt + new_pw).encode()).hexdigest()}"
+        cur.execute("UPDATE agents SET password_hash = %s WHERE id = %s", (pw_hash, agent[0]))
+        conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"status": "ok"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
 @app.route("/settings")
 @admin_required
 def settings():
