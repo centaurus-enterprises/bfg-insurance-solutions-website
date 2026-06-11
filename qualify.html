@@ -1676,10 +1676,10 @@
             if (result.status === 'ok') {
                 btn.textContent = '✓ Submitted Successfully';
                 btn.style.background = 'var(--saddle)';
-                // Scroll to top so they see confirmation
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                // Optional: redirect to a thank you page later
-                // window.location.href = 'thank_you.html';
+                const pref = data.contact_preference === 'book_appointment'
+                  ? 'book_appointment'
+                  : 'call_me';
+                window.location.href = 'thank_you.html?pref=' + pref;
             } else {
                 btn.disabled = false;
                 btn.textContent = 'Submit My Information →';
