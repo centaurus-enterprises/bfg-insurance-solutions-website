@@ -161,8 +161,7 @@ View in dashboard: http://localhost:5000/admin
 """
 
     try:
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        server.starttls()
+        server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
         server.login(sender, password)
 
         for recipient_email, recipient_name in recipients:
