@@ -1471,7 +1471,7 @@
         <ul>
           <li><a href="qualify.html">See If You Qualify</a></li>
           <li><a href="careers.html">Join Our Team</a></li>
-          <li><a href="https://brown-agency-website.onrender.com/login">Agent Portal</a></li>
+          <li><a href="/login">Agent Portal</a></li>
           <li><a href="#">Privacy Policy</a></li>
         </ul>
       </div>
@@ -1664,7 +1664,7 @@
         btn.textContent = 'Submitting...';
 
         try {
-            const response = await fetch('https://brown-agency-website.onrender.com/submit', {
+            const response = await fetch('/submit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)

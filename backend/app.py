@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for, session
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session, send_from_directory
 from flask_cors import CORS
 from datetime import datetime, timedelta
 from db import get_connection
@@ -12,6 +12,21 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 app.secret_key = os.getenv("SECRET_KEY", secrets.token_hex(32))
+
+
+# ─────────────────────────────────────────────
+# STATIC SITE
+# ─────────────────────────────────────────────
+
+SITE_ROOT = os.path.join(os.path.dirname(__file__), "..")
+
+@app.route("/")
+def home():
+    return send_from_directory(SITE_ROOT, "index.html")
+
+@app.route("/<path:filename>")
+def static_site(filename):
+    return send_from_directory(SITE_ROOT, filename)
 
 
 # ─────────────────────────────────────────────
