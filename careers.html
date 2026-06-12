@@ -1218,10 +1218,50 @@
 
     if (!valid) return;
 
-    // Show success
-    document.getElementById('formContent').style.display = 'none';
-    document.getElementById('formSuccess').style.display = 'block';
-    document.getElementById('apply').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const btn = document.querySelector('.btn-form-submit');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
+    const getRadio = (groupId) => {
+      const sel = document.getElementById(groupId).querySelector('.selected');
+      return sel ? sel.dataset.value || sel.textContent.trim() : '';
+    };
+
+    const payload = {
+      first_name:   document.getElementById('firstName').value.trim(),
+      last_name:    document.getElementById('lastName').value.trim(),
+      email:        document.getElementById('email').value.trim(),
+      phone:        document.getElementById('phone').value.trim(),
+      state:        document.getElementById('state').value.trim(),
+      licensed:     getRadio('licensedGroup'),
+      experience:   getRadio('experienceGroup'),
+      arrangement:  getRadio('arrangementGroup'),
+      referral:     document.getElementById('hearAbout') ? document.getElementById('hearAbout').value : '',
+      message:      document.getElementById('notes') ? document.getElementById('notes').value.trim() : ''
+    };
+
+    fetch('https://brown-agency-website.onrender.com/apply', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(r => r.json())
+    .then(result => {
+      if (result.status === 'ok') {
+        document.getElementById('formContent').style.display = 'none';
+        document.getElementById('formSuccess').style.display = 'block';
+        document.getElementById('apply').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        btn.disabled = false;
+        btn.textContent = 'Submit Application  →';
+        alert('Something went wrong. Please try again.');
+      }
+    })
+    .catch(() => {
+      btn.disabled = false;
+      btn.textContent = 'Submit Application  →';
+      alert('Network error. Please check your connection and try again.');
+    });
   }
 </script>
 

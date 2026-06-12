@@ -699,6 +699,124 @@ def settings():
 
 
 # ─────────────────────────────────────────────
+# AGENT APPLICATION (public)
+# ─────────────────────────────────────────────
+
+@app.route("/apply", methods=["POST"])
+def apply():
+    from sendgrid import SendGridAPIClient
+    from sendgrid.helpers.mail import Mail
+
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"status": "error", "message": "No data received."}), 400
+
+        api_key = os.getenv("SENDGRID_API_KEY")
+        sender  = os.getenv("MAIL_SENDER")
+
+        if not api_key or not sender:
+            return jsonify({"status": "ok"})
+
+        first        = data.get("first_name", "")
+        last         = data.get("last_name", "")
+        email        = data.get("email", "")
+        phone        = data.get("phone", "")
+        state        = data.get("state", "")
+        best_time    = data.get("best_time", "")
+        licensed     = data.get("licensed", "")
+        experience   = data.get("experience", "")
+        arrangement  = data.get("arrangement", "")
+        income_goal  = data.get("income_goal", "")
+        interests    = ", ".join(data.get("interests", [])) or "None selected"
+        message      = data.get("message", "")
+        referral     = data.get("referral", "")
+        submitted    = datetime.now().strftime("%B %d, %Y at %I:%M %p")
+
+        subject = f"New Agent Application: {first} {last}"
+
+        html_body = f"""
+        <div style="font-family:'DM Sans',Arial,sans-serif;max-width:580px;margin:0 auto;background:#ffffff;border:1px solid #e8d5c0;border-radius:8px;overflow:hidden">
+          <div style="background:#4B2E2B;padding:1.25rem 1.5rem">
+            <p style="font-family:Arial,sans-serif;font-size:1.15rem;font-weight:800;color:#ffffff;margin:0">
+              Brown<span style="color:#C08552">Financial Group</span>
+            </p>
+            <p style="font-size:0.75rem;color:#c8a882;margin:0.2rem 0 0;letter-spacing:0.08em;text-transform:uppercase">New Agent Application</p>
+          </div>
+          <div style="padding:1.5rem">
+            <h2 style="font-size:1.1rem;color:#4B2E2B;margin:0 0 0.25rem">{first} {last}</h2>
+            <p style="font-size:0.85rem;color:#8C5A3C;margin:0 0 1.5rem;font-weight:600">{state}</p>
+
+            <table style="width:100%;border-collapse:collapse;font-size:0.875rem">
+              <tr style="border-bottom:1px solid #f0e4d4">
+                <td style="padding:0.6rem 0;color:#9a7a6a;width:160px;font-weight:600">Email</td>
+                <td style="padding:0.6rem 0;color:#2C1810">{email}</td>
+              </tr>
+              <tr style="border-bottom:1px solid #f0e4d4">
+                <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">Phone</td>
+                <td style="padding:0.6rem 0;color:#2C1810">{phone}</td>
+              </tr>
+              <tr style="border-bottom:1px solid #f0e4d4">
+                <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">Best Time</td>
+                <td style="padding:0.6rem 0;color:#2C1810">{best_time}</td>
+              </tr>
+              <tr style="border-bottom:1px solid #f0e4d4">
+                <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">Licensed</td>
+                <td style="padding:0.6rem 0;color:#2C1810">{licensed}</td>
+              </tr>
+              <tr style="border-bottom:1px solid #f0e4d4">
+                <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">Experience</td>
+                <td style="padding:0.6rem 0;color:#2C1810">{experience}</td>
+              </tr>
+              <tr style="border-bottom:1px solid #f0e4d4">
+                <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">Arrangement</td>
+                <td style="padding:0.6rem 0;color:#2C1810">{arrangement}</td>
+              </tr>
+              <tr style="border-bottom:1px solid #f0e4d4">
+                <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">Income Goal</td>
+                <td style="padding:0.6rem 0;color:#2C1810">{income_goal}</td>
+              </tr>
+              <tr style="border-bottom:1px solid #f0e4d4">
+                <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">Interests</td>
+                <td style="padding:0.6rem 0;color:#2C1810">{interests}</td>
+              </tr>
+              <tr style="border-bottom:1px solid #f0e4d4">
+                <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">Referral</td>
+                <td style="padding:0.6rem 0;color:#2C1810">{referral}</td>
+              </tr>
+              <tr>
+                <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">Message</td>
+                <td style="padding:0.6rem 0;color:#2C1810">{message if message else '—'}</td>
+              </tr>
+            </table>
+
+            <p style="font-size:0.75rem;color:#c8a882;margin-top:1.25rem">Submitted {submitted}</p>
+          </div>
+        </div>
+        """
+
+        recipients = [
+            "josh@thebrownfinancialgroup.com",
+            "johnmbrown@outlook.com"
+        ]
+
+        sg = SendGridAPIClient(api_key)
+        for recipient in recipients:
+            message_obj = Mail(
+                from_email=sender,
+                to_emails=recipient,
+                subject=subject,
+                html_content=html_body
+            )
+            sg.send(message_obj)
+
+        return jsonify({"status": "ok"})
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+# ─────────────────────────────────────────────
 # FORM SUBMISSION (public)
 # ─────────────────────────────────────────────
 
