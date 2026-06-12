@@ -1,4 +1,4 @@
-# Brown Agency — Project Summary
+# Brown Financial Group — Project Summary
 
 A family-run independent life insurance brokerage website with a Flask + PostgreSQL backend,
 agent dashboard, and lead management system. Built by Josh and John Brown under Symmetry
@@ -197,7 +197,7 @@ domain before go-live.
 
 ## Agency Context
 
-- **Agency:** Brown Agency (also considering Brown Financial Group)
+- **Agency:** Brown Financial Group (also considering Brown Financial Group)
 - **Principals:** Josh Brown (tech + sales) and John Brown (sales)
 - **IMO:** Symmetry Financial Group
 - **Licensed:** California-based, nationwide
