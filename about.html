@@ -273,9 +273,9 @@
     }
 
     .values-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
       margin-top: 2.5rem;
     }
 
@@ -283,17 +283,20 @@
       background: var(--parchment);
       border: 1px solid var(--parchment-mid);
       border-radius: 10px;
-      padding: 2rem 1.75rem;
+      padding: 1.75rem 2rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1.5rem;
     }
 
     .value-icon {
-      width: 40px; height: 40px;
+      width: 44px; height: 44px;
+      flex-shrink: 0;
       border-radius: 8px;
       background: rgba(192,133,82,0.12);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 1.25rem;
     }
 
     .value-icon svg {
@@ -461,7 +464,6 @@
     /* ── RESPONSIVE ── */
     @media (max-width: 760px) {
       .team-grid { grid-template-columns: 1fr; }
-      .values-grid { grid-template-columns: 1fr; }
       .symmetry-grid { grid-template-columns: 1fr; }
       .symmetry-callout { flex-direction: column; gap: 1.25rem; }
     }
