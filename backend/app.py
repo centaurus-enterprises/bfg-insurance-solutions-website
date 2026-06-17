@@ -176,7 +176,7 @@ def send_lead_notification(data: dict):
         </table>
 
         <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid #f0e4d4">
-          <a href="https://brown-agency-website.onrender.com/admin"
+          <a href="https://thebrownfinancialgroup.com/admin"
              style="display:inline-block;background:#C08552;color:#ffffff;font-weight:700;font-size:0.875rem;padding:0.65rem 1.4rem;border-radius:6px;text-decoration:none">
             View in Dashboard →
           </a>
