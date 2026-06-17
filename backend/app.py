@@ -357,35 +357,55 @@ def get_lead(lead_id):
 @app.route("/lead/<int:lead_id>/status", methods=["POST"])
 @login_required
 def update_status(lead_id):
-    """Updates the status and/or notes for a lead."""
     data       = request.get_json()
     new_status = data.get("status")
     new_notes  = data.get("notes")
+    uw         = data.get("underwriting", {})
 
     valid_statuses = ["new", "follow_up", "does_not_pick_up", "sale", "no_sale"]
     if new_status and new_status not in valid_statuses:
         return jsonify({"status": "error", "message": "Invalid status value."}), 400
 
+    def to_bool(val):
+        if val == "true":  return True
+        if val == "false": return False
+        return None
+
     try:
         conn = get_connection()
         cur  = conn.cursor()
-
-        if new_status and new_notes is not None:
-            cur.execute(
-                "UPDATE leads SET status = %s, notes = %s WHERE id = %s",
-                (new_status, new_notes, lead_id)
-            )
-        elif new_status:
-            cur.execute(
-                "UPDATE leads SET status = %s WHERE id = %s",
-                (new_status, lead_id)
-            )
-        elif new_notes is not None:
-            cur.execute(
-                "UPDATE leads SET notes = %s WHERE id = %s",
-                (new_notes, lead_id)
-            )
-
+        cur.execute("""
+            UPDATE leads SET
+                status             = COALESCE(%s, status),
+                notes              = %s,
+                dob                = %s,
+                height_ft          = %s,
+                height_in          = %s,
+                weight             = %s,
+                tobacco            = %s,
+                currently_insured  = %s,
+                assigned_agent     = %s,
+                coverage_amount    = %s,
+                monthly_budget     = %s,
+                major_conditions   = %s,
+                medications        = %s
+            WHERE id = %s
+        """, (
+            new_status,
+            new_notes,
+            uw.get("dob") or None,
+            uw.get("height_ft"),
+            uw.get("height_in"),
+            uw.get("weight"),
+            to_bool(uw.get("tobacco")),
+            to_bool(uw.get("currently_insured")),
+            uw.get("assigned_agent") or None,
+            uw.get("coverage_amount") or None,
+            uw.get("monthly_budget") or None,
+            uw.get("major_conditions") or None,
+            uw.get("medications") or None,
+            lead_id
+        ))
         conn.commit()
         cur.close()
         conn.close()

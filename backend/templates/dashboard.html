@@ -509,6 +509,83 @@
 
     .notes-textarea:focus { border-color: var(--cognac); }
 
+    /* ── UNDERWRITING SECTION ── */
+    .underwriting-section {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .underwriting-section h4 {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+    }
+
+    .uw-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .uw-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .uw-field label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .uw-field input,
+    .uw-field select {
+      background: var(--bg-base);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      padding: 0.45rem 0.65rem;
+      width: 100%;
+    }
+
+    .uw-field input:focus,
+    .uw-field select:focus {
+      outline: none;
+      border-color: var(--cognac);
+    }
+
+    .uw-field-wide {
+      grid-column: 1 / -1;
+    }
+
+    .uw-field textarea {
+      background: var(--bg-base);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      padding: 0.45rem 0.65rem;
+      width: 100%;
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    .uw-field textarea:focus {
+      outline: none;
+      border-color: var(--cognac);
+    }
+
     .expand-action-buttons {
       display: flex;
       gap: 0.5rem;
@@ -1152,6 +1229,60 @@
           <button class="btn-delete-lead" onclick="deleteLead(${lead.id})">Delete</button>
         </div>
       </div>
+
+      <div class="underwriting-section">
+        <h4>Underwriting & Coverage Notes</h4>
+        <div class="uw-grid">
+          <div class="uw-field">
+            <label>Date of Birth</label>
+            <input type="date" id="uw-dob-${lead.id}" value="${lead.dob || ''}"/>
+          </div>
+          <div class="uw-field">
+            <label>Height</label>
+            <input type="text" id="uw-height-${lead.id}" placeholder="e.g. 5ft 10in" value="${lead.height_ft ? lead.height_ft + 'ft ' + (lead.height_in||0) + 'in' : ''}"/>
+          </div>
+          <div class="uw-field">
+            <label>Weight (lbs)</label>
+            <input type="number" id="uw-weight-${lead.id}" placeholder="e.g. 175" value="${lead.weight || ''}"/>
+          </div>
+          <div class="uw-field">
+            <label>Tobacco Use</label>
+            <select id="uw-tobacco-${lead.id}">
+              <option value="">— Select —</option>
+              <option value="true"  ${lead.tobacco===true?'selected':''}>Yes</option>
+              <option value="false" ${lead.tobacco===false?'selected':''}>No</option>
+            </select>
+          </div>
+          <div class="uw-field">
+            <label>Currently Insured</label>
+            <select id="uw-insured-${lead.id}">
+              <option value="">— Select —</option>
+              <option value="true"  ${lead.currently_insured===true?'selected':''}>Yes</option>
+              <option value="false" ${lead.currently_insured===false?'selected':''}>No</option>
+            </select>
+          </div>
+          <div class="uw-field">
+            <label>Assigned Agent</label>
+            <input type="text" id="uw-agent-${lead.id}" placeholder="e.g. Josh" value="${lead.assigned_agent || ''}"/>
+          </div>
+          <div class="uw-field">
+            <label>Coverage Amount</label>
+            <input type="text" id="uw-coverage-${lead.id}" placeholder="e.g. $250,000" value="${lead.coverage_amount || ''}"/>
+          </div>
+          <div class="uw-field">
+            <label>Monthly Budget</label>
+            <input type="text" id="uw-budget-${lead.id}" placeholder="e.g. $75/mo" value="${lead.monthly_budget || ''}"/>
+          </div>
+          <div class="uw-field uw-field-wide">
+            <label>Major Health Conditions</label>
+            <textarea id="uw-conditions-${lead.id}" placeholder="e.g. Type 2 diabetes, hypertension...">${lead.major_conditions || ''}</textarea>
+          </div>
+          <div class="uw-field uw-field-wide">
+            <label>Current Medications</label>
+            <textarea id="uw-medications-${lead.id}" placeholder="e.g. Metformin, Lisinopril...">${lead.medications || ''}</textarea>
+          </div>
+        </div>
+      </div>
     `;
   }
 
@@ -1160,36 +1291,52 @@
     const status = document.getElementById('status-select-' + id)?.value;
     const notes  = document.getElementById('notes-' + id)?.value;
 
+    // Parse height string like "5ft 10in"
+    const heightRaw = document.getElementById('uw-height-' + id)?.value || '';
+    const heightMatch = heightRaw.match(/(\d+)\s*ft\s*(\d*)/i);
+    const heightFt = heightMatch ? parseInt(heightMatch[1]) : null;
+    const heightIn = heightMatch ? parseInt(heightMatch[2] || 0) : null;
+
+    const underwriting = {
+      dob:               document.getElementById('uw-dob-' + id)?.value || null,
+      height_ft:         heightFt,
+      height_in:         heightIn,
+      weight:            parseInt(document.getElementById('uw-weight-' + id)?.value) || null,
+      tobacco:           document.getElementById('uw-tobacco-' + id)?.value || null,
+      currently_insured: document.getElementById('uw-insured-' + id)?.value || null,
+      assigned_agent:    document.getElementById('uw-agent-' + id)?.value || null,
+      coverage_amount:   document.getElementById('uw-coverage-' + id)?.value || null,
+      monthly_budget:    document.getElementById('uw-budget-' + id)?.value || null,
+      major_conditions:  document.getElementById('uw-conditions-' + id)?.value || null,
+      medications:       document.getElementById('uw-medications-' + id)?.value || null,
+    };
+
     try {
       const res  = await fetch('/lead/' + id + '/status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status, notes })
+        body: JSON.stringify({ status, notes, underwriting })
       });
       const data = await res.json();
       if (data.status !== 'ok') throw new Error(data.message);
 
-      // Update local data
       const lead = ALL_LEADS.find(l => l.id === id);
       if (lead) lead.status = status;
 
-      // Update badge in table row
       const row   = document.querySelector(`.lead-row[data-id="${id}"]`);
       const badge = row?.querySelector('.status-badge');
       if (badge) {
         badge.className = `status-badge badge-${status}`;
         badge.textContent = status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
       }
-
       row.dataset.status = status;
       updateStatCounts();
 
       const fb = document.getElementById('save-feedback-' + id);
-      if (fb) { fb.style.display = 'inline'; setTimeout(() => fb.style.display = 'none', 2000); }
+      if (fb) { fb.style.opacity = '1'; setTimeout(() => fb.style.opacity = '0', 2000); }
 
-      showToast('Lead updated.', 'success');
-    } catch(e) {
-      showToast('Error: ' + e.message, 'error');
+    } catch (e) {
+      alert('Failed to save: ' + e.message);
     }
   }
 
