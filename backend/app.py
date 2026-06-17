@@ -945,11 +945,12 @@ def setup_admin():
     username = "josh"
     password = "ChangeMe2026!"
     email    = "josh@thebrownfinancialgroup.com"
-    pw_hash  = hashlib.sha256(password.encode()).hexdigest()
+    salt     = secrets.token_hex(16)
+    pw_hash  = salt + ":" + hashlib.sha256((salt + password).encode()).hexdigest()
     conn = get_connection()
     cur  = conn.cursor()
     cur.execute(
-        "INSERT INTO agents (username, password_hash, email, full_name, notify_on_lead) VALUES (%s, %s, %s, %s, %s) ON CONFLICT (username) DO NOTHING",
+        "INSERT INTO agents (username, password_hash, email, full_name, notify_on_lead) VALUES (%s, %s, %s, %s, %s) ON CONFLICT (username) DO UPDATE SET password_hash = EXCLUDED.password_hash",
         (username, pw_hash, email, "Josh Brown", True)
     )
     conn.commit()
