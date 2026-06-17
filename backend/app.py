@@ -949,8 +949,8 @@ def setup_admin():
     conn = get_connection()
     cur  = conn.cursor()
     cur.execute(
-        "INSERT INTO agents (username, password_hash, email, notify_on_lead) VALUES (%s, %s, %s, %s) ON CONFLICT (username) DO NOTHING",
-        (username, pw_hash, email, True)
+        "INSERT INTO agents (username, password_hash, email, full_name, notify_on_lead) VALUES (%s, %s, %s, %s, %s) ON CONFLICT (username) DO NOTHING",
+        (username, pw_hash, email, "Josh Brown", True)
     )
     conn.commit()
     cur.close()
