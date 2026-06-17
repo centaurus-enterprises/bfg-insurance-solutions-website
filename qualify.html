@@ -372,9 +372,24 @@
     }
 
     .field textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--parchment-mid);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.925rem;
+      color: var(--espresso);
+      background: var(--white);
       resize: vertical;
       min-height: 100px;
+      transition: border-color 0.2s, box-shadow 0.2s;
       line-height: 1.6;
+    }
+
+    .field textarea:focus {
+      outline: none;
+      border-color: var(--cognac);
+      box-shadow: 0 0 0 3px rgba(192,133,82,0.12);
     }
 
     .field select {
@@ -421,14 +436,6 @@
       color: var(--cognac);
       font-weight: 600;
     }
-
-    /* HEIGHT FIELD */
-    .height-group {
-      display: flex;
-      gap: 0.75rem;
-    }
-
-    .height-group .field { flex: 1; }
 
     /* FIELD HINT */
     .field-hint {
@@ -575,32 +582,16 @@
       box-shadow: 0 8px 28px rgba(140,90,60,0.35);
     }
 
-    /* ── SECTION 2 PRODUCT MODULES ── */
-    /* All modules hidden by default; JS shows the active one */
-    .coverage-module {
-      display: none;
-    }
-    .coverage-module.active {
-      display: block;
-    }
-
-    /* Prompt shown before product is selected */
-    .coverage-placeholder {
-      padding: 2rem;
-      text-align: center;
-      border: 1.5px dashed var(--parchment-mid);
-      border-radius: 8px;
-      color: var(--text-light);
-      font-size: 0.9rem;
-      line-height: 1.6;
-    }
-
-    .coverage-placeholder strong {
-      display: block;
-      font-family: 'Raleway', sans-serif;
-      font-size: 1rem;
-      color: var(--espresso);
-      margin-bottom: 0.35rem;
+    /* AGENT DISCLAIMER */
+    .agent-disclaimer {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-top: 1.5rem;
+      padding: 1rem 1.25rem;
+      background: rgba(192,133,82,0.04);
+      border-left: 3px solid var(--cognac);
+      border-radius: 0 6px 6px 0;
     }
 
     /* ── RESPONSIVE ── */
@@ -656,13 +647,9 @@
       </div>
       <div class="progress-step">
         <div class="step-bubble" id="bubble-3"><span>3</span></div>
-        <div class="step-connector" id="connector-3"></div>
-      </div>
-      <div class="progress-step">
-        <div class="step-bubble" id="bubble-4"><span>4</span></div>
       </div>
     </div>
-    <div class="progress-label">Section <span id="progressLabel">1</span> of 4</div>
+    <div class="progress-label">Section <span id="progressLabel">1</span> of 3</div>
   </div>
 
   <!-- MAIN -->
@@ -672,7 +659,7 @@
       <!-- HEADER -->
       <div class="qualify-header">
         <h1>Let's find the right <span id="pageHeadlineSpan">coverage for you</span></h1>
-        <p id="pageSubhead">This form helps us prepare your options ahead of time. Your information is kept private and secure — the more detail you provide, the better we can match you with the right product before your call.</p>
+        <p id="pageSubhead">This form helps us prepare your options ahead of time. Your information is kept private and secure — one of our agents will reach out to walk you through your options personally.</p>
       </div>
 
       <div class="privacy-note">
@@ -769,12 +756,12 @@
           <p class="locked-notice">✓ Your product interest was pre-selected based on your inquiry. You can change it above if needed.</p>
         </div>
 
-        <!-- ── SECTION 1: PERSONAL INFO ── -->
+        <!-- ── SECTION 1: YOUR INFORMATION ── -->
         <div class="form-section" id="section-1">
           <div class="section-header">
             <div class="section-number">1</div>
             <div class="section-header-text">
-              <h2>Personal Information</h2>
+              <h2>Your Information</h2>
               <p>Basic contact details so we can reach you</p>
             </div>
           </div>
@@ -788,21 +775,17 @@
               <label>Last Name <span class="required">*</span></label>
               <input type="text" name="last_name" placeholder="Smith" required/>
             </div>
-            <div class="field">
-              <label>Age <span class="required">*</span></label>
-              <input type="number" name="age" placeholder="42" min="18" max="100" required/>
-            </div>
-            <div class="field">
-              <label>Email Address <span class="required">*</span></label>
-              <input type="email" name="email" placeholder="john@example.com" required/>
-            </div>
-            <div class="field">
+            <div class="field field-full">
               <label>Mobile Phone <span class="required">*</span></label>
-              <input type="tel" name="mobile_phone" placeholder="(000) 000-0000" required/>
+              <input type="tel" name="mobile_phone" id="mobile_phone" placeholder="(000) 000-0000" required/>
             </div>
-            <div class="field">
+            <div class="field field-full">
               <label>Home Phone <span class="optional">(optional)</span></label>
-              <input type="tel" name="home_phone" placeholder="(000) 000-0000"/>
+              <input type="tel" name="home_phone" id="home_phone" placeholder="(000) 000-0000"/>
+            </div>
+            <div class="field field-full">
+              <label>Email <span class="optional">(optional)</span></label>
+              <input type="email" name="email" placeholder="john@example.com"/>
             </div>
             <div class="field">
               <label>City <span class="required">*</span></label>
@@ -831,527 +814,57 @@
                 <option>Wisconsin</option><option>Wyoming</option>
               </select>
             </div>
-            <div class="field">
-              <label>Zip Code <span class="required">*</span></label>
-              <input type="text" name="zip" placeholder="92101" maxlength="5" required/>
-            </div>
           </div>
         </div>
 
-        <!-- ── SECTION 2: COVERAGE INFO (CONDITIONAL) ── -->
+        <!-- ── SECTION 2: COVERAGE DETAILS ── -->
         <div class="form-section" id="section-2">
           <div class="section-header">
             <div class="section-number">2</div>
             <div class="section-header-text">
-              <h2 id="section2Title">Coverage Information</h2>
-              <p id="section2Sub">Details about your coverage needs</p>
+              <h2>Coverage Details</h2>
+              <p>A few details to help us prepare the right options for your call</p>
             </div>
           </div>
 
-          <!-- PLACEHOLDER — shown until product is selected -->
-          <div class="coverage-placeholder" id="coveragePlaceholder">
-            <strong>Select a product above to continue</strong>
-            Choose the type of coverage you're interested in and this section will update with the relevant questions.
-          </div>
+          <div class="field-grid cols-1">
 
-          <!-- ═══════════════════════════════════════════ -->
-          <!-- MODULE: MORTGAGE PROTECTION                 -->
-          <!-- ═══════════════════════════════════════════ -->
-          <div class="coverage-module" id="module-mortgage-protection">
-            <div class="field-grid">
-              <div class="field">
-                <label>Mortgage Lender <span class="optional">(optional)</span></label>
-                <input type="text" name="mp_lender" placeholder="e.g. Wells Fargo, Chase"/>
-              </div>
-              <div class="field">
-                <label>Remaining Mortgage Balance <span class="required">*</span></label>
-                <input type="text" name="mp_balance" placeholder="$285,000"/>
-              </div>
-              <div class="field">
-                <label>Monthly Mortgage Payment <span class="required">*</span></label>
-                <input type="text" name="mp_monthly" placeholder="$1,850"/>
-              </div>
-              <div class="field">
-                <label>Years Remaining on Mortgage <span class="required">*</span></label>
-                <select name="mp_years_remaining">
-                  <option value="" disabled selected>Select</option>
-                  <option>5 or fewer</option>
-                  <option>6–10 years</option>
-                  <option>11–15 years</option>
-                  <option>16–20 years</option>
-                  <option>21–25 years</option>
-                  <option>26–30 years</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Year Home Was Purchased <span class="optional">(optional)</span></label>
-                <input type="number" name="mp_purchase_year" placeholder="2021" min="1950" max="2026"/>
-              </div>
-              <div class="field">
-                <label>Currently Insured? <span class="required">*</span></label>
-                <div class="radio-group">
-                  <div class="radio-option">
-                    <input type="radio" name="mp_insured" id="mp-ins-no" value="No"/>
-                    <label for="mp-ins-no">No</label>
-                  </div>
-                  <div class="radio-option">
-                    <input type="radio" name="mp_insured" id="mp-ins-yes" value="Yes"/>
-                    <label for="mp-ins-yes">Yes</label>
-                  </div>
+            <div class="field">
+              <label>Do you have a beneficiary in mind?</label>
+              <div class="radio-group">
+                <div class="radio-option">
+                  <input type="radio" name="has_beneficiary" id="ben-yes" value="yes"/>
+                  <label for="ben-yes">Yes</label>
                 </div>
-              </div>
-              <div class="field">
-                <label>Do you have a beneficiary? <span class="required">*</span></label>
-                <div class="radio-group">
-                  <div class="radio-option">
-                    <input type="radio" name="mp_beneficiary" id="mp-ben-yes" value="Yes"/>
-                    <label for="mp-ben-yes">Yes</label>
-                  </div>
-                  <div class="radio-option">
-                    <input type="radio" name="mp_beneficiary" id="mp-ben-no" value="No"/>
-                    <label for="mp-ben-no">No</label>
-                  </div>
+                <div class="radio-option">
+                  <input type="radio" name="has_beneficiary" id="ben-no" value="no"/>
+                  <label for="ben-no">No</label>
                 </div>
-              </div>
-              <div class="field">
-                <label>Beneficiary Relationship <span class="optional">(optional)</span></label>
-                <input type="text" name="mp_beneficiary_relationship" placeholder="e.g. Spouse, Child"/>
-              </div>
-              <div class="field field-full">
-                <label>Reason for Seeking Coverage <span class="optional">(optional)</span></label>
-                <textarea name="mp_reason" placeholder="Tell us a little about what brought you here..."></textarea>
               </div>
             </div>
-          </div>
 
-          <!-- ═══════════════════════════════════════════ -->
-          <!-- MODULE: FINAL EXPENSE                       -->
-          <!-- ═══════════════════════════════════════════ -->
-          <div class="coverage-module" id="module-final-expense">
-            <div class="field-grid">
-              <div class="field">
-                <label>Desired Coverage Amount <span class="required">*</span></label>
-                <select name="fe_coverage_amount">
-                  <option value="" disabled selected>Select range</option>
-                  <option>$5,000 – $10,000</option>
-                  <option>$10,000 – $15,000</option>
-                  <option>$15,000 – $20,000</option>
-                  <option>$20,000 – $25,000</option>
-                  <option>$25,000+</option>
-                  <option>Not sure yet</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Monthly Budget for Premium <span class="optional">(optional)</span></label>
-                <select name="fe_budget">
-                  <option value="" disabled selected>Select range</option>
-                  <option>Under $50/mo</option>
-                  <option>$50 – $75/mo</option>
-                  <option>$75 – $100/mo</option>
-                  <option>$100 – $150/mo</option>
-                  <option>$150+/mo</option>
-                  <option>Flexible</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Currently Insured? <span class="required">*</span></label>
-                <div class="radio-group">
-                  <div class="radio-option">
-                    <input type="radio" name="fe_insured" id="fe-ins-no" value="No"/>
-                    <label for="fe-ins-no">No</label>
-                  </div>
-                  <div class="radio-option">
-                    <input type="radio" name="fe_insured" id="fe-ins-yes" value="Yes"/>
-                    <label for="fe-ins-yes">Yes</label>
-                  </div>
-                </div>
-              </div>
-              <div class="field">
-                <label>Do you have a beneficiary? <span class="required">*</span></label>
-                <div class="radio-group">
-                  <div class="radio-option">
-                    <input type="radio" name="fe_beneficiary" id="fe-ben-yes" value="Yes"/>
-                    <label for="fe-ben-yes">Yes</label>
-                  </div>
-                  <div class="radio-option">
-                    <input type="radio" name="fe_beneficiary" id="fe-ben-no" value="No"/>
-                    <label for="fe-ben-no">No</label>
-                  </div>
-                </div>
-              </div>
-              <div class="field">
-                <label>Beneficiary Relationship <span class="optional">(optional)</span></label>
-                <input type="text" name="fe_beneficiary_relationship" placeholder="e.g. Spouse, Child"/>
-              </div>
-              <div class="field field-full">
-                <label>Anything else you'd like us to know? <span class="optional">(optional)</span></label>
-                <textarea name="fe_notes" placeholder="Any specific concerns or questions about final expense coverage..."></textarea>
-              </div>
+            <div class="field" id="beneficiaryRelField" style="display:none;">
+              <label>Relationship to beneficiary <span class="optional">(optional)</span></label>
+              <input type="text" name="beneficiary_relationship" placeholder="e.g. Spouse, Child, Parent"/>
             </div>
-          </div>
 
-          <!-- ═══════════════════════════════════════════ -->
-          <!-- MODULE: TERM LIFE                           -->
-          <!-- ═══════════════════════════════════════════ -->
-          <div class="coverage-module" id="module-term-life">
-            <div class="field-grid">
-              <div class="field">
-                <label>Desired Coverage Amount <span class="required">*</span></label>
-                <input type="text" name="term_coverage_amount" placeholder="$500,000"/>
-              </div>
-              <div class="field">
-                <label>Preferred Term Length <span class="required">*</span></label>
-                <select name="term_length">
-                  <option value="" disabled selected>Select term</option>
-                  <option>10 Year</option>
-                  <option>15 Year</option>
-                  <option>20 Year</option>
-                  <option>25 Year</option>
-                  <option>30 Year</option>
-                  <option>Not sure yet</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Estimated Annual Income <span class="optional">(optional)</span></label>
-                <input type="text" name="term_annual_income" placeholder="$75,000"/>
-              </div>
-              <div class="field">
-                <label>Primary Reason for Coverage <span class="required">*</span></label>
-                <select name="term_reason">
-                  <option value="" disabled selected>Select</option>
-                  <option>Income replacement</option>
-                  <option>Mortgage / debt protection</option>
-                  <option>Children's future</option>
-                  <option>Business coverage</option>
-                  <option>Other</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Currently Insured? <span class="required">*</span></label>
-                <div class="radio-group">
-                  <div class="radio-option">
-                    <input type="radio" name="term_insured" id="term-ins-no" value="No"/>
-                    <label for="term-ins-no">No</label>
-                  </div>
-                  <div class="radio-option">
-                    <input type="radio" name="term_insured" id="term-ins-yes" value="Yes"/>
-                    <label for="term-ins-yes">Yes</label>
-                  </div>
-                  <div class="radio-option">
-                    <input type="radio" name="term_insured" id="term-ins-thinking" value="Thinking About It"/>
-                    <label for="term-ins-thinking">Thinking About It</label>
-                  </div>
-                </div>
-              </div>
-              <div class="field">
-                <label>Do you have a beneficiary? <span class="required">*</span></label>
-                <div class="radio-group">
-                  <div class="radio-option">
-                    <input type="radio" name="term_beneficiary" id="term-ben-yes" value="Yes"/>
-                    <label for="term-ben-yes">Yes</label>
-                  </div>
-                  <div class="radio-option">
-                    <input type="radio" name="term_beneficiary" id="term-ben-no" value="No"/>
-                    <label for="term-ben-no">No</label>
-                  </div>
-                </div>
-              </div>
-              <div class="field">
-                <label>Beneficiary Relationship <span class="optional">(optional)</span></label>
-                <input type="text" name="term_beneficiary_relationship" placeholder="e.g. Spouse, Child"/>
-              </div>
-              <div class="field field-full">
-                <label>Additional Notes <span class="optional">(optional)</span></label>
-                <textarea name="term_notes" placeholder="Tell us a little about what brought you here..."></textarea>
-              </div>
+            <div class="field">
+              <label>Reason for seeking coverage <span class="optional">(optional)</span></label>
+              <textarea name="reason" placeholder="e.g. Recently purchased a home, new baby, planning for retirement..."></textarea>
             </div>
+
           </div>
 
-          <!-- ═══════════════════════════════════════════ -->
-          <!-- MODULE: WHOLE LIFE                          -->
-          <!-- ═══════════════════════════════════════════ -->
-          <div class="coverage-module" id="module-whole-life">
-            <div class="field-grid">
-              <div class="field">
-                <label>Desired Coverage Amount <span class="required">*</span></label>
-                <input type="text" name="wl_coverage_amount" placeholder="$250,000"/>
-              </div>
-              <div class="field">
-                <label>Monthly Premium Budget <span class="optional">(optional)</span></label>
-                <select name="wl_budget">
-                  <option value="" disabled selected>Select range</option>
-                  <option>Under $100/mo</option>
-                  <option>$100 – $200/mo</option>
-                  <option>$200 – $350/mo</option>
-                  <option>$350 – $500/mo</option>
-                  <option>$500+/mo</option>
-                  <option>Flexible</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Primary Goal <span class="required">*</span></label>
-                <select name="wl_goal">
-                  <option value="" disabled selected>Select</option>
-                  <option>Lifelong family protection</option>
-                  <option>Cash value / savings growth</option>
-                  <option>Estate planning / legacy</option>
-                  <option>Business planning</option>
-                  <option>Other</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Currently Insured? <span class="required">*</span></label>
-                <div class="radio-group">
-                  <div class="radio-option">
-                    <input type="radio" name="wl_insured" id="wl-ins-no" value="No"/>
-                    <label for="wl-ins-no">No</label>
-                  </div>
-                  <div class="radio-option">
-                    <input type="radio" name="wl_insured" id="wl-ins-yes" value="Yes"/>
-                    <label for="wl-ins-yes">Yes</label>
-                  </div>
-                </div>
-              </div>
-              <div class="field">
-                <label>Do you have a beneficiary? <span class="required">*</span></label>
-                <div class="radio-group">
-                  <div class="radio-option">
-                    <input type="radio" name="wl_beneficiary" id="wl-ben-yes" value="Yes"/>
-                    <label for="wl-ben-yes">Yes</label>
-                  </div>
-                  <div class="radio-option">
-                    <input type="radio" name="wl_beneficiary" id="wl-ben-no" value="No"/>
-                    <label for="wl-ben-no">No</label>
-                  </div>
-                </div>
-              </div>
-              <div class="field">
-                <label>Beneficiary Relationship <span class="optional">(optional)</span></label>
-                <input type="text" name="wl_beneficiary_relationship" placeholder="e.g. Spouse, Child"/>
-              </div>
-              <div class="field field-full">
-                <label>Additional Notes <span class="optional">(optional)</span></label>
-                <textarea name="wl_notes" placeholder="Tell us about your goals or any questions you have..."></textarea>
-              </div>
-            </div>
-          </div>
+          <p class="agent-disclaimer">One of our agents will reach out shortly to discuss your options and walk you through some additional questions to find the best fit for your needs.</p>
+        </div>
 
-          <!-- ═══════════════════════════════════════════ -->
-          <!-- MODULE: IUL / WEALTH BUILDING               -->
-          <!-- ═══════════════════════════════════════════ -->
-          <div class="coverage-module" id="module-iul">
-            <div class="field-grid">
-              <div class="field">
-                <label>Estimated Annual Income <span class="required">*</span></label>
-                <input type="text" name="iul_annual_income" placeholder="$90,000"/>
-              </div>
-              <div class="field">
-                <label>Monthly Contribution Budget <span class="required">*</span></label>
-                <select name="iul_budget">
-                  <option value="" disabled selected>Select range</option>
-                  <option>Under $200/mo</option>
-                  <option>$200 – $400/mo</option>
-                  <option>$400 – $700/mo</option>
-                  <option>$700 – $1,000/mo</option>
-                  <option>$1,000+/mo</option>
-                  <option>Not sure yet</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Primary Goal <span class="required">*</span></label>
-                <select name="iul_goal">
-                  <option value="" disabled selected>Select</option>
-                  <option>Tax-free retirement income</option>
-                  <option>Wealth accumulation</option>
-                  <option>College funding</option>
-                  <option>Business planning</option>
-                  <option>Supplement existing retirement</option>
-                  <option>Other</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Investment Experience <span class="optional">(optional)</span></label>
-                <select name="iul_investment_exp">
-                  <option value="" disabled selected>Select</option>
-                  <option>None</option>
-                  <option>Basic (savings, CDs)</option>
-                  <option>Moderate (401k, IRA)</option>
-                  <option>Advanced (stocks, brokerage accounts)</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Do you have existing life insurance? <span class="required">*</span></label>
-                <div class="radio-group">
-                  <div class="radio-option">
-                    <input type="radio" name="iul_existing_coverage" id="iul-cov-no" value="No"/>
-                    <label for="iul-cov-no">No</label>
-                  </div>
-                  <div class="radio-option">
-                    <input type="radio" name="iul_existing_coverage" id="iul-cov-yes" value="Yes"/>
-                    <label for="iul-cov-yes">Yes</label>
-                  </div>
-                </div>
-              </div>
-              <div class="field">
-                <label>Do you have a beneficiary? <span class="optional">(optional)</span></label>
-                <div class="radio-group">
-                  <div class="radio-option">
-                    <input type="radio" name="iul_beneficiary" id="iul-ben-yes" value="Yes"/>
-                    <label for="iul-ben-yes">Yes</label>
-                  </div>
-                  <div class="radio-option">
-                    <input type="radio" name="iul_beneficiary" id="iul-ben-no" value="No"/>
-                    <label for="iul-ben-no">No</label>
-                  </div>
-                </div>
-              </div>
-              <div class="field field-full">
-                <label>Additional Notes <span class="optional">(optional)</span></label>
-                <textarea name="iul_notes" placeholder="Tell us about your financial goals or any questions you have..."></textarea>
-              </div>
-            </div>
-          </div>
-
-          <!-- ═══════════════════════════════════════════ -->
-          <!-- MODULE: LIVING BENEFITS                     -->
-          <!-- ═══════════════════════════════════════════ -->
-          <div class="coverage-module" id="module-living-benefits">
-            <div class="field-grid">
-              <div class="field">
-                <label>Desired Coverage Amount <span class="required">*</span></label>
-                <input type="text" name="lb_coverage_amount" placeholder="$300,000"/>
-              </div>
-              <div class="field">
-                <label>Primary Concern <span class="required">*</span></label>
-                <select name="lb_concern">
-                  <option value="" disabled selected>Select</option>
-                  <option>Critical illness (cancer, heart attack, stroke)</option>
-                  <option>Chronic illness / long-term care</option>
-                  <option>Terminal illness</option>
-                  <option>All of the above</option>
-                  <option>Not sure — want guidance</option>
-                </select>
-              </div>
-              <div class="field">
-                <label>Family History of Critical Illness? <span class="optional">(optional)</span></label>
-                <div class="radio-group">
-                  <div class="radio-option">
-                    <input type="radio" name="lb_family_history" id="lb-fh-no" value="No"/>
-                    <label for="lb-fh-no">No</label>
-                  </div>
-                  <div class="radio-option">
-                    <input type="radio" name="lb_family_history" id="lb-fh-yes" value="Yes"/>
-                    <label for="lb-fh-yes">Yes</label>
-                  </div>
-                </div>
-              </div>
-              <div class="field">
-                <label>Currently Insured? <span class="required">*</span></label>
-                <div class="radio-group">
-                  <div class="radio-option">
-                    <input type="radio" name="lb_insured" id="lb-ins-no" value="No"/>
-                    <label for="lb-ins-no">No</label>
-                  </div>
-                  <div class="radio-option">
-                    <input type="radio" name="lb_insured" id="lb-ins-yes" value="Yes"/>
-                    <label for="lb-ins-yes">Yes</label>
-                  </div>
-                </div>
-              </div>
-              <div class="field">
-                <label>Do you have a beneficiary? <span class="required">*</span></label>
-                <div class="radio-group">
-                  <div class="radio-option">
-                    <input type="radio" name="lb_beneficiary" id="lb-ben-yes" value="Yes"/>
-                    <label for="lb-ben-yes">Yes</label>
-                  </div>
-                  <div class="radio-option">
-                    <input type="radio" name="lb_beneficiary" id="lb-ben-no" value="No"/>
-                    <label for="lb-ben-no">No</label>
-                  </div>
-                </div>
-              </div>
-              <div class="field">
-                <label>Beneficiary Relationship <span class="optional">(optional)</span></label>
-                <input type="text" name="lb_beneficiary_relationship" placeholder="e.g. Spouse, Child"/>
-              </div>
-              <div class="field field-full">
-                <label>Additional Notes <span class="optional">(optional)</span></label>
-                <textarea name="lb_notes" placeholder="Tell us about your concerns or what prompted you to look into living benefits..."></textarea>
-              </div>
-            </div>
-          </div>
-
-        </div><!-- /section-2 -->
-
-        <!-- ── SECTION 3: MEDICAL INFO ── -->
+        <!-- ── SECTION 3: CONTACT PREFERENCE ── -->
         <div class="form-section" id="section-3">
           <div class="section-header">
             <div class="section-number">3</div>
             <div class="section-header-text">
-              <h2>Medical Information</h2>
-              <p>Helps us determine which carriers and plans you qualify for</p>
-            </div>
-          </div>
-
-          <div class="field-grid">
-            <div class="field field-full">
-              <label>Tobacco or Nicotine use in the past 12 months? <span class="required">*</span></label>
-              <div class="radio-group">
-                <div class="radio-option">
-                  <input type="radio" name="tobacco" id="tobacco-no" value="No" required/>
-                  <label for="tobacco-no">No</label>
-                </div>
-                <div class="radio-option">
-                  <input type="radio" name="tobacco" id="tobacco-yes" value="Yes"/>
-                  <label for="tobacco-yes">Yes</label>
-                </div>
-              </div>
-            </div>
-
-            <div class="field field-full">
-              <label>Height <span class="required">*</span></label>
-              <div class="height-group">
-                <div class="field">
-                  <input type="number" name="height_ft" placeholder="Feet" min="3" max="8"/>
-                </div>
-                <div class="field">
-                  <input type="number" name="height_in" placeholder="Inches" min="0" max="11"/>
-                </div>
-              </div>
-            </div>
-
-            <div class="field">
-              <label>Weight (lbs) <span class="required">*</span></label>
-              <input type="number" name="weight" placeholder="175" min="50" max="700" required/>
-            </div>
-
-            <div class="field field-full">
-              <label>Major Medical Conditions <span class="required">*</span></label>
-              <textarea name="major_conditions" placeholder="Heart attack, stroke, cancer, etc. Type 'N/A' if none." required></textarea>
-              <span class="field-hint">Examples: Heart Attack, Stroke, Cancer, Kidney Disease, COPD</span>
-            </div>
-
-            <div class="field field-full">
-              <label>Minor Medical Conditions <span class="required">*</span></label>
-              <textarea name="minor_conditions" placeholder="Diabetes, high blood pressure, cholesterol, etc. Type 'N/A' if none." required></textarea>
-              <span class="field-hint">Examples: Type 1 or 2 Diabetes, High Blood Pressure, High Cholesterol</span>
-            </div>
-
-            <div class="field field-full">
-              <label>Current Medications <span class="optional">(optional)</span></label>
-              <textarea name="medications" placeholder="Please list any medications you are currently taking. Type 'N/A' if none."></textarea>
-            </div>
-          </div>
-        </div>
-
-        <!-- ── SECTION 4: IDENTITY + CONTACT PREFERENCE ── -->
-        <div class="form-section" id="section-4">
-          <div class="section-header">
-            <div class="section-number">4</div>
-            <div class="section-header-text">
               <h2>How Would You Like to Connect?</h2>
-              <p>Tell us your preference and verify your identity for your call</p>
+              <p>Tell us your preference for follow-up</p>
             </div>
           </div>
 
@@ -1386,25 +899,6 @@
                   </label>
                 </div>
               </div>
-            </div>
-
-            <!-- BEST TIME TO CALL -->
-            <div class="field">
-              <label>Best Time to Reach You <span class="optional">(optional)</span></label>
-              <select name="best_time">
-                <option value="" disabled selected>Select a time</option>
-                <option>Morning (8am – 12pm)</option>
-                <option>Afternoon (12pm – 5pm)</option>
-                <option>Evening (5pm – 8pm)</option>
-                <option>Anytime</option>
-              </select>
-            </div>
-
-            <!-- IDENTITY CONFIRM -->
-            <div class="field">
-              <label>What is your favorite hobby? <span class="required">*</span></label>
-              <input type="text" name="hobby" placeholder="e.g. Hiking, cooking, gardening..." required/>
-              <span class="field-hint">This is used only to confirm your identity when our agent calls — it will never be shared.</span>
             </div>
 
           </div>
@@ -1468,140 +962,84 @@
 
   <script>
     // ═══════════════════════════════════════════════════════
-    // PRODUCT CONFIG
-    // Maps product values to display copy & section 2 text
-    // ═══════════════════════════════════════════════════════
-    const PRODUCT_CONFIG = {
-      'mortgage-protection': {
-        eyebrow:    'Mortgage Protection',
-        headline:   'mortgage protection coverage',
-        subhead:    'This form helps us prepare your options ahead of time. Tell us about your mortgage and we\'ll match you with the right carriers before your call.',
-        section2Title: 'Mortgage & Coverage Details',
-        section2Sub:   'Information about your home loan so we can size your coverage correctly',
-      },
-      'final-expense': {
-        eyebrow:    'Final Expense',
-        headline:   'final expense coverage',
-        subhead:    'This form helps us understand your needs so we can recommend the most affordable coverage options before your call.',
-        section2Title: 'Coverage Preferences',
-        section2Sub:   'Help us understand the coverage amount and budget that works best for you',
-      },
-      'term-life': {
-        eyebrow:    'Term Life',
-        headline:   'term life coverage',
-        subhead:    'Tell us about your coverage goals and we\'ll prepare your best options before your call.',
-        section2Title: 'Term Coverage Details',
-        section2Sub:   'Coverage amount, term length, and your reason for seeking protection',
-      },
-      'whole-life': {
-        eyebrow:    'Whole Life',
-        headline:   'whole life coverage',
-        subhead:    'Tell us about your long-term goals and we\'ll match you with the right permanent coverage options before your call.',
-        section2Title: 'Whole Life Coverage Details',
-        section2Sub:   'Your coverage goals and budget help us find the right permanent policy',
-      },
-      'iul': {
-        eyebrow:    'IUL / Wealth Building',
-        headline:   'an IUL strategy',
-        subhead:    'Tell us about your financial goals and we\'ll build a strategy tailored to your situation before your call.',
-        section2Title: 'Financial & Coverage Goals',
-        section2Sub:   'Income, budget, and objectives to help us design the right IUL illustration for you',
-      },
-      'living-benefits': {
-        eyebrow:    'Living Benefits',
-        headline:   'living benefits coverage',
-        subhead:    'Tell us about your concerns and we\'ll prepare coverage options that protect you while you\'re still living.',
-        section2Title: 'Living Benefits Details',
-        section2Sub:   'Your primary concerns help us find the right critical illness and living benefit riders',
-      },
-    };
-
-    // ═══════════════════════════════════════════════════════
-    // APPLY PRODUCT SELECTION
-    // ═══════════════════════════════════════════════════════
-    function applyProduct(value) {
-      const config = PRODUCT_CONFIG[value];
-      if (!config) return;
-
-      // Update page header copy
-      document.getElementById('pageEyebrow').textContent = config.eyebrow;
-      document.getElementById('pageHeadlineSpan').textContent = config.headline;
-      document.getElementById('pageSubhead').textContent = config.subhead;
-
-      // Update section 2 header
-      document.getElementById('section2Title').textContent = config.section2Title;
-      document.getElementById('section2Sub').textContent  = config.section2Sub;
-
-      // Hide placeholder, show correct module
-      document.getElementById('coveragePlaceholder').style.display = 'none';
-      document.querySelectorAll('.coverage-module').forEach(m => m.classList.remove('active'));
-      const activeModule = document.getElementById('module-' + value);
-      if (activeModule) activeModule.classList.add('active');
-    }
-
-    // ═══════════════════════════════════════════════════════
-    // URL PARAMETER DETECTION
+    // PRODUCT URL PARAM PRE-SELECTION
     // Handles: qualify.html?product=mortgage-protection
     // ═══════════════════════════════════════════════════════
-    function initProductFromURL() {
+    (function initProductFromURL() {
       const params  = new URLSearchParams(window.location.search);
       const product = params.get('product');
+      const validProducts = [
+        'mortgage-protection','final-expense','term-life',
+        'whole-life','iul','living-benefits'
+      ];
 
-      if (product && PRODUCT_CONFIG[product]) {
-        // Check the right radio tile
-        const radio = document.getElementById('prod-' + product.replace('mortgage-protection','mp').replace('final-expense','fe').replace('term-life','term').replace('whole-life','whole').replace('living-benefits','lb'));
-
-        // Fallback: find by value
-        const radioByValue = document.querySelector(`input[name="product_type"][value="${product}"]`);
-        if (radioByValue) radioByValue.checked = true;
-
-        // Lock the selector visually
-        document.getElementById('productSelectorBlock').classList.add('locked');
-
-        applyProduct(product);
+      if (product && validProducts.includes(product)) {
+        const radio = document.querySelector(`input[name="product_type"][value="${product}"]`);
+        if (radio) {
+          radio.checked = true;
+          document.getElementById('productSelectorBlock').classList.add('locked');
+        }
       }
-    }
+    })();
 
     // ═══════════════════════════════════════════════════════
-    // PRODUCT TILE CLICK LISTENER
+    // BENEFICIARY RELATIONSHIP SHOW / HIDE
     // ═══════════════════════════════════════════════════════
-    document.querySelectorAll('input[name="product_type"]').forEach(radio => {
+    document.querySelectorAll('input[name="has_beneficiary"]').forEach(function(radio) {
       radio.addEventListener('change', function() {
-        applyProduct(this.value);
+        var relField = document.getElementById('beneficiaryRelField');
+        relField.style.display = (this.value === 'yes') ? 'flex' : 'none';
       });
     });
 
     // ═══════════════════════════════════════════════════════
-    // SCROLL PROGRESS TRACKER
+    // PHONE NUMBER AUTO-FORMATTING  (000) 000-0000
     // ═══════════════════════════════════════════════════════
-    const sections = [
-      document.getElementById('section-1'),
-      document.getElementById('section-2'),
-      document.getElementById('section-3'),
-      document.getElementById('section-4'),
-    ];
+    function formatPhone(input) {
+      input.addEventListener('input', function() {
+        var digits = this.value.replace(/\D/g, '').slice(0, 10);
+        var formatted = '';
+        if (digits.length === 0) {
+          formatted = '';
+        } else if (digits.length <= 3) {
+          formatted = '(' + digits;
+        } else if (digits.length <= 6) {
+          formatted = '(' + digits.slice(0,3) + ') ' + digits.slice(3);
+        } else {
+          formatted = '(' + digits.slice(0,3) + ') ' + digits.slice(3,6) + '-' + digits.slice(6);
+        }
+        this.value = formatted;
+      });
+    }
 
-    const bubbles    = [1,2,3,4].map(n => document.getElementById(`bubble-${n}`));
-    const connectors = [1,2,3].map(n => document.getElementById(`connector-${n}`));
-    const label      = document.getElementById('progressLabel');
+    formatPhone(document.getElementById('mobile_phone'));
+    formatPhone(document.getElementById('home_phone'));
+
+    // ═══════════════════════════════════════════════════════
+    // SCROLL PROGRESS TRACKER (3 steps)
+    // ═══════════════════════════════════════════════════════
+    var sections   = ['section-1','section-2','section-3'].map(function(id) { return document.getElementById(id); });
+    var bubbles    = [1,2,3].map(function(n) { return document.getElementById('bubble-' + n); });
+    var connectors = [1,2].map(function(n) { return document.getElementById('connector-' + n); });
+    var label      = document.getElementById('progressLabel');
 
     function updateProgress() {
-      const scrollY = window.scrollY + window.innerHeight * 0.4;
-      let current = 0;
+      var scrollY  = window.scrollY + window.innerHeight * 0.4;
+      var current  = 0;
 
-      sections.forEach((section, i) => {
+      sections.forEach(function(section, i) {
         if (section && scrollY >= section.offsetTop) {
           current = i;
         }
       });
 
-      bubbles.forEach((bubble, i) => {
+      bubbles.forEach(function(bubble, i) {
         bubble.classList.remove('active', 'complete');
         if (i < current) bubble.classList.add('complete');
         else if (i === current) bubble.classList.add('active');
       });
 
-      connectors.forEach((connector, i) => {
+      connectors.forEach(function(connector, i) {
         connector.classList.toggle('filled', i < current);
       });
 
@@ -1609,68 +1047,87 @@
     }
 
     window.addEventListener('scroll', updateProgress, { passive: true });
-
-    // ═══════════════════════════════════════════════════════
-    // INIT
-    // ═══════════════════════════════════════════════════════
-    initProductFromURL();
     updateProgress();
-    
+
     // ═══════════════════════════════════════════════════════
     // FORM SUBMISSION
-    // Collects all field values and POSTs to Flask as JSON
     // ═══════════════════════════════════════════════════════
     document.getElementById('qualifyForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
+      e.preventDefault();
 
-        const form = e.target;
-        const data = {};
+      var form = e.target;
 
-        // Collect all text, number, email, tel, textarea inputs
-        form.querySelectorAll('input[name], select[name], textarea[name]').forEach(field => {
-            const name = field.name;
-            const type = field.type;
+      // Collect field values
+      var data = {};
+      form.querySelectorAll('input[name], select[name], textarea[name]').forEach(function(field) {
+        if (field.type === 'radio') {
+          if (field.checked) data[field.name] = field.value;
+        } else {
+          if (field.value.trim() !== '') data[field.name] = field.value.trim();
+        }
+      });
 
-            if (type === 'radio') {
-                if (field.checked) data[name] = field.value;
-            } else {
-                if (field.value.trim() !== '') data[name] = field.value.trim();
-            }
+      // Client-side required field validation
+      var required = ['first_name','last_name','mobile_phone','city','state','product_type'];
+      var missing  = required.filter(function(k) { return !data[k]; });
+      if (missing.length > 0) {
+        alert('Please fill in all required fields before submitting.');
+        return;
+      }
+      if (!data.contact_preference) {
+        alert('Please select a contact preference.');
+        return;
+      }
+
+      // Disable button to prevent double submit
+      var btn = form.querySelector('.btn-submit');
+      btn.disabled = true;
+      btn.textContent = 'Submitting...';
+
+      // Build clean payload
+      var payload = {
+        product_type:             data.product_type             || '',
+        first_name:               data.first_name               || '',
+        last_name:                data.last_name                || '',
+        mobile_phone:             data.mobile_phone             || '',
+        home_phone:               data.home_phone               || '',
+        email:                    data.email                    || '',
+        city:                     data.city                     || '',
+        state:                    data.state                    || '',
+        has_beneficiary:          data.has_beneficiary          || '',
+        beneficiary_relationship: data.beneficiary_relationship || '',
+        reason:                   data.reason                   || '',
+        contact_preference:       data.contact_preference       || '',
+      };
+
+      try {
+        var response = await fetch('/submit', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify(payload)
         });
 
-        // Disable button to prevent double submit
-        const btn = form.querySelector('.btn-submit');
-        btn.disabled = true;
-        btn.textContent = 'Submitting...';
+        var result = await response.json();
 
-        try {
-            const response = await fetch('/submit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-
-            const result = await response.json();
-
-            if (result.status === 'ok') {
-                btn.textContent = '✓ Submitted Successfully';
-                btn.style.background = 'var(--saddle)';
-                const pref = data.contact_preference === 'book_appointment'
-                  ? 'book_appointment'
-                  : 'call_me';
-                window.location.href = 'thank_you.html?pref=' + pref;
-            } else {
-                btn.disabled = false;
-                btn.textContent = 'Submit My Information →';
-                alert('Something went wrong: ' + result.message);
-            }
-
-        } catch (err) {
-            btn.disabled = false;
-            btn.textContent = 'Submit My Information →';
-            alert('Could not reach the server. Make sure Flask is running.');
-            console.error(err);
+        if (result.status === 'ok') {
+          btn.textContent = '✓ Submitted Successfully';
+          btn.style.background = 'var(--saddle)';
+          var pref = payload.contact_preference === 'book_appointment'
+            ? 'book_appointment'
+            : 'call_me';
+          window.location.href = 'thank_you.html?pref=' + pref;
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'Submit My Information →';
+          alert('Something went wrong: ' + result.message);
         }
+
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = 'Submit My Information →';
+        alert('Could not reach the server. Make sure Flask is running.');
+        console.error(err);
+      }
     });
   </script>
 

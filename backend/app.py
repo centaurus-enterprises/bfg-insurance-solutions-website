@@ -104,10 +104,14 @@ def send_lead_notification(data: dict):
     last         = data.get("last_name", "")
     product      = PRODUCT_LABELS.get(data.get("product_type", ""), data.get("product_type", "Unknown"))
     mobile       = data.get("mobile_phone", "—")
-    email        = data.get("email", "—")
-    state        = data.get("state", "—")
+    home_phone   = data.get("home_phone", "—") or "—"
+    email        = data.get("email", "—") or "—"
+    city         = data.get("city", "—") or "—"
+    state        = data.get("state", "—") or "—"
+    has_ben      = (data.get("has_beneficiary") or "—").capitalize()
+    ben_rel      = data.get("beneficiary_relationship", "—") or "—"
+    reason       = data.get("reason", "—") or "—"
     contact_pref = "Call Me" if data.get("contact_preference") == "call_me" else "Book Appointment"
-    best_time    = data.get("best_time", "—")
     submitted    = datetime.now().strftime("%B %d, %Y at %I:%M %p")
 
     subject = f"New Lead: {first} {last} — {product}"
@@ -116,7 +120,7 @@ def send_lead_notification(data: dict):
     <div style="font-family:'DM Sans',Arial,sans-serif;max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #e8d5c0;border-radius:8px;overflow:hidden">
       <div style="background:#4B2E2B;padding:1.25rem 1.5rem">
         <p style="font-family:Arial,sans-serif;font-size:1.15rem;font-weight:800;color:#ffffff;margin:0">
-          Brown<span style="color:#C08552">Agency</span>
+          Brown<span style="color:#C08552">Financial Group</span>
         </p>
         <p style="font-size:0.75rem;color:#c8a882;margin:0.2rem 0 0;letter-spacing:0.08em;text-transform:uppercase">New Lead Notification</p>
       </div>
@@ -126,24 +130,48 @@ def send_lead_notification(data: dict):
 
         <table style="width:100%;border-collapse:collapse;font-size:0.875rem">
           <tr style="border-bottom:1px solid #f0e4d4">
-            <td style="padding:0.6rem 0;color:#9a7a6a;width:140px;font-weight:600">Mobile</td>
+            <td style="padding:0.6rem 0;color:#9a7a6a;width:160px;font-weight:600">Mobile</td>
             <td style="padding:0.6rem 0;color:#2C1810">{mobile}</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0e4d4">
+            <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">Home Phone</td>
+            <td style="padding:0.6rem 0;color:#2C1810">{home_phone}</td>
           </tr>
           <tr style="border-bottom:1px solid #f0e4d4">
             <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">Email</td>
             <td style="padding:0.6rem 0;color:#2C1810">{email}</td>
           </tr>
           <tr style="border-bottom:1px solid #f0e4d4">
+            <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">City</td>
+            <td style="padding:0.6rem 0;color:#2C1810">{city}</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0e4d4">
             <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">State</td>
             <td style="padding:0.6rem 0;color:#2C1810">{state}</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0e4d4">
+            <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">Product Type</td>
+            <td style="padding:0.6rem 0;color:#2C1810">{product}</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0e4d4">
+            <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">Has Beneficiary</td>
+            <td style="padding:0.6rem 0;color:#2C1810">{has_ben}</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0e4d4">
+            <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">Beneficiary Rel.</td>
+            <td style="padding:0.6rem 0;color:#2C1810">{ben_rel}</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0e4d4">
+            <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">Reason</td>
+            <td style="padding:0.6rem 0;color:#2C1810">{reason}</td>
           </tr>
           <tr style="border-bottom:1px solid #f0e4d4">
             <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">Contact Pref</td>
             <td style="padding:0.6rem 0;color:#2C1810">{contact_pref}</td>
           </tr>
           <tr>
-            <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">Best Time</td>
-            <td style="padding:0.6rem 0;color:#2C1810">{best_time}</td>
+            <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">Submitted</td>
+            <td style="padding:0.6rem 0;color:#2C1810">{submitted}</td>
           </tr>
         </table>
 
@@ -153,8 +181,6 @@ def send_lead_notification(data: dict):
             View in Dashboard →
           </a>
         </div>
-
-        <p style="font-size:0.75rem;color:#c8a882;margin-top:1.25rem">Submitted {submitted}</p>
       </div>
     </div>
     """
@@ -837,6 +863,22 @@ def apply():
 
 @app.route("/submit", methods=["POST"])
 def submit():
+    # -- CREATE TABLE leads (
+    # --     id SERIAL PRIMARY KEY,
+    # --     submitted_at TIMESTAMP DEFAULT NOW(),
+    # --     product_type VARCHAR(100),
+    # --     first_name VARCHAR(100),
+    # --     last_name VARCHAR(100),
+    # --     mobile_phone VARCHAR(50),
+    # --     home_phone VARCHAR(50),
+    # --     email VARCHAR(255),
+    # --     city VARCHAR(100),
+    # --     state VARCHAR(100),
+    # --     has_beneficiary VARCHAR(10),
+    # --     beneficiary_relationship VARCHAR(100),
+    # --     reason TEXT,
+    # --     contact_preference VARCHAR(50)
+    # -- );
     try:
         data = request.get_json()
         if not data:
@@ -847,92 +889,31 @@ def submit():
 
         cur.execute("""
             INSERT INTO leads (
-                product_type,
-                first_name, last_name, age, email,
-                mobile_phone, home_phone, city, state, zip,
-                coverage_amount, budget, currently_insured,
-                beneficiary, beneficiary_rel,
-                mp_lender, mp_balance, mp_monthly,
-                mp_years_remaining, mp_purchase_year,
-                term_length, term_reason, term_annual_income,
-                wl_goal,
-                iul_annual_income, iul_goal, iul_investment_exp,
-                lb_concern, lb_family_history,
-                tobacco, height_ft, height_in, weight,
-                major_conditions, minor_conditions, medications,
-                contact_preference, best_time, hobby
+                product_type, first_name, last_name,
+                mobile_phone, home_phone, email,
+                city, state,
+                has_beneficiary, beneficiary_relationship,
+                reason, contact_preference
             ) VALUES (
-                %(product_type)s,
-                %(first_name)s, %(last_name)s, %(age)s, %(email)s,
-                %(mobile_phone)s, %(home_phone)s, %(city)s, %(state)s, %(zip)s,
-                %(coverage_amount)s, %(budget)s, %(currently_insured)s,
-                %(beneficiary)s, %(beneficiary_rel)s,
-                %(mp_lender)s, %(mp_balance)s, %(mp_monthly)s,
-                %(mp_years_remaining)s, %(mp_purchase_year)s,
-                %(term_length)s, %(term_reason)s, %(term_annual_income)s,
-                %(wl_goal)s,
-                %(iul_annual_income)s, %(iul_goal)s, %(iul_investment_exp)s,
-                %(lb_concern)s, %(lb_family_history)s,
-                %(tobacco)s, %(height_ft)s, %(height_in)s, %(weight)s,
-                %(major_conditions)s, %(minor_conditions)s, %(medications)s,
-                %(contact_preference)s, %(best_time)s, %(hobby)s
+                %(product_type)s, %(first_name)s, %(last_name)s,
+                %(mobile_phone)s, %(home_phone)s, %(email)s,
+                %(city)s, %(state)s,
+                %(has_beneficiary)s, %(beneficiary_relationship)s,
+                %(reason)s, %(contact_preference)s
             )
         """, {
-            "product_type":       data.get("product_type"),
-            "first_name":         data.get("first_name"),
-            "last_name":          data.get("last_name"),
-            "age":                int(data["age"]) if data.get("age") else None,
-            "email":              data.get("email"),
-            "mobile_phone":       data.get("mobile_phone"),
-            "home_phone":         data.get("home_phone"),
-            "city":               data.get("city"),
-            "state":              data.get("state"),
-            "zip":                data.get("zip"),
-            "coverage_amount":    (
-                data.get("fe_coverage_amount") or data.get("term_coverage_amount") or
-                data.get("wl_coverage_amount") or data.get("lb_coverage_amount")
-            ),
-            "budget":             (
-                data.get("fe_budget") or data.get("wl_budget") or data.get("iul_budget")
-            ),
-            "currently_insured":  (
-                data.get("mp_insured") or data.get("fe_insured") or data.get("term_insured") or
-                data.get("wl_insured") or data.get("lb_insured")
-            ),
-            "beneficiary":        (
-                data.get("mp_beneficiary") or data.get("fe_beneficiary") or
-                data.get("term_beneficiary") or data.get("wl_beneficiary") or
-                data.get("iul_beneficiary") or data.get("lb_beneficiary")
-            ),
-            "beneficiary_rel":    (
-                data.get("mp_beneficiary_relationship") or data.get("fe_beneficiary_relationship") or
-                data.get("term_beneficiary_relationship") or data.get("wl_beneficiary_relationship") or
-                data.get("lb_beneficiary_relationship")
-            ),
-            "mp_lender":          data.get("mp_lender"),
-            "mp_balance":         data.get("mp_balance"),
-            "mp_monthly":         data.get("mp_monthly"),
-            "mp_years_remaining": data.get("mp_years_remaining"),
-            "mp_purchase_year":   int(data["mp_purchase_year"]) if data.get("mp_purchase_year") else None,
-            "term_length":        data.get("term_length"),
-            "term_reason":        data.get("term_reason"),
-            "term_annual_income": data.get("term_annual_income"),
-            "wl_goal":            data.get("wl_goal"),
-            "iul_annual_income":  data.get("iul_annual_income"),
-            "iul_goal":           data.get("iul_goal"),
-            "iul_investment_exp": data.get("iul_investment_exp"),
-            "lb_concern":         data.get("lb_concern"),
-            "lb_family_history":  data.get("lb_family_history"),
-            "tobacco":            data.get("tobacco"),
-            "height_ft":          int(data["height_ft"]) if data.get("height_ft") else None,
-            "height_in":          int(data["height_in"]) if data.get("height_in") else None,
-            "weight":             int(data["weight"]) if data.get("weight") else None,
-            "major_conditions":   data.get("major_conditions"),
-            "minor_conditions":   data.get("minor_conditions"),
-            "medications":        data.get("medications"),
-            "contact_preference": data.get("contact_preference"),
-            "best_time":          data.get("best_time"),
-            "hobby":              data.get("hobby"),
+            "product_type":             data.get("product_type"),
+            "first_name":               data.get("first_name"),
+            "last_name":                data.get("last_name"),
+            "mobile_phone":             data.get("mobile_phone"),
+            "home_phone":               data.get("home_phone"),
+            "email":                    data.get("email"),
+            "city":                     data.get("city"),
+            "state":                    data.get("state"),
+            "has_beneficiary":          data.get("has_beneficiary"),
+            "beneficiary_relationship": data.get("beneficiary_relationship"),
+            "reason":                   data.get("reason"),
+            "contact_preference":       data.get("contact_preference"),
         })
 
         conn.commit()
