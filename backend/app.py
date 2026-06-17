@@ -935,29 +935,6 @@ def submit():
 # ENTRY POINT
 # ─────────────────────────────────────────────
 
-# ─────────────────────────────────────────────
-# TEMPORARY SETUP — DELETE AFTER USE
-# ─────────────────────────────────────────────
-
-@app.route("/setup-admin")
-def setup_admin():
-    import hashlib
-    username = "josh_admin"
-    password = "ChangeMe2026!"
-    email    = "josh@thebrownfinancialgroup.com"
-    salt     = secrets.token_hex(16)
-    pw_hash  = salt + ":" + hashlib.sha256((salt + password).encode()).hexdigest()
-    conn = get_connection()
-    cur  = conn.cursor()
-    cur.execute(
-        "INSERT INTO agents (username, password_hash, email, full_name, notify_on_lead) VALUES (%s, %s, %s, %s, %s) ON CONFLICT (username) DO UPDATE SET password_hash = EXCLUDED.password_hash",
-        (username, pw_hash, email, "Josh Brown", True)
-    )
-    conn.commit()
-    cur.close()
-    conn.close()
-    return "Admin account created. Username: josh / Password: ChangeMe2026! — DELETE THIS ROUTE NOW."
-
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True)
