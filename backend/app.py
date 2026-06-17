@@ -942,7 +942,7 @@ def submit():
 @app.route("/setup-admin")
 def setup_admin():
     import hashlib
-    username = "josh"
+    username = "josh_admin"
     password = "ChangeMe2026!"
     email    = "josh@thebrownfinancialgroup.com"
     salt     = secrets.token_hex(16)
