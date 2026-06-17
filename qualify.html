@@ -470,80 +470,6 @@
       margin: 0;
     }
 
-    /* ── CONTACT PREFERENCE ── */
-    .contact-pref-group {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-      margin-top: 0.5rem;
-    }
-
-    .contact-pref-option {
-      position: relative;
-    }
-
-    .contact-pref-option input[type="radio"] {
-      position: absolute;
-      opacity: 0;
-      width: 0; height: 0;
-    }
-
-    .contact-pref-option label {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-      background: var(--white);
-      border: 1.5px solid var(--parchment-mid);
-      border-radius: 8px;
-      padding: 1rem 1.15rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      user-select: none;
-    }
-
-    .contact-pref-option label:hover {
-      border-color: var(--cognac);
-    }
-
-    .contact-pref-option input[type="radio"]:checked + label {
-      border-color: var(--cognac);
-      background: rgba(192,133,82,0.08);
-      box-shadow: 0 0 0 3px rgba(192,133,82,0.12);
-    }
-
-    .pref-icon {
-      width: 30px;
-      height: 30px;
-      border-radius: 7px;
-      background: rgba(192,133,82,0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      margin-bottom: 0.2rem;
-    }
-
-    .pref-icon svg {
-      stroke: var(--cognac);
-    }
-
-    .contact-pref-option input[type="radio"]:checked + label .pref-icon {
-      background: rgba(192,133,82,0.2);
-    }
-
-    .pref-title {
-      font-family: 'Raleway', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--espresso);
-    }
-
-    .pref-desc {
-      font-size: 0.72rem;
-      color: var(--text-light);
-      line-height: 1.4;
-    }
-
     /* SUBMIT */
     .form-submit {
       padding-top: 2rem;
@@ -601,7 +527,6 @@
       .progress-label { display: none; }
       .progress-bar-wrap { padding: 0.75rem 4%; }
       .product-tiles { grid-template-columns: repeat(2, 1fr); }
-      .contact-pref-group { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 480px) {
@@ -643,13 +568,9 @@
       </div>
       <div class="progress-step">
         <div class="step-bubble" id="bubble-2"><span>2</span></div>
-        <div class="step-connector" id="connector-2"></div>
-      </div>
-      <div class="progress-step">
-        <div class="step-bubble" id="bubble-3"><span>3</span></div>
       </div>
     </div>
-    <div class="progress-label">Section <span id="progressLabel">1</span> of 3</div>
+    <div class="progress-label">Section <span id="progressLabel">1</span> of 2</div>
   </div>
 
   <!-- MAIN -->
@@ -858,52 +779,6 @@
           <p class="agent-disclaimer">One of our agents will reach out shortly to discuss your options and walk you through some additional questions to find the best fit for your needs.</p>
         </div>
 
-        <!-- ── SECTION 3: CONTACT PREFERENCE ── -->
-        <div class="form-section" id="section-3">
-          <div class="section-header">
-            <div class="section-number">3</div>
-            <div class="section-header-text">
-              <h2>How Would You Like to Connect?</h2>
-              <p>Tell us your preference for follow-up</p>
-            </div>
-          </div>
-
-          <div class="field-grid cols-1">
-
-            <!-- CONTACT PREFERENCE -->
-            <div class="field">
-              <label>Contact Preference <span class="required">*</span></label>
-              <div class="contact-pref-group">
-                <div class="contact-pref-option">
-                  <input type="radio" name="contact_preference" id="pref-call" value="call_me" required/>
-                  <label for="pref-call">
-                    <span class="pref-icon">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.83a16 16 0 0 0 6 6l1.27-.82a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.72 2.04z"/>
-                      </svg>
-                    </span>
-                    <span class="pref-title">Call Me</span>
-                    <span class="pref-desc">An agent will reach out within 24 hours to go over your options.</span>
-                  </label>
-                </div>
-                <div class="contact-pref-option">
-                  <input type="radio" name="contact_preference" id="pref-book" value="book_appointment"/>
-                  <label for="pref-book">
-                    <span class="pref-icon">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-                      </svg>
-                    </span>
-                    <span class="pref-title">Book an Appointment</span>
-                    <span class="pref-desc">Pick a time that works for you on an agent's calendar.</span>
-                  </label>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
         <!-- SUBMIT -->
         <div class="form-submit">
           <p class="submit-note">By submitting this form you agree to be contacted by a Brown Financial Group representative. We will never sell or share your information with third parties.</p>
@@ -1016,11 +891,11 @@
     formatPhone(document.getElementById('home_phone'));
 
     // ═══════════════════════════════════════════════════════
-    // SCROLL PROGRESS TRACKER (3 steps)
+    // SCROLL PROGRESS TRACKER (2 steps)
     // ═══════════════════════════════════════════════════════
-    var sections   = ['section-1','section-2','section-3'].map(function(id) { return document.getElementById(id); });
-    var bubbles    = [1,2,3].map(function(n) { return document.getElementById('bubble-' + n); });
-    var connectors = [1,2].map(function(n) { return document.getElementById('connector-' + n); });
+    var sections   = ['section-1','section-2'].map(function(id) { return document.getElementById(id); });
+    var bubbles    = [1,2].map(function(n) { return document.getElementById('bubble-' + n); });
+    var connectors = [1].map(function(n) { return document.getElementById('connector-' + n); });
     var label      = document.getElementById('progressLabel');
 
     function updateProgress() {
@@ -1074,11 +949,6 @@
         alert('Please fill in all required fields before submitting.');
         return;
       }
-      if (!data.contact_preference) {
-        alert('Please select a contact preference.');
-        return;
-      }
-
       // Disable button to prevent double submit
       var btn = form.querySelector('.btn-submit');
       btn.disabled = true;
@@ -1097,7 +967,6 @@
         has_beneficiary:          data.has_beneficiary          || '',
         beneficiary_relationship: data.beneficiary_relationship || '',
         reason:                   data.reason                   || '',
-        contact_preference:       data.contact_preference       || '',
       };
 
       try {
@@ -1112,10 +981,8 @@
         if (result.status === 'ok') {
           btn.textContent = '✓ Submitted Successfully';
           btn.style.background = 'var(--saddle)';
-          var pref = payload.contact_preference === 'book_appointment'
-            ? 'book_appointment'
-            : 'call_me';
-          window.location.href = 'thank_you.html?pref=' + pref;
+          var state = encodeURIComponent(payload.state || '');
+          window.location.href = 'thank_you.html?state=' + state;
         } else {
           btn.disabled = false;
           btn.textContent = 'Submit My Information →';

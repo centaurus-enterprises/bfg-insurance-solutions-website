@@ -196,6 +196,119 @@
       .calendly-inline-widget { height: 850px; }
     }
 
+    /* ── CHOICE BUTTONS ── */
+    .connect-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+      animation: fadeUp 0.6s ease 0.35s both;
+    }
+
+    .connect-option {
+      background: var(--white);
+      border: 1.5px solid var(--parchment-mid);
+      border-radius: 10px;
+      padding: 1.75rem 1.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .connect-option:hover {
+      border-color: var(--cognac);
+      background: rgba(192,133,82,0.04);
+    }
+
+    .connect-icon {
+      width: 40px; height: 40px;
+      border-radius: 8px;
+      background: rgba(192,133,82,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .connect-icon svg { stroke: var(--cognac); }
+
+    .connect-title {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--espresso);
+    }
+
+    .connect-desc {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* ── BOOKING OPTIONS ── */
+    .booking-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      animation: fadeUp 0.6s ease 0.1s both;
+    }
+
+    .booking-option {
+      background: var(--white);
+      border: 1.5px solid var(--parchment-mid);
+      border-radius: 10px;
+      padding: 1.75rem 1.5rem;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      transition: all 0.2s;
+      text-align: left;
+    }
+
+    .booking-option:hover {
+      border-color: var(--cognac);
+      background: rgba(192,133,82,0.04);
+    }
+
+    .booking-title {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--espresso);
+    }
+
+    .booking-desc {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .btn-back {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.82rem;
+      color: var(--text-light);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0;
+      margin-bottom: 1.5rem;
+      transition: color 0.2s;
+    }
+
+    .btn-back:hover { color: var(--cognac); }
+
+    @media (max-width: 500px) {
+      .connect-grid { grid-template-columns: 1fr; }
+      .booking-grid { grid-template-columns: 1fr; }
+    }
+
   </style>
 </head>
 <body>
@@ -230,10 +343,54 @@
         </svg>
       </div>
 
-      <!-- CALL ME -->
-      <div id="state-call-me">
+      <!-- STATE: CHOICE -->
+      <div id="state-choice">
         <div class="thank-eyebrow">You're all set</div>
         <h1>We've received your <span>information</span></h1>
+        <p class="thank-body">How would you like to connect with one of our agents?</p>
+
+        <div class="connect-grid">
+          <button class="connect-option" onclick="showCall()">
+            <div class="connect-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.83a16 16 0 0 0 6 6l1.27-.82a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.72 2.04z"/>
+              </svg>
+            </div>
+            <span class="connect-title">Have us call you</span>
+            <span class="connect-desc">An agent will reach out within 24 hours at the number you provided.</span>
+          </button>
+
+          <button class="connect-option" onclick="showBook()">
+            <div class="connect-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+            </div>
+            <span class="connect-title">Book a meeting</span>
+            <span class="connect-desc">Pick a time on our calendar for a phone or Zoom consultation.</span>
+          </button>
+        </div>
+
+        <div class="back-home">
+          <a href="index.html">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+            </svg>
+            Back to home
+          </a>
+        </div>
+      </div>
+
+      <!-- STATE: CALL ME -->
+      <div id="state-call" style="display:none;">
+        <button class="btn-back" onclick="showChoice()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+          </svg>
+          Back
+        </button>
+        <div class="thank-eyebrow">Got it</div>
+        <h1>We'll be in <span>touch soon</span></h1>
         <p class="thank-body">One of our agents will review your details and reach out within 24 hours to walk you through your options. No pressure — just a conversation.</p>
 
         <div class="what-happens">
@@ -241,15 +398,15 @@
           <ul class="next-steps">
             <li>
               <span class="step-dot">1</span>
-              <span>We review your submission and identify the carriers that best match your profile and health information.</span>
+              <span>We review your submission and identify the carriers and products that best match your situation.</span>
             </li>
             <li>
               <span class="step-dot">2</span>
-              <span>An agent will call you at the number you provided — we'll ask your hobby question to confirm your identity before discussing anything.</span>
+              <span>An agent will call you at the number you provided within 24 hours.</span>
             </li>
             <li>
               <span class="step-dot">3</span>
-              <span>We walk you through your options side by side, with no obligation to buy. You decide if and when you're ready.</span>
+              <span>We walk you through your options with no obligation to buy. You decide if and when you're ready.</span>
             </li>
           </ul>
         </div>
@@ -264,17 +421,38 @@
         </div>
       </div>
 
-      <!-- BOOK APPOINTMENT -->
+      <!-- STATE: BOOK -->
       <div id="state-book" style="display:none;">
+        <button class="btn-back" onclick="showChoice()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+          </svg>
+          Back
+        </button>
         <div class="thank-eyebrow">One more step</div>
         <h1>Pick a time that <span>works for you</span></h1>
-        <p class="thank-body">Your information was submitted. Now choose a time on our calendar and we'll be prepared with your options when we connect.</p>
+        <p class="thank-body">Choose a phone or Zoom consultation — whichever works best for you.</p>
 
-        <div class="calendly-wrap">
-          <div
-            class="calendly-inline-widget"
-            data-url="https://calendly.com/josh-thebrownfinancialgroup/30min?hide_landing_page_details=1&hide_gdpr_banner=1"
-          ></div>
+        <div class="booking-grid">
+          <a class="booking-option" id="link-phone" href="#" target="_blank">
+            <div class="connect-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.83a16 16 0 0 0 6 6l1.27-.82a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.72 2.04z"/>
+              </svg>
+            </div>
+            <span class="booking-title">Phone Consultation</span>
+            <span class="booking-desc">We'll call you at your scheduled time. Best for a quick, no-fuss conversation.</span>
+          </a>
+
+          <a class="booking-option" id="link-zoom" href="#" target="_blank">
+            <div class="connect-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+              </svg>
+            </div>
+            <span class="booking-title">Zoom Meeting</span>
+            <span class="booking-desc">Meet face to face over video. A link will be sent to your email.</span>
+          </a>
         </div>
 
         <div class="back-home">
@@ -290,18 +468,41 @@
     </div>
   </div>
 
-  <!-- Calendly embed script — only loads when needed -->
   <script>
-    const pref = new URLSearchParams(window.location.search).get('pref');
+    // ── CALENDLY URLS ──────────────────────────────────────────
+    // Replace these with real URLs once Calendly events are set up
+    var JOSH_PHONE = 'https://calendly.com/PLACEHOLDER_JOSH_PHONE';
+    var JOSH_ZOOM  = 'https://calendly.com/PLACEHOLDER_JOSH_ZOOM';
+    var JOHN_PHONE = 'https://calendly.com/PLACEHOLDER_JOHN_PHONE';
+    var JOHN_ZOOM  = 'https://calendly.com/PLACEHOLDER_JOHN_ZOOM';
 
-    if (pref === 'book_appointment') {
-      document.getElementById('state-call-me').style.display = 'none';
-      document.getElementById('state-book').style.display    = 'block';
+    // ── STATE ROUTING ──────────────────────────────────────────
+    var clientState = decodeURIComponent(new URLSearchParams(window.location.search).get('state') || '');
+    var isCA        = clientState.toLowerCase() === 'california';
 
-      const script = document.createElement('script');
-      script.src = 'https://assets.calendly.com/assets/external/widget.js';
-      script.async = true;
-      document.head.appendChild(script);
+    var phoneUrl = isCA ? JOSH_PHONE : JOHN_PHONE;
+    var zoomUrl  = isCA ? JOSH_ZOOM  : JOHN_ZOOM;
+
+    document.getElementById('link-phone').href = phoneUrl;
+    document.getElementById('link-zoom').href  = zoomUrl;
+
+    // ── STATE TRANSITIONS ─────────────────────────────────────
+    function showChoice() {
+      document.getElementById('state-choice').style.display = 'block';
+      document.getElementById('state-call').style.display   = 'none';
+      document.getElementById('state-book').style.display   = 'none';
+    }
+
+    function showCall() {
+      document.getElementById('state-choice').style.display = 'none';
+      document.getElementById('state-call').style.display   = 'block';
+      document.getElementById('state-book').style.display   = 'none';
+    }
+
+    function showBook() {
+      document.getElementById('state-choice').style.display = 'none';
+      document.getElementById('state-call').style.display   = 'none';
+      document.getElementById('state-book').style.display   = 'block';
     }
   </script>
 
