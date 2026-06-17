@@ -357,18 +357,16 @@ def get_lead(lead_id):
 @app.route("/lead/<int:lead_id>/status", methods=["POST"])
 @login_required
 def update_status(lead_id):
-    data       = request.get_json()
-    new_status = data.get("status")
-    new_notes  = data.get("notes")
-    uw         = data.get("underwriting", {})
+    data = request.get_json()
 
     valid_statuses = ["new", "follow_up", "does_not_pick_up", "sale", "no_sale"]
+    new_status = data.get("status")
     if new_status and new_status not in valid_statuses:
         return jsonify({"status": "error", "message": "Invalid status value."}), 400
 
     def to_bool(val):
-        if val == "true":  return True
-        if val == "false": return False
+        if val is True or val == "true":  return True
+        if val is False or val == "false": return False
         return None
 
     try:
@@ -376,34 +374,56 @@ def update_status(lead_id):
         cur  = conn.cursor()
         cur.execute("""
             UPDATE leads SET
-                status             = COALESCE(%s, status),
-                notes              = %s,
-                dob                = %s,
-                height_ft          = %s,
-                height_in          = %s,
-                weight             = %s,
-                tobacco            = %s,
-                currently_insured  = %s,
-                assigned_agent     = %s,
-                coverage_amount    = %s,
-                monthly_budget     = %s,
-                major_conditions   = %s,
-                medications        = %s
+                status                   = COALESCE(%s, status),
+                notes                    = %s,
+                first_name               = COALESCE(%s, first_name),
+                last_name                = COALESCE(%s, last_name),
+                mobile_phone             = %s,
+                home_phone               = %s,
+                email                    = %s,
+                city                     = %s,
+                state                    = %s,
+                product_type             = COALESCE(%s, product_type),
+                coverage_amount          = %s,
+                monthly_budget           = %s,
+                has_beneficiary          = %s,
+                beneficiary_relationship = %s,
+                currently_insured        = %s,
+                reason                   = %s,
+                dob                      = %s,
+                height_ft                = %s,
+                height_in                = %s,
+                weight                   = %s,
+                tobacco                  = %s,
+                major_conditions         = %s,
+                medications              = %s,
+                assigned_agent           = %s
             WHERE id = %s
         """, (
             new_status,
-            new_notes,
-            uw.get("dob") or None,
-            uw.get("height_ft"),
-            uw.get("height_in"),
-            uw.get("weight"),
-            to_bool(uw.get("tobacco")),
-            to_bool(uw.get("currently_insured")),
-            uw.get("assigned_agent") or None,
-            uw.get("coverage_amount") or None,
-            uw.get("monthly_budget") or None,
-            uw.get("major_conditions") or None,
-            uw.get("medications") or None,
+            data.get("notes"),
+            data.get("first_name"),
+            data.get("last_name"),
+            data.get("mobile_phone"),
+            data.get("home_phone"),
+            data.get("email"),
+            data.get("city"),
+            data.get("state"),
+            data.get("product_type"),
+            data.get("coverage_amount"),
+            data.get("monthly_budget"),
+            data.get("has_beneficiary"),
+            data.get("beneficiary_relationship"),
+            to_bool(data.get("currently_insured")),
+            data.get("reason"),
+            data.get("dob") or None,
+            data.get("height_ft"),
+            data.get("height_in"),
+            data.get("weight"),
+            to_bool(data.get("tobacco")),
+            data.get("major_conditions"),
+            data.get("medications"),
+            data.get("assigned_agent"),
             lead_id
         ))
         conn.commit()

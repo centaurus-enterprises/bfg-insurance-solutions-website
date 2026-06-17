@@ -1280,48 +1280,60 @@
 
   // ── SAVE LEAD ─────────────────────────────────────────
   async function saveLead(id) {
-    const status = document.getElementById('status-select-' + id)?.value;
-    const notes  = document.getElementById('notes-' + id)?.value;
+    const g = (suffix) => document.getElementById(suffix + id);
 
-    // Parse height string like "5ft 10in"
-    const heightRaw = document.getElementById('uw-height-' + id)?.value || '';
+    const heightRaw   = g('ef-height-')?.value || '';
     const heightMatch = heightRaw.match(/(\d+)\s*ft\s*(\d*)/i);
-    const heightFt = heightMatch ? parseInt(heightMatch[1]) : null;
-    const heightIn = heightMatch ? parseInt(heightMatch[2] || 0) : null;
 
-    const underwriting = {
-      dob:               document.getElementById('uw-dob-' + id)?.value || null,
-      height_ft:         heightFt,
-      height_in:         heightIn,
-      weight:            parseInt(document.getElementById('uw-weight-' + id)?.value) || null,
-      tobacco:           document.getElementById('uw-tobacco-' + id)?.value || null,
-      currently_insured: document.getElementById('uw-insured-' + id)?.value || null,
-      assigned_agent:    document.getElementById('uw-agent-' + id)?.value || null,
-      coverage_amount:   document.getElementById('uw-coverage-' + id)?.value || null,
-      monthly_budget:    document.getElementById('uw-budget-' + id)?.value || null,
-      major_conditions:  document.getElementById('uw-conditions-' + id)?.value || null,
-      medications:       document.getElementById('uw-medications-' + id)?.value || null,
+    const toBool = (val) => val === 'true' ? true : val === 'false' ? false : null;
+
+    const payload = {
+      status:                   g('status-select-')?.value,
+      notes:                    g('notes-')?.value || null,
+      first_name:               g('ef-first-')?.value || null,
+      last_name:                g('ef-last-')?.value || null,
+      mobile_phone:             g('ef-mobile-')?.value || null,
+      home_phone:               g('ef-home-')?.value || null,
+      email:                    g('ef-email-')?.value || null,
+      city:                     g('ef-city-')?.value || null,
+      state:                    g('ef-state-')?.value || null,
+      product_type:             g('ef-product-')?.value || null,
+      coverage_amount:          g('ef-coverage-')?.value || null,
+      monthly_budget:           g('ef-budget-')?.value || null,
+      has_beneficiary:          g('ef-beneficiary-')?.value || null,
+      beneficiary_relationship: g('ef-benrel-')?.value || null,
+      currently_insured:        g('ef-insured-')?.value || null,
+      reason:                   g('ef-reason-')?.value || null,
+      dob:                      g('ef-dob-')?.value || null,
+      height_ft:                heightMatch ? parseInt(heightMatch[1]) : null,
+      height_in:                heightMatch ? parseInt(heightMatch[2] || 0) : null,
+      weight:                   parseInt(g('ef-weight-')?.value) || null,
+      tobacco:                  g('ef-tobacco-')?.value || null,
+      major_conditions:         g('ef-conditions-')?.value || null,
+      medications:              g('ef-medications-')?.value || null,
+      assigned_agent:           g('ef-agent-')?.value || null,
     };
 
     try {
       const res  = await fetch('/lead/' + id + '/status', {
-        method: 'POST',
+        method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status, notes, underwriting })
+        body:    JSON.stringify(payload)
       });
       const data = await res.json();
       if (data.status !== 'ok') throw new Error(data.message);
 
+      // Update row data attributes
       const lead = ALL_LEADS.find(l => l.id === id);
-      if (lead) lead.status = status;
+      if (lead) lead.status = payload.status;
 
       const row   = document.querySelector(`.lead-row[data-id="${id}"]`);
       const badge = row?.querySelector('.status-badge');
       if (badge) {
-        badge.className = `status-badge badge-${status}`;
-        badge.textContent = status.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+        badge.className   = `status-badge badge-${payload.status}`;
+        badge.textContent = payload.status.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
       }
-      row.dataset.status = status;
+      if (row) row.dataset.status = payload.status;
       updateStatCounts();
 
       const fb = document.getElementById('save-feedback-' + id);
