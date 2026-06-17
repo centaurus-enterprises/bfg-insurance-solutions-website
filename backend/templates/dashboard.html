@@ -429,27 +429,6 @@
       border-bottom: 1px solid var(--border);
     }
 
-    .expand-field {
-      margin-bottom: 0.6rem;
-    }
-
-    .expand-field-label {
-      font-size: 0.68rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 0.15rem;
-    }
-
-    .expand-field-value {
-      font-size: 0.85rem;
-      color: var(--text-primary);
-      line-height: 1.4;
-    }
-
-    .expand-field-value.empty { color: var(--text-muted); font-style: italic; }
-
     .expand-actions {
       display: flex;
       align-items: flex-start;
@@ -509,36 +488,39 @@
 
     .notes-textarea:focus { border-color: var(--cognac); }
 
-    /* ── UNDERWRITING SECTION ── */
-    .underwriting-section {
-      margin-top: 1.5rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--border);
+    /* ── EDITABLE EXPAND FIELDS ── */
+    .edit-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem 1.25rem;
+      margin-bottom: 1.5rem;
     }
 
-    .underwriting-section h4 {
-      font-size: 0.72rem;
+    .edit-section-label {
+      grid-column: 1 / -1;
+      font-size: 0.68rem;
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--text-muted);
-      margin-bottom: 1.25rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border-light);
+      margin-top: 0.25rem;
     }
 
-    .uw-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.75rem 1.25rem;
-      margin-bottom: 1rem;
+    .edit-section-label:first-child {
+      padding-top: 0;
+      border-top: none;
+      margin-top: 0;
     }
 
-    .uw-field {
+    .edit-field {
       display: flex;
       flex-direction: column;
       gap: 0.3rem;
     }
 
-    .uw-field label {
+    .edit-field label {
       font-size: 0.68rem;
       font-weight: 600;
       letter-spacing: 0.06em;
@@ -546,8 +528,8 @@
       color: var(--text-muted);
     }
 
-    .uw-field input,
-    .uw-field select {
+    .edit-field input,
+    .edit-field select {
       background: var(--bg-base);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-sm);
@@ -558,17 +540,24 @@
       width: 100%;
     }
 
-    .uw-field input:focus,
-    .uw-field select:focus {
+    .edit-field input:focus,
+    .edit-field select:focus {
       outline: none;
       border-color: var(--cognac);
     }
 
-    .uw-field-wide {
+    .edit-field input[readonly] {
+      color: var(--text-muted);
+      cursor: default;
+      background: transparent;
+      border-color: transparent;
+    }
+
+    .edit-field-wide {
       grid-column: 1 / -1;
     }
 
-    .uw-field textarea {
+    .edit-field textarea {
       background: var(--bg-base);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-sm);
@@ -581,7 +570,7 @@
       min-height: 70px;
     }
 
-    .uw-field textarea:focus {
+    .edit-field textarea:focus {
       outline: none;
       border-color: var(--cognac);
     }
@@ -1135,152 +1124,155 @@
     }
   }
 
-  function val(v) {
-    if (v === null || v === undefined || v === '' || v === 'None') {
-      return '<span class="expand-field-value empty">—</span>';
-    }
-    return `<span class="expand-field-value">${v}</span>`;
-  }
-
-  function field(label, value) {
-    return `<div class="expand-field"><div class="expand-field-label">${label}</div>${val(value)}</div>`;
-  }
-
   function renderExpandContent(el, lead) {
-    el.innerHTML = `
-      <div class="expand-grid">
-        <div class="expand-section">
-          <h4>Personal</h4>
-          ${field('Name', lead.first_name + ' ' + lead.last_name)}
-          ${field('Age', lead.age)}
-          ${field('Email', lead.email)}
-          ${field('Mobile', lead.mobile_phone)}
-          ${field('Home Phone', lead.home_phone)}
-          ${field('City', lead.city)}
-          ${field('State', lead.state)}
-          ${field('Zip', lead.zip)}
-        </div>
-        <div class="expand-section">
-          <h4>Coverage — ${(lead.product_type || '').replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase())}</h4>
-          ${field('Coverage Amount', lead.coverage_amount)}
-          ${field('Budget', lead.budget)}
-          ${field('Currently Insured', lead.currently_insured)}
-          ${field('Beneficiary', lead.beneficiary)}
-          ${field('Beneficiary Rel.', lead.beneficiary_rel)}
-          ${lead.product_type === 'mortgage-protection' ? `
-            ${field('Lender', lead.mp_lender)}
-            ${field('Balance', lead.mp_balance)}
-            ${field('Monthly Pmt', lead.mp_monthly)}
-            ${field('Years Left', lead.mp_years_remaining)}
-            ${field('Purchase Year', lead.mp_purchase_year)}
-          ` : ''}
-          ${lead.product_type === 'term-life' ? `
-            ${field('Term Length', lead.term_length)}
-            ${field('Reason', lead.term_reason)}
-            ${field('Annual Income', lead.term_annual_income)}
-          ` : ''}
-          ${lead.product_type === 'whole-life' ? field('Goal', lead.wl_goal) : ''}
-          ${lead.product_type === 'iul' ? `
-            ${field('Annual Income', lead.iul_annual_income)}
-            ${field('Goal', lead.iul_goal)}
-            ${field('Invest. Exp.', lead.iul_investment_exp)}
-          ` : ''}
-          ${lead.product_type === 'living-benefits' ? `
-            ${field('Primary Concern', lead.lb_concern)}
-            ${field('Family History', lead.lb_family_history)}
-          ` : ''}
-        </div>
-        <div class="expand-section">
-          <h4>Medical</h4>
-          ${field('Tobacco', lead.tobacco)}
-          ${field('Height', lead.height_ft && lead.height_in !== null ? lead.height_ft + "'" + lead.height_in + '"' : null)}
-          ${field('Weight', lead.weight ? lead.weight + ' lbs' : null)}
-          ${field('Major Conditions', lead.major_conditions)}
-          ${field('Minor Conditions', lead.minor_conditions)}
-          ${field('Medications', lead.medications)}
-        </div>
-        <div class="expand-section">
-          <h4>Contact</h4>
-          ${field('Preference', lead.contact_preference === 'call_me' ? 'Call Me' : 'Book Appointment')}
-          ${field('Best Time', lead.best_time)}
-          ${field('Security Q', lead.hobby)}
-          ${field('Submitted', lead.submitted_at)}
-        </div>
-      </div>
+    const v = (val) => val !== null && val !== undefined && val !== '' && val !== 'None' ? val : '';
+    const checked = (a, b) => a === b ? 'selected' : '';
 
-      <div class="expand-actions">
-        <div class="expand-action-group">
-          <div class="expand-action-label">Status</div>
-          <select class="status-select" id="status-select-${lead.id}">
-            <option value="new"               ${lead.status==='new'?'selected':''}>New</option>
-            <option value="follow_up"         ${lead.status==='follow_up'?'selected':''}>Follow Up</option>
-            <option value="does_not_pick_up"  ${lead.status==='does_not_pick_up'?'selected':''}>Does Not Pick Up</option>
-            <option value="sale"              ${lead.status==='sale'?'selected':''}>Sale</option>
-            <option value="no_sale"           ${lead.status==='no_sale'?'selected':''}>No Sale</option>
+    el.innerHTML = `
+      <div class="edit-grid">
+
+        <div class="edit-section-label">Contact Information</div>
+
+        <div class="edit-field">
+          <label>First Name</label>
+          <input type="text" id="ef-first-${lead.id}" value="${v(lead.first_name)}"/>
+        </div>
+        <div class="edit-field">
+          <label>Last Name</label>
+          <input type="text" id="ef-last-${lead.id}" value="${v(lead.last_name)}"/>
+        </div>
+        <div class="edit-field">
+          <label>Mobile Phone</label>
+          <input type="text" id="ef-mobile-${lead.id}" value="${v(lead.mobile_phone)}"/>
+        </div>
+        <div class="edit-field">
+          <label>Home Phone</label>
+          <input type="text" id="ef-home-${lead.id}" value="${v(lead.home_phone)}"/>
+        </div>
+        <div class="edit-field">
+          <label>Email</label>
+          <input type="email" id="ef-email-${lead.id}" value="${v(lead.email)}"/>
+        </div>
+        <div class="edit-field">
+          <label>City</label>
+          <input type="text" id="ef-city-${lead.id}" value="${v(lead.city)}"/>
+        </div>
+        <div class="edit-field">
+          <label>State</label>
+          <input type="text" id="ef-state-${lead.id}" value="${v(lead.state)}"/>
+        </div>
+        <div class="edit-field">
+          <label>Submitted</label>
+          <input type="text" id="ef-submitted-${lead.id}" value="${v(lead.submitted_at)}" readonly/>
+        </div>
+
+        <div class="edit-section-label">Coverage</div>
+
+        <div class="edit-field">
+          <label>Product Type</label>
+          <select id="ef-product-${lead.id}">
+            <option value="">— Select —</option>
+            <option value="mortgage-protection" ${checked(lead.product_type,'mortgage-protection')}>Mortgage Protection</option>
+            <option value="final-expense"       ${checked(lead.product_type,'final-expense')}>Final Expense</option>
+            <option value="term-life"           ${checked(lead.product_type,'term-life')}>Term Life</option>
+            <option value="whole-life"          ${checked(lead.product_type,'whole-life')}>Whole Life</option>
+            <option value="iul"                 ${checked(lead.product_type,'iul')}>IUL / Wealth Building</option>
+            <option value="living-benefits"     ${checked(lead.product_type,'living-benefits')}>Living Benefits</option>
           </select>
         </div>
-        <div class="expand-action-group" style="flex:1">
-          <div class="expand-action-label">Notes</div>
-          <textarea class="notes-textarea" id="notes-${lead.id}" placeholder="Add call notes...">${lead.notes || ''}</textarea>
+        <div class="edit-field">
+          <label>Coverage Amount</label>
+          <input type="text" id="ef-coverage-${lead.id}" value="${v(lead.coverage_amount)}" placeholder="e.g. $250,000"/>
         </div>
-        <div class="expand-action-buttons">
-          <button class="btn-save" onclick="saveLead(${lead.id})">Save</button>
-          <span class="save-feedback" id="save-feedback-${lead.id}">✓ Saved</span>
-          <button class="btn-delete-lead" onclick="deleteLead(${lead.id})">Delete</button>
+        <div class="edit-field">
+          <label>Monthly Budget</label>
+          <input type="text" id="ef-budget-${lead.id}" value="${v(lead.monthly_budget)}" placeholder="e.g. $75/mo"/>
         </div>
+        <div class="edit-field">
+          <label>Has Beneficiary</label>
+          <select id="ef-beneficiary-${lead.id}">
+            <option value="">— Select —</option>
+            <option value="yes" ${checked(lead.has_beneficiary,'yes')}>Yes</option>
+            <option value="no"  ${checked(lead.has_beneficiary,'no')}>No</option>
+          </select>
+        </div>
+        <div class="edit-field">
+          <label>Beneficiary Relationship</label>
+          <input type="text" id="ef-benrel-${lead.id}" value="${v(lead.beneficiary_relationship)}" placeholder="e.g. Spouse"/>
+        </div>
+        <div class="edit-field">
+          <label>Currently Insured</label>
+          <select id="ef-insured-${lead.id}">
+            <option value="">— Select —</option>
+            <option value="true"  ${lead.currently_insured===true?'selected':''}>Yes</option>
+            <option value="false" ${lead.currently_insured===false?'selected':''}>No</option>
+          </select>
+        </div>
+        <div class="edit-field edit-field-wide">
+          <label>Reason for Seeking Coverage</label>
+          <textarea id="ef-reason-${lead.id}" placeholder="Client's reason...">${v(lead.reason)}</textarea>
+        </div>
+
+        <div class="edit-section-label">Medical & Underwriting</div>
+
+        <div class="edit-field">
+          <label>Date of Birth</label>
+          <input type="date" id="ef-dob-${lead.id}" value="${v(lead.dob)}"/>
+        </div>
+        <div class="edit-field">
+          <label>Height</label>
+          <input type="text" id="ef-height-${lead.id}" placeholder="e.g. 5ft 10in" value="${lead.height_ft ? lead.height_ft + 'ft ' + (lead.height_in||0) + 'in' : ''}"/>
+        </div>
+        <div class="edit-field">
+          <label>Weight (lbs)</label>
+          <input type="number" id="ef-weight-${lead.id}" placeholder="175" value="${v(lead.weight)}"/>
+        </div>
+        <div class="edit-field">
+          <label>Tobacco Use</label>
+          <select id="ef-tobacco-${lead.id}">
+            <option value="">— Select —</option>
+            <option value="true"  ${lead.tobacco===true?'selected':''}>Yes</option>
+            <option value="false" ${lead.tobacco===false?'selected':''}>No</option>
+          </select>
+        </div>
+        <div class="edit-field edit-field-wide">
+          <label>Major Health Conditions</label>
+          <textarea id="ef-conditions-${lead.id}" placeholder="e.g. Type 2 diabetes, hypertension...">${v(lead.major_conditions)}</textarea>
+        </div>
+        <div class="edit-field edit-field-wide">
+          <label>Current Medications</label>
+          <textarea id="ef-medications-${lead.id}" placeholder="e.g. Metformin, Lisinopril...">${v(lead.medications)}</textarea>
+        </div>
+
+        <div class="edit-section-label">Agent</div>
+
+        <div class="edit-field">
+          <label>Assigned Agent</label>
+          <input type="text" id="ef-agent-${lead.id}" value="${v(lead.assigned_agent)}" placeholder="e.g. Josh"/>
+        </div>
+        <div class="edit-field">
+          <label>Status</label>
+          <select id="status-select-${lead.id}">
+            <option value="new"               ${checked(lead.status,'new')}>New</option>
+            <option value="follow_up"         ${checked(lead.status,'follow_up')}>Follow Up</option>
+            <option value="does_not_pick_up"  ${checked(lead.status,'does_not_pick_up')}>Does Not Pick Up</option>
+            <option value="sale"              ${checked(lead.status,'sale')}>Sale</option>
+            <option value="no_sale"           ${checked(lead.status,'no_sale')}>No Sale</option>
+          </select>
+        </div>
+
+        <div class="edit-field edit-field-wide">
+          <label>Notes</label>
+          <textarea id="notes-${lead.id}" placeholder="Call notes, observations...">${v(lead.notes)}</textarea>
+        </div>
+
       </div>
 
-      <div class="underwriting-section">
-        <h4>Underwriting & Coverage Notes</h4>
-        <div class="uw-grid">
-          <div class="uw-field">
-            <label>Date of Birth</label>
-            <input type="date" id="uw-dob-${lead.id}" value="${lead.dob || ''}"/>
-          </div>
-          <div class="uw-field">
-            <label>Height</label>
-            <input type="text" id="uw-height-${lead.id}" placeholder="e.g. 5ft 10in" value="${lead.height_ft ? lead.height_ft + 'ft ' + (lead.height_in||0) + 'in' : ''}"/>
-          </div>
-          <div class="uw-field">
-            <label>Weight (lbs)</label>
-            <input type="number" id="uw-weight-${lead.id}" placeholder="e.g. 175" value="${lead.weight || ''}"/>
-          </div>
-          <div class="uw-field">
-            <label>Tobacco Use</label>
-            <select id="uw-tobacco-${lead.id}">
-              <option value="">— Select —</option>
-              <option value="true"  ${lead.tobacco===true?'selected':''}>Yes</option>
-              <option value="false" ${lead.tobacco===false?'selected':''}>No</option>
-            </select>
-          </div>
-          <div class="uw-field">
-            <label>Currently Insured</label>
-            <select id="uw-insured-${lead.id}">
-              <option value="">— Select —</option>
-              <option value="true"  ${lead.currently_insured===true?'selected':''}>Yes</option>
-              <option value="false" ${lead.currently_insured===false?'selected':''}>No</option>
-            </select>
-          </div>
-          <div class="uw-field">
-            <label>Assigned Agent</label>
-            <input type="text" id="uw-agent-${lead.id}" placeholder="e.g. Josh" value="${lead.assigned_agent || ''}"/>
-          </div>
-          <div class="uw-field">
-            <label>Coverage Amount</label>
-            <input type="text" id="uw-coverage-${lead.id}" placeholder="e.g. $250,000" value="${lead.coverage_amount || ''}"/>
-          </div>
-          <div class="uw-field">
-            <label>Monthly Budget</label>
-            <input type="text" id="uw-budget-${lead.id}" placeholder="e.g. $75/mo" value="${lead.monthly_budget || ''}"/>
-          </div>
-          <div class="uw-field uw-field-wide">
-            <label>Major Health Conditions</label>
-            <textarea id="uw-conditions-${lead.id}" placeholder="e.g. Type 2 diabetes, hypertension...">${lead.major_conditions || ''}</textarea>
-          </div>
-          <div class="uw-field uw-field-wide">
-            <label>Current Medications</label>
-            <textarea id="uw-medications-${lead.id}" placeholder="e.g. Metformin, Lisinopril...">${lead.medications || ''}</textarea>
-          </div>
+      <div class="expand-actions" style="border-top:1px solid var(--border);padding-top:1.25rem">
+        <div class="expand-action-buttons">
+          <button class="btn-save" onclick="saveLead(${lead.id})">Save Changes</button>
+          <span class="save-feedback" id="save-feedback-${lead.id}">✓ Saved</span>
+          <button class="btn-delete-lead" onclick="deleteLead(${lead.id})">Delete Lead</button>
         </div>
       </div>
     `;
