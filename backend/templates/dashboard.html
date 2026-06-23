@@ -1142,6 +1142,10 @@
           <input type="text" id="ef-last-${lead.id}" value="${v(lead.last_name)}"/>
         </div>
         <div class="edit-field">
+          <label>Age</label>
+          <input type="number" id="ef-age-${lead.id}" value="${v(lead.age)}" min="18" max="99"/>
+        </div>
+        <div class="edit-field">
           <label>Mobile Phone</label>
           <input type="text" id="ef-mobile-${lead.id}" value="${v(lead.mobile_phone)}"/>
         </div>
@@ -1292,6 +1296,7 @@
       notes:                    g('notes-')?.value || null,
       first_name:               g('ef-first-')?.value || null,
       last_name:                g('ef-last-')?.value || null,
+      age:                      g('ef-age-')?.value ? parseInt(g('ef-age-')?.value, 10) : null,
       mobile_phone:             g('ef-mobile-')?.value || null,
       home_phone:               g('ef-home-')?.value || null,
       email:                    g('ef-email-')?.value || null,
