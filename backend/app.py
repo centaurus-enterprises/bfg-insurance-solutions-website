@@ -933,13 +933,13 @@ def submit():
                 mobile_phone, home_phone, email,
                 city, state,
                 has_beneficiary, beneficiary_relationship,
-                reason, contact_preference
+                reason, contact_preference, age
             ) VALUES (
                 %(product_type)s, %(first_name)s, %(last_name)s,
                 %(mobile_phone)s, %(home_phone)s, %(email)s,
                 %(city)s, %(state)s,
                 %(has_beneficiary)s, %(beneficiary_relationship)s,
-                %(reason)s, %(contact_preference)s
+                %(reason)s, %(contact_preference)s, %(age)s
             )
         """, {
             "product_type":             data.get("product_type"),
@@ -954,6 +954,7 @@ def submit():
             "beneficiary_relationship": data.get("beneficiary_relationship"),
             "reason":                   data.get("reason"),
             "contact_preference":       data.get("contact_preference"),
+            "age":                      data.get("age"),
         })
 
         conn.commit()

@@ -3,1000 +3,651 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>See If You Qualify | Brown Financial Group</title>
+  <title>Get Your Free Quote | Brown Financial Group</title>
   <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="style.css"/>
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── PROGRESS BAR ── */
-    .progress-bar-wrap {
-      position: fixed;
-      top: 72px;
-      left: 0; right: 0;
-      z-index: 90;
-      background: var(--parchment-dark);
-      border-bottom: 1px solid var(--parchment-mid);
-      padding: 0.75rem 5%;
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
+    :root {
+      --espresso: #2C1A0E;
+      --cognac: #7B3F1E;
+      --saddle: #A0522D;
+      --parchment: #F5EFE6;
+      --parchment-dark: #EDE3D6;
+      --parchment-mid: #D9CCBA;
+      --white: #FFFFFF;
+      --text: #3A2A1A;
+      --text-light: #7A6A5A;
+      --error: #C0392B;
+      --success: #27AE60;
+      --radius: 10px;
     }
 
-    .progress-steps {
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--parchment);
+      color: var(--text);
+      min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 0;
-      flex: 1;
     }
 
-    .progress-step {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      flex: 1;
-    }
-
-    .progress-step:last-child { flex: 0; }
-
-    .step-bubble {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      border: 1.5px solid var(--parchment-mid);
-      background: var(--white);
+    /* ── HEADER ── */
+    .form-header {
+      width: 100%;
+      background: var(--espresso);
+      padding: 1rem 1.5rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.7rem;
-      font-weight: 700;
-      color: var(--text-light);
-      flex-shrink: 0;
-      transition: all 0.3s ease;
-      position: relative;
-      z-index: 1;
     }
 
-    .step-bubble.active {
-      border-color: var(--cognac);
-      background: var(--cognac);
-      color: var(--white);
-    }
-
-    .step-bubble.complete {
-      border-color: var(--saddle);
-      background: var(--saddle);
-      color: var(--white);
-    }
-
-    .step-bubble.complete::after {
-      content: '✓';
-      font-size: 0.75rem;
-    }
-
-    .step-bubble.complete span { display: none; }
-
-    .step-connector {
-      flex: 1;
-      height: 1.5px;
-      background: var(--parchment-mid);
-      transition: background 0.3s ease;
-      margin: 0 2px;
-    }
-
-    .step-connector.filled { background: var(--saddle); }
-
-    .progress-label {
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-light);
-      white-space: nowrap;
-    }
-
-    .progress-label span {
-      color: var(--cognac);
-      font-weight: 700;
-    }
-
-    /* ── PAGE LAYOUT ── */
-    .qualify-page {
-      min-height: 100vh;
-      background: var(--parchment);
-      padding-top: 130px;
-      padding-bottom: 5rem;
-    }
-
-    .qualify-inner {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 0 5%;
-    }
-
-    /* ── PAGE HEADER ── */
-    .qualify-header {
-      padding: 3rem 0 2.5rem;
-      border-bottom: 1px solid var(--parchment-mid);
-      margin-bottom: 3rem;
-    }
-
-    .qualify-header h1 {
-      font-family: 'Raleway', sans-serif;
-      font-size: clamp(2rem, 4vw, 2.8rem);
-      font-weight: 800;
-      color: var(--espresso);
-      line-height: 1.15;
-      margin-bottom: 0.75rem;
-    }
-
-    .qualify-header h1 span { color: var(--cognac); }
-
-    .qualify-header p {
-      font-size: 0.975rem;
-      color: var(--text-secondary);
-      line-height: 1.75;
-      max-width: 540px;
-    }
-
-    /* ── PRODUCT SELECTOR ── */
-    .product-selector-block {
-      margin-bottom: 3.5rem;
-      padding-bottom: 3.5rem;
-      border-bottom: 1px solid var(--parchment-mid);
-    }
-
-    .product-selector-label {
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--espresso);
-      margin-bottom: 1rem;
-      display: block;
-    }
-
-    .product-selector-label .required { color: var(--cognac); margin-left: 2px; }
-
-    .product-tiles {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
+    .logo-wrap {
+      display: flex;
+      align-items: center;
       gap: 0.75rem;
     }
 
-    .product-tile {
-      position: relative;
-      cursor: pointer;
+    .logo-wrap img {
+      height: 40px;
+      width: auto;
     }
 
-    .product-tile input[type="radio"] {
-      position: absolute;
-      opacity: 0;
-      width: 0; height: 0;
+    .logo-fallback {
+      font-family: 'Raleway', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--white);
+      letter-spacing: 0.02em;
     }
 
-    .product-tile label {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.3rem;
-      background: var(--white);
-      border: 1.5px solid var(--parchment-mid);
-      border-radius: 8px;
-      padding: 1rem 1.1rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      user-select: none;
+    /* ── MAIN CARD ── */
+    .form-card {
       width: 100%;
+      max-width: 560px;
+      padding: 2rem 1.5rem 3rem;
     }
 
-    .product-tile label:hover {
-      border-color: var(--cognac);
-      background: rgba(192,133,82,0.04);
+    .form-headline {
+      font-family: 'Raleway', sans-serif;
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: var(--espresso);
+      text-align: center;
+      margin-bottom: 0.4rem;
+      line-height: 1.25;
     }
 
-    .product-tile input[type="radio"]:checked + label {
+    .form-sub {
+      font-size: 0.95rem;
+      color: var(--text-light);
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+
+    /* ── SECTION LABELS ── */
+    .section-label {
+      font-family: 'Raleway', sans-serif;
+      font-weight: 700;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--cognac);
+      margin-bottom: 0.75rem;
+      margin-top: 1.75rem;
+    }
+
+    .section-label:first-of-type { margin-top: 0; }
+
+    /* ── PRODUCT TILES ── */
+    .product-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .product-tile {
+      border: 1.5px solid var(--parchment-mid);
+      border-radius: var(--radius);
+      background: var(--white);
+      padding: 0.85rem 0.75rem;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      user-select: none;
+    }
+
+    .product-tile:hover {
+      border-color: var(--saddle);
+      background: #fdf9f5;
+    }
+
+    .product-tile.selected {
       border-color: var(--cognac);
-      background: rgba(192,133,82,0.08);
-      box-shadow: 0 0 0 3px rgba(192,133,82,0.12);
+      background: #f9f0e8;
     }
 
     .tile-icon {
       width: 32px;
       height: 32px;
-      border-radius: 7px;
-      background: rgba(192,133,82,0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
       flex-shrink: 0;
-      margin-bottom: 0.35rem;
+      color: var(--cognac);
     }
 
-    .tile-icon svg {
-      stroke: var(--cognac);
-    }
-
-    .product-tile input[type="radio"]:checked + label .tile-icon {
-      background: rgba(192,133,82,0.18);
-    }
+    .tile-text { line-height: 1.2; }
 
     .tile-name {
       font-family: 'Raleway', sans-serif;
+      font-weight: 600;
       font-size: 0.82rem;
-      font-weight: 700;
       color: var(--espresso);
-      line-height: 1.2;
     }
 
-    .tile-sub {
-      font-size: 0.7rem;
+    .tile-desc {
+      font-size: 0.72rem;
       color: var(--text-light);
-      line-height: 1.4;
+      margin-top: 0.1rem;
     }
 
-    /* Locked state — when URL param pre-selects a product */
-    .product-selector-block.locked .product-tiles {
-      pointer-events: none;
-      opacity: 0.7;
-    }
-
-    .locked-notice {
-      display: none;
-      font-size: 0.78rem;
-      color: var(--saddle);
-      font-weight: 500;
-      margin-top: 0.75rem;
-    }
-
-    .product-selector-block.locked .locked-notice { display: block; }
-
-    /* ── FORM SECTIONS ── */
-    .form-section {
-      margin-bottom: 3.5rem;
-      padding-bottom: 3.5rem;
-      border-bottom: 1px solid var(--parchment-mid);
-    }
-
-    .form-section:last-of-type {
-      border-bottom: none;
-    }
-
-    .section-header {
-      display: flex;
-      align-items: flex-start;
-      gap: 1.25rem;
-      margin-bottom: 2rem;
-    }
-
-    .section-number {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      background: var(--espresso);
-      color: var(--parchment);
-      font-family: 'Raleway', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      margin-top: 0.15rem;
-    }
-
-    .section-header-text h2 {
-      font-family: 'Raleway', sans-serif;
-      font-size: 1.2rem;
-      font-weight: 800;
-      color: var(--espresso);
-      margin-bottom: 0.2rem;
-    }
-
-    .section-header-text p {
-      font-size: 0.85rem;
-      color: var(--text-light);
-      line-height: 1.5;
-    }
-
-    /* ── FIELD GRID ── */
-    .field-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.25rem;
-    }
-
-    .field-grid.cols-3 {
-      grid-template-columns: 1fr 1fr 1fr;
-    }
-
-    .field-grid.cols-1 {
-      grid-template-columns: 1fr;
-    }
-
-    .field-full { grid-column: 1 / -1; }
+    /* hidden radio */
+    .product-tile input[type="radio"] { display: none; }
 
     /* ── FORM FIELDS ── */
-    .field {
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .field-row.single { grid-template-columns: 1fr; }
+
+    .field-group {
       display: flex;
       flex-direction: column;
-      gap: 0.4rem;
+      gap: 0.3rem;
+      margin-bottom: 0.75rem;
     }
 
-    .field label {
-      font-size: 0.78rem;
+    label {
+      font-size: 0.8rem;
       font-weight: 600;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--espresso);
+      color: var(--text);
     }
 
-    .field label .required {
-      color: var(--cognac);
-      margin-left: 2px;
-    }
-
-    .field label .optional {
-      font-size: 0.68rem;
+    label .opt {
       font-weight: 400;
       color: var(--text-light);
-      text-transform: none;
-      letter-spacing: 0;
-      margin-left: 4px;
+      font-size: 0.75rem;
     }
 
-    .field input,
-    .field select,
-    .field textarea {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.925rem;
-      color: var(--text-primary);
-      background: var(--white);
-      border: 1.5px solid var(--parchment-mid);
-      border-radius: 6px;
-      padding: 0.75rem 1rem;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      outline: none;
+    input[type="text"],
+    input[type="tel"],
+    input[type="email"],
+    input[type="number"],
+    select,
+    textarea {
       width: 100%;
-      appearance: none;
-    }
-
-    .field input::placeholder,
-    .field textarea::placeholder {
-      color: var(--text-light);
-      font-weight: 300;
-    }
-
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus {
-      border-color: var(--cognac);
-      box-shadow: 0 0 0 3px rgba(192,133,82,0.12);
-    }
-
-    .field textarea {
-      width: 100%;
-      padding: 0.75rem 1rem;
+      padding: 0.7rem 0.85rem;
       border: 1.5px solid var(--parchment-mid);
-      border-radius: 8px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.925rem;
-      color: var(--espresso);
+      border-radius: var(--radius);
       background: var(--white);
-      resize: vertical;
-      min-height: 100px;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      line-height: 1.6;
-    }
-
-    .field textarea:focus {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
       outline: none;
-      border-color: var(--cognac);
-      box-shadow: 0 0 0 3px rgba(192,133,82,0.12);
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
     }
 
-    .field select {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239a7a6a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 1rem center;
-      padding-right: 2.5rem;
-      cursor: pointer;
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--saddle);
     }
 
-    /* RADIO GROUP */
-    .radio-group {
+    input.error, select.error, textarea.error {
+      border-color: var(--error);
+    }
+
+    textarea { resize: vertical; min-height: 80px; }
+
+    /* ── PILL BUTTONS (yes/no) ── */
+    .pill-group {
       display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
+      gap: 0.5rem;
     }
 
-    .radio-option {
-      display: flex;
-      align-items: center;
-      gap: 0;
-    }
-
-    .radio-option input[type="radio"] { display: none; }
-
-    .radio-option label {
-      font-size: 0.875rem;
+    .pill {
+      flex: 1;
+      padding: 0.65rem;
+      border: 1.5px solid var(--parchment-mid);
+      border-radius: 50px;
+      background: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
       font-weight: 500;
-      color: var(--text-secondary);
-      background: var(--white);
-      border: 1.5px solid var(--parchment-mid);
-      border-radius: 6px;
-      padding: 0.6rem 1.1rem;
+      color: var(--text);
       cursor: pointer;
-      transition: all 0.2s;
-      text-transform: none;
-      letter-spacing: 0;
+      text-align: center;
+      transition: border-color 0.15s, background 0.15s;
       user-select: none;
     }
 
-    .radio-option input[type="radio"]:checked + label {
-      border-color: var(--cognac);
-      background: rgba(192,133,82,0.08);
-      color: var(--cognac);
-      font-weight: 600;
+    .pill:hover { border-color: var(--saddle); }
+    .pill.selected { border-color: var(--cognac); background: #f9f0e8; color: var(--cognac); font-weight: 600; }
+    .pill input { display: none; }
+
+    /* ── HIDDEN SECTIONS ── */
+    .conditional { display: none; }
+    .conditional.visible { display: block; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--parchment-mid);
+      margin: 1.75rem 0;
     }
 
-    /* FIELD HINT */
-    .field-hint {
-      font-size: 0.75rem;
-      color: var(--text-light);
-      line-height: 1.5;
-      margin-top: 0.1rem;
-    }
-
-    /* PRIVACY NOTE */
-    .privacy-note {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.75rem;
-      background: rgba(192,133,82,0.06);
-      border: 1px solid rgba(192,133,82,0.2);
-      border-radius: 6px;
-      padding: 1rem 1.25rem;
-      margin-bottom: 2rem;
-    }
-
-    .privacy-icon {
-      font-size: 1rem;
-      flex-shrink: 0;
-      margin-top: 0.1rem;
-    }
-
-    .privacy-note p {
-      font-size: 0.825rem;
-      color: var(--text-secondary);
-      line-height: 1.6;
-      margin: 0;
-    }
-
-    /* SUBMIT */
-    .form-submit {
-      padding-top: 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 1rem;
-    }
-
-    .submit-note {
-      font-size: 0.8rem;
-      color: var(--text-light);
-      line-height: 1.6;
-    }
-
-    .btn-submit {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
+    /* ── SUBMIT ── */
+    .submit-btn {
+      width: 100%;
+      padding: 1rem;
       background: var(--cognac);
       color: var(--white);
+      border: none;
+      border-radius: var(--radius);
       font-family: 'Raleway', sans-serif;
       font-weight: 700;
       font-size: 1rem;
-      padding: 1rem 2.5rem;
-      border-radius: 6px;
-      border: none;
+      letter-spacing: 0.04em;
       cursor: pointer;
-      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 4px 20px rgba(192,133,82,0.3);
+      transition: background 0.15s, transform 0.1s;
+      margin-top: 0.5rem;
     }
 
-    .btn-submit:hover {
-      background: var(--saddle);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 28px rgba(140,90,60,0.35);
+    .submit-btn:hover { background: var(--espresso); }
+    .submit-btn:active { transform: scale(0.99); }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .form-note {
+      font-size: 0.72rem;
+      color: var(--text-light);
+      text-align: center;
+      margin-top: 0.75rem;
     }
 
-    /* AGENT DISCLAIMER */
-    .agent-disclaimer {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      line-height: 1.7;
-      margin-top: 1.5rem;
-      padding: 1rem 1.25rem;
-      background: rgba(192,133,82,0.04);
-      border-left: 3px solid var(--cognac);
-      border-radius: 0 6px 6px 0;
+    /* ── ERROR MESSAGE ── */
+    .form-error {
+      background: #fdecea;
+      border: 1px solid #f5c6c2;
+      border-radius: var(--radius);
+      color: var(--error);
+      font-size: 0.85rem;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      display: none;
     }
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 700px) {
-      .field-grid { grid-template-columns: 1fr; }
-      .field-grid.cols-3 { grid-template-columns: 1fr 1fr; }
-      .progress-label { display: none; }
-      .progress-bar-wrap { padding: 0.75rem 4%; }
-      .product-tiles { grid-template-columns: repeat(2, 1fr); }
-    }
+    .form-error.visible { display: block; }
 
-    @media (max-width: 480px) {
-      .field-grid.cols-3 { grid-template-columns: 1fr; }
-      .product-tiles { grid-template-columns: 1fr 1fr; }
+    /* ── MOBILE ── */
+    @media (max-width: 420px) {
+      .form-card { padding: 1.5rem 1rem 2.5rem; }
+      .form-headline { font-size: 1.35rem; }
+      .product-grid { gap: 0.5rem; }
+      .tile-name { font-size: 0.78rem; }
+      .field-row { grid-template-columns: 1fr; gap: 0; }
     }
-
   </style>
 </head>
 <body>
 
-  <!-- NAV -->
-  <nav>
-    <a href="index.html" class="nav-logo">Brown<span>Financial Group</span></a>
-    <ul class="nav-links">
-      <li><a href="about.html">About Us</a></li>
-      <li class="nav-dropdown">
-        <a href="products.html" class="nav-dropdown-toggle">Products ▾</a>
-        <ul class="dropdown-menu">
-          <li><a href="mortgage_protection.html">Mortgage Protection</a></li>
-          <li><a href="term_life.html">Term Life</a></li>
-          <li><a href="whole_life.html">Whole Life</a></li>
-          <li><a href="final_expense.html">Final Expense</a></li>
-          <li><a href="iul.html">IUL / Wealth Building</a></li>
-          <li><a href="living_benefits.html">Living Benefits</a></li>
-        </ul>
-      </li>
-      <li><a href="careers.html">Careers</a></li>
-      <li><a href="qualify.html" class="nav-cta">See If You Qualify</a></li>
-    </ul>
-  </nav>
-
-  <!-- PROGRESS BAR -->
-  <div class="progress-bar-wrap" id="progressBar">
-    <div class="progress-steps">
-      <div class="progress-step">
-        <div class="step-bubble active" id="bubble-1"><span>1</span></div>
-        <div class="step-connector" id="connector-1"></div>
-      </div>
-      <div class="progress-step">
-        <div class="step-bubble" id="bubble-2"><span>2</span></div>
-      </div>
+  <header class="form-header">
+    <div class="logo-wrap">
+      <img src="logo.png" alt="Brown Financial Group" onerror="this.style.display='none'"/>
+      <span class="logo-fallback">Brown Financial Group</span>
     </div>
-    <div class="progress-label">Section <span id="progressLabel">1</span> of 2</div>
-  </div>
+  </header>
 
-  <!-- MAIN -->
-  <div class="qualify-page">
-    <div class="qualify-inner">
+  <main class="form-card">
+    <h1 class="form-headline">Get Your Free Quote</h1>
+    <p class="form-sub">Takes under 2 minutes — no obligation.</p>
 
-      <!-- HEADER -->
-      <div class="qualify-header">
-        <h1>Let's find the right <span id="pageHeadlineSpan">coverage for you</span></h1>
-        <p id="pageSubhead">This form helps us prepare your options ahead of time. Your information is kept private and secure — one of our agents will reach out to walk you through your options personally.</p>
-      </div>
+    <div class="form-error" id="form-error">Please fill in all required fields.</div>
 
-      <div class="privacy-note">
-        <div class="privacy-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-        <p>Your information is never sold or shared with third parties. It is used solely to prepare your coverage options before speaking with one of our agents.</p>
-      </div>
+    <form id="qualify-form" novalidate>
 
-      <form id="qualifyForm" action="#" method="POST">
+      <!-- PRODUCT TYPE -->
+      <div class="section-label">What type of coverage are you looking for?</div>
+      <div class="product-grid">
 
-        <!-- ── PRODUCT SELECTOR ── -->
-        <div class="product-selector-block" id="productSelectorBlock">
-          <span class="product-selector-label">What type of coverage are you interested in? <span class="required">*</span></span>
-          <div class="product-tiles">
-
-            <div class="product-tile">
-              <input type="radio" name="product_type" id="prod-mp" value="mortgage-protection"/>
-              <label for="prod-mp">
-                <span class="tile-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-                  </svg>
-                </span>
-                <span class="tile-name">Mortgage Protection</span>
-                <span class="tile-sub">Protect your home & family</span>
-              </label>
-            </div>
-
-            <div class="product-tile">
-              <input type="radio" name="product_type" id="prod-fe" value="final-expense"/>
-              <label for="prod-fe">
-                <span class="tile-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                  </svg>
-                </span>
-                <span class="tile-name">Final Expense</span>
-                <span class="tile-sub">Cover end-of-life costs</span>
-              </label>
-            </div>
-
-            <div class="product-tile">
-              <input type="radio" name="product_type" id="prod-term" value="term-life"/>
-              <label for="prod-term">
-                <span class="tile-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                  </svg>
-                </span>
-                <span class="tile-name">Term Life</span>
-                <span class="tile-sub">Affordable fixed-term coverage</span>
-              </label>
-            </div>
-
-            <div class="product-tile">
-              <input type="radio" name="product_type" id="prod-whole" value="whole-life"/>
-              <label for="prod-whole">
-                <span class="tile-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                  </svg>
-                </span>
-                <span class="tile-name">Whole Life</span>
-                <span class="tile-sub">Lifelong permanent coverage</span>
-              </label>
-            </div>
-
-            <div class="product-tile">
-              <input type="radio" name="product_type" id="prod-iul" value="iul"/>
-              <label for="prod-iul">
-                <span class="tile-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
-                  </svg>
-                </span>
-                <span class="tile-name">IUL / Wealth Building</span>
-                <span class="tile-sub">Growth + protection combined</span>
-              </label>
-            </div>
-
-            <div class="product-tile">
-              <input type="radio" name="product_type" id="prod-lb" value="living-benefits"/>
-              <label for="prod-lb">
-                <span class="tile-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-                  </svg>
-                </span>
-                <span class="tile-name">Living Benefits</span>
-                <span class="tile-sub">Coverage you can use while living</span>
-              </label>
-            </div>
-
+        <label class="product-tile" id="tile-term">
+          <input type="radio" name="product_type" value="Term Life"/>
+          <svg class="tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          <div class="tile-text">
+            <div class="tile-name">Term Life</div>
+            <div class="tile-desc">10, 20, or 30-year coverage</div>
           </div>
-          <p class="locked-notice">✓ Your product interest was pre-selected based on your inquiry. You can change it above if needed.</p>
+        </label>
+
+        <label class="product-tile" id="tile-whole">
+          <input type="radio" name="product_type" value="Whole Life"/>
+          <svg class="tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+          <div class="tile-text">
+            <div class="tile-name">Whole Life</div>
+            <div class="tile-desc">Lifetime, builds cash value</div>
+          </div>
+        </label>
+
+        <label class="product-tile" id="tile-iul">
+          <input type="radio" name="product_type" value="Indexed Universal Life"/>
+          <svg class="tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
+            <polyline points="16 7 22 7 22 13"/>
+          </svg>
+          <div class="tile-text">
+            <div class="tile-name">IUL</div>
+            <div class="tile-desc">Index-linked growth</div>
+          </div>
+        </label>
+
+        <label class="product-tile" id="tile-fe">
+          <input type="radio" name="product_type" value="Final Expense"/>
+          <svg class="tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+          <div class="tile-text">
+            <div class="tile-name">Final Expense</div>
+            <div class="tile-desc">Covers end-of-life costs</div>
+          </div>
+        </label>
+
+        <label class="product-tile" id="tile-annuity">
+          <input type="radio" name="product_type" value="Annuity"/>
+          <svg class="tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <rect x="2" y="7" width="20" height="14" rx="2"/>
+            <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+          </svg>
+          <div class="tile-text">
+            <div class="tile-name">Annuity</div>
+            <div class="tile-desc">Retirement income stream</div>
+          </div>
+        </label>
+
+        <label class="product-tile" id="tile-mortgage">
+          <input type="radio" name="product_type" value="Mortgage Protection"/>
+          <svg class="tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          <div class="tile-text">
+            <div class="tile-name">Mortgage Protection</div>
+            <div class="tile-desc">Protects your home loan</div>
+          </div>
+        </label>
+
+      </div>
+
+      <hr class="divider"/>
+
+      <!-- CONTACT INFO -->
+      <div class="section-label">Your Information</div>
+
+      <div class="field-row">
+        <div class="field-group">
+          <label for="first_name">First Name <span style="color:var(--error)">*</span></label>
+          <input type="text" id="first_name" name="first_name" placeholder="Jane" autocomplete="given-name" required/>
         </div>
-
-        <!-- ── SECTION 1: YOUR INFORMATION ── -->
-        <div class="form-section" id="section-1">
-          <div class="section-header">
-            <div class="section-number">1</div>
-            <div class="section-header-text">
-              <h2>Your Information</h2>
-              <p>Basic contact details so we can reach you</p>
-            </div>
-          </div>
-
-          <div class="field-grid">
-            <div class="field">
-              <label>First Name <span class="required">*</span></label>
-              <input type="text" name="first_name" placeholder="John" required/>
-            </div>
-            <div class="field">
-              <label>Last Name <span class="required">*</span></label>
-              <input type="text" name="last_name" placeholder="Smith" required/>
-            </div>
-            <div class="field field-full">
-              <label>Mobile Phone <span class="required">*</span></label>
-              <input type="tel" name="mobile_phone" id="mobile_phone" placeholder="(000) 000-0000" required/>
-            </div>
-            <div class="field field-full">
-              <label>Home Phone <span class="optional">(optional)</span></label>
-              <input type="tel" name="home_phone" id="home_phone" placeholder="(000) 000-0000"/>
-            </div>
-            <div class="field field-full">
-              <label>Email <span class="optional">(optional)</span></label>
-              <input type="email" name="email" placeholder="john@example.com"/>
-            </div>
-            <div class="field">
-              <label>City <span class="required">*</span></label>
-              <input type="text" name="city" placeholder="San Diego" required/>
-            </div>
-            <div class="field">
-              <label>State <span class="required">*</span></label>
-              <select name="state" required>
-                <option value="" disabled selected>Select state</option>
-                <option>Alabama</option><option>Alaska</option><option>Arizona</option>
-                <option>Arkansas</option><option>California</option><option>Colorado</option>
-                <option>Connecticut</option><option>Delaware</option><option>Florida</option>
-                <option>Georgia</option><option>Hawaii</option><option>Idaho</option>
-                <option>Illinois</option><option>Indiana</option><option>Iowa</option>
-                <option>Kansas</option><option>Kentucky</option><option>Louisiana</option>
-                <option>Maine</option><option>Maryland</option><option>Massachusetts</option>
-                <option>Michigan</option><option>Minnesota</option><option>Mississippi</option>
-                <option>Missouri</option><option>Montana</option><option>Nebraska</option>
-                <option>Nevada</option><option>New Hampshire</option><option>New Jersey</option>
-                <option>New Mexico</option><option>New York</option><option>North Carolina</option>
-                <option>North Dakota</option><option>Ohio</option><option>Oklahoma</option>
-                <option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option>
-                <option>South Carolina</option><option>South Dakota</option><option>Tennessee</option>
-                <option>Texas</option><option>Utah</option><option>Vermont</option>
-                <option>Virginia</option><option>Washington</option><option>West Virginia</option>
-                <option>Wisconsin</option><option>Wyoming</option>
-              </select>
-            </div>
-          </div>
+        <div class="field-group">
+          <label for="last_name">Last Name <span style="color:var(--error)">*</span></label>
+          <input type="text" id="last_name" name="last_name" placeholder="Smith" autocomplete="family-name" required/>
         </div>
+      </div>
 
-        <!-- ── SECTION 2: COVERAGE DETAILS ── -->
-        <div class="form-section" id="section-2">
-          <div class="section-header">
-            <div class="section-number">2</div>
-            <div class="section-header-text">
-              <h2>Coverage Details</h2>
-              <p>A few details to help us prepare the right options for your call</p>
-            </div>
-          </div>
-
-          <div class="field-grid cols-1">
-
-            <div class="field">
-              <label>Do you have a beneficiary in mind?</label>
-              <div class="radio-group">
-                <div class="radio-option">
-                  <input type="radio" name="has_beneficiary" id="ben-yes" value="yes"/>
-                  <label for="ben-yes">Yes</label>
-                </div>
-                <div class="radio-option">
-                  <input type="radio" name="has_beneficiary" id="ben-no" value="no"/>
-                  <label for="ben-no">No</label>
-                </div>
-              </div>
-            </div>
-
-            <div class="field" id="beneficiaryRelField" style="display:none;">
-              <label>Relationship to beneficiary <span class="optional">(optional)</span></label>
-              <input type="text" name="beneficiary_relationship" placeholder="e.g. Spouse, Child, Parent"/>
-            </div>
-
-            <div class="field">
-              <label>Reason for seeking coverage <span class="optional">(optional)</span></label>
-              <textarea name="reason" placeholder="e.g. Recently purchased a home, new baby, planning for retirement..."></textarea>
-            </div>
-
-          </div>
-
-          <p class="agent-disclaimer">One of our agents will reach out shortly to discuss your options and walk you through some additional questions to find the best fit for your needs.</p>
+      <div class="field-row">
+        <div class="field-group">
+          <label for="age">Age <span style="color:var(--error)">*</span></label>
+          <input type="number" id="age" name="age" placeholder="35" min="18" max="99" required/>
         </div>
-
-        <!-- SUBMIT -->
-        <div class="form-submit">
-          <p class="submit-note">By submitting this form you agree to be contacted by a Brown Financial Group representative. We will never sell or share your information with third parties.</p>
-          <button type="submit" class="btn-submit">Submit My Information &nbsp;→</button>
+        <div class="field-group">
+          <label for="mobile_phone">Mobile Phone <span style="color:var(--error)">*</span></label>
+          <input type="tel" id="mobile_phone" name="mobile_phone" placeholder="(555) 000-0000" autocomplete="tel" required/>
         </div>
+      </div>
 
-      </form>
-    </div>
-  </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label for="home_phone">Home Phone <span class="opt">(optional)</span></label>
+          <input type="tel" id="home_phone" name="home_phone" placeholder="(555) 000-0000" autocomplete="tel-home"/>
+        </div>
+        <div class="field-group">
+          <label for="email">Email <span style="color:var(--error)">*</span></label>
+          <input type="email" id="email" name="email" placeholder="jane@email.com" autocomplete="email" required/>
+        </div>
+      </div>
 
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <a href="index.html" class="nav-logo">Brown<span>Financial Group</span></a>
-        <p>Independent life insurance brokerage serving families across the U.S. We work for you — not the carriers.</p>
+      <div class="field-row">
+        <div class="field-group">
+          <label for="city">City <span style="color:var(--error)">*</span></label>
+          <input type="text" id="city" name="city" placeholder="Los Angeles" autocomplete="address-level2" required/>
+        </div>
+        <div class="field-group">
+          <label for="state">State <span style="color:var(--error)">*</span></label>
+          <select id="state" name="state" required>
+            <option value="" disabled selected>Select state</option>
+            <option>Alabama</option><option>Alaska</option><option>Arizona</option>
+            <option>Arkansas</option><option>California</option><option>Colorado</option>
+            <option>Connecticut</option><option>Delaware</option><option>Florida</option>
+            <option>Georgia</option><option>Hawaii</option><option>Idaho</option>
+            <option>Illinois</option><option>Indiana</option><option>Iowa</option>
+            <option>Kansas</option><option>Kentucky</option><option>Louisiana</option>
+            <option>Maine</option><option>Maryland</option><option>Massachusetts</option>
+            <option>Michigan</option><option>Minnesota</option><option>Mississippi</option>
+            <option>Missouri</option><option>Montana</option><option>Nebraska</option>
+            <option>Nevada</option><option>New Hampshire</option><option>New Jersey</option>
+            <option>New Mexico</option><option>New York</option><option>North Carolina</option>
+            <option>North Dakota</option><option>Ohio</option><option>Oklahoma</option>
+            <option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option>
+            <option>South Carolina</option><option>South Dakota</option><option>Tennessee</option>
+            <option>Texas</option><option>Utah</option><option>Vermont</option>
+            <option>Virginia</option><option>Washington</option><option>West Virginia</option>
+            <option>Wisconsin</option><option>Wyoming</option>
+          </select>
+        </div>
       </div>
-      <div class="footer-col">
-        <h4>Products</h4>
-        <ul>
-          <li><a href="mortgage_protection.html">Mortgage Protection</a></li>
-          <li><a href="term_life.html">Term Life</a></li>
-          <li><a href="whole_life.html">Whole Life</a></li>
-          <li><a href="iul.html">IUL / Wealth</a></li>
-          <li><a href="final_expense.html">Final Expense</a></li>
-          <li><a href="living_benefits.html">Living Benefits</a></li>
-        </ul>
+
+      <hr class="divider"/>
+
+      <!-- COVERAGE DETAILS -->
+      <div class="section-label">Coverage Details</div>
+
+      <div class="field-group">
+        <label>Do you have a beneficiary in mind?</label>
+        <div class="pill-group">
+          <label class="pill" id="pill-ben-yes">
+            <input type="radio" name="has_beneficiary" value="Yes"/>
+            Yes
+          </label>
+          <label class="pill" id="pill-ben-no">
+            <input type="radio" name="has_beneficiary" value="No"/>
+            Not yet
+          </label>
+        </div>
       </div>
-      <div class="footer-col">
-        <h4>Company</h4>
-        <ul>
-          <li><a href="about.html">About Us</a></li>
-          <li><a href="careers.html">Careers</a></li>
-          <li><a href="#">Contact</a></li>
-        </ul>
+
+      <div class="conditional field-group" id="beneficiary-rel-wrap">
+        <label for="beneficiary_relationship">Beneficiary Relationship <span style="color:var(--error)">*</span></label>
+        <input type="text" id="beneficiary_relationship" name="beneficiary_relationship" placeholder="e.g. Spouse, Child, Parent"/>
       </div>
-      <div class="footer-col">
-        <h4>Get Started</h4>
-        <ul>
-          <li><a href="qualify.html">See If You Qualify</a></li>
-          <li><a href="careers.html">Join Our Team</a></li>
-          <li><a href="/login">Agent Portal</a></li>
-          <li><a href="#">Privacy Policy</a></li>
-        </ul>
+
+      <div class="field-group">
+        <label for="reason">Primary reason for coverage <span style="color:var(--error)">*</span></label>
+        <select id="reason" name="reason" required>
+          <option value="" disabled selected>Select a reason</option>
+          <option value="Income replacement">Income replacement for my family</option>
+          <option value="Final expenses">Cover final expenses</option>
+          <option value="Mortgage protection">Protect my mortgage / home</option>
+          <option value="Wealth transfer">Wealth transfer / legacy planning</option>
+          <option value="Retirement savings">Supplement retirement savings</option>
+          <option value="Other">Other</option>
+        </select>
       </div>
-    </div>
-    <div class="footer-bottom">
-      <span>© 2026 Brown Financial Group LLC. All rights reserved.</span>
-      <div class="footer-legal">
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms of Service</a>
-        <a href="#">Disclaimers</a>
+
+      <div class="conditional field-group" id="reason-other-wrap">
+        <label for="reason_other">Please describe <span style="color:var(--error)">*</span></label>
+        <textarea id="reason_other" name="reason_other" maxlength="100" placeholder="Brief description (100 characters max)"></textarea>
       </div>
-    </div>
-  </footer>
+
+      <div class="field-group">
+        <label for="contact_preference">Best way to reach you <span style="color:var(--error)">*</span></label>
+        <select id="contact_preference" name="contact_preference" required>
+          <option value="" disabled selected>Select preference</option>
+          <option value="Phone call">Phone call</option>
+          <option value="Text message">Text message</option>
+          <option value="Email">Email</option>
+          <option value="Video call">Video call</option>
+        </select>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submit-btn">Get My Free Quote &rarr;</button>
+      <p class="form-note">Your information is private and never sold. No spam, ever.</p>
+
+    </form>
+  </main>
 
   <script>
-    // ═══════════════════════════════════════════════════════
-    // PRODUCT URL PARAM PRE-SELECTION
-    // Handles: qualify.html?product=mortgage-protection
-    // ═══════════════════════════════════════════════════════
-    (function initProductFromURL() {
-      const params  = new URLSearchParams(window.location.search);
-      const product = params.get('product');
-      const validProducts = [
-        'mortgage-protection','final-expense','term-life',
-        'whole-life','iul','living-benefits'
-      ];
-
-      if (product && validProducts.includes(product)) {
-        const radio = document.querySelector(`input[name="product_type"][value="${product}"]`);
-        if (radio) {
-          radio.checked = true;
-          document.getElementById('productSelectorBlock').classList.add('locked');
-        }
-      }
-    })();
-
-    // ═══════════════════════════════════════════════════════
-    // BENEFICIARY RELATIONSHIP SHOW / HIDE
-    // ═══════════════════════════════════════════════════════
-    document.querySelectorAll('input[name="has_beneficiary"]').forEach(function(radio) {
-      radio.addEventListener('change', function() {
-        var relField = document.getElementById('beneficiaryRelField');
-        relField.style.display = (this.value === 'yes') ? 'flex' : 'none';
+    // Product tile selection
+    document.querySelectorAll('.product-tile').forEach(function(tile) {
+      tile.addEventListener('click', function() {
+        document.querySelectorAll('.product-tile').forEach(function(t) { t.classList.remove('selected'); });
+        tile.classList.add('selected');
       });
     });
 
-    // ═══════════════════════════════════════════════════════
-    // PHONE NUMBER AUTO-FORMATTING  (000) 000-0000
-    // ═══════════════════════════════════════════════════════
-    function formatPhone(input) {
-      input.addEventListener('input', function() {
-        var digits = this.value.replace(/\D/g, '').slice(0, 10);
-        var formatted = '';
-        if (digits.length === 0) {
-          formatted = '';
-        } else if (digits.length <= 3) {
-          formatted = '(' + digits;
-        } else if (digits.length <= 6) {
-          formatted = '(' + digits.slice(0,3) + ') ' + digits.slice(3);
-        } else {
-          formatted = '(' + digits.slice(0,3) + ') ' + digits.slice(3,6) + '-' + digits.slice(6);
-        }
-        this.value = formatted;
-      });
-    }
+    // Pill selection
+    document.querySelectorAll('.pill').forEach(function(pill) {
+      pill.addEventListener('click', function() {
+        var name = pill.querySelector('input').name;
+        document.querySelectorAll('.pill input[name="' + name + '"]').forEach(function(inp) {
+          inp.closest('.pill').classList.remove('selected');
+        });
+        pill.classList.add('selected');
 
-    formatPhone(document.getElementById('mobile_phone'));
-    formatPhone(document.getElementById('home_phone'));
-
-    // ═══════════════════════════════════════════════════════
-    // SCROLL PROGRESS TRACKER (2 steps)
-    // ═══════════════════════════════════════════════════════
-    var sections   = ['section-1','section-2'].map(function(id) { return document.getElementById(id); });
-    var bubbles    = [1,2].map(function(n) { return document.getElementById('bubble-' + n); });
-    var connectors = [1].map(function(n) { return document.getElementById('connector-' + n); });
-    var label      = document.getElementById('progressLabel');
-
-    function updateProgress() {
-      var scrollY  = window.scrollY + window.innerHeight * 0.4;
-      var current  = 0;
-
-      sections.forEach(function(section, i) {
-        if (section && scrollY >= section.offsetTop) {
-          current = i;
+        if (name === 'has_beneficiary') {
+          var val = pill.querySelector('input').value;
+          var wrap = document.getElementById('beneficiary-rel-wrap');
+          if (val === 'Yes') {
+            wrap.classList.add('visible');
+          } else {
+            wrap.classList.remove('visible');
+            document.getElementById('beneficiary_relationship').value = '';
+          }
         }
       });
+    });
 
-      bubbles.forEach(function(bubble, i) {
-        bubble.classList.remove('active', 'complete');
-        if (i < current) bubble.classList.add('complete');
-        else if (i === current) bubble.classList.add('active');
-      });
+    // Reason "Other" textarea
+    document.getElementById('reason').addEventListener('change', function() {
+      var wrap = document.getElementById('reason-other-wrap');
+      if (this.value === 'Other') {
+        wrap.classList.add('visible');
+      } else {
+        wrap.classList.remove('visible');
+        document.getElementById('reason_other').value = '';
+      }
+    });
 
-      connectors.forEach(function(connector, i) {
-        connector.classList.toggle('filled', i < current);
-      });
-
-      label.textContent = current + 1;
-    }
-
-    window.addEventListener('scroll', updateProgress, { passive: true });
-    updateProgress();
-
-    // ═══════════════════════════════════════════════════════
-    // FORM SUBMISSION
-    // ═══════════════════════════════════════════════════════
-    document.getElementById('qualifyForm').addEventListener('submit', async function(e) {
+    // Form submit
+    document.getElementById('qualify-form').addEventListener('submit', function(e) {
       e.preventDefault();
 
-      var form = e.target;
+      var errEl = document.getElementById('form-error');
+      errEl.classList.remove('visible');
 
-      // Collect field values
-      var data = {};
-      form.querySelectorAll('input[name], select[name], textarea[name]').forEach(function(field) {
-        if (field.type === 'radio') {
-          if (field.checked) data[field.name] = field.value;
-        } else {
-          if (field.value.trim() !== '') data[field.name] = field.value.trim();
-        }
-      });
+      // Clear previous errors
+      document.querySelectorAll('.error').forEach(function(el) { el.classList.remove('error'); });
 
-      // Client-side required field validation
-      var required = ['first_name','last_name','mobile_phone','city','state','product_type'];
-      var missing  = required.filter(function(k) { return !data[k]; });
-      if (missing.length > 0) {
-        alert('Please fill in all required fields before submitting.');
+      var ok = true;
+      function req(id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        if (!el.value.trim()) { el.classList.add('error'); ok = false; }
+      }
+
+      req('first_name'); req('last_name'); req('age'); req('mobile_phone'); req('email');
+      req('city'); req('state'); req('reason'); req('contact_preference');
+
+      // Reason other
+      if (document.getElementById('reason').value === 'Other') {
+        req('reason_other');
+      }
+
+      // Beneficiary relationship if yes
+      var benYes = document.querySelector('.pill#pill-ben-yes.selected');
+      if (benYes) req('beneficiary_relationship');
+
+      if (!ok) {
+        errEl.textContent = 'Please fill in all required fields.';
+        errEl.classList.add('visible');
+        errEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
-      // Disable button to prevent double submit
-      var btn = form.querySelector('.btn-submit');
-      btn.disabled = true;
-      btn.textContent = 'Submitting...';
 
-      // Build clean payload
+      var productInput = document.querySelector('input[name="product_type"]:checked');
+      var benInput = document.querySelector('input[name="has_beneficiary"]:checked');
+
+      var reasonVal = document.getElementById('reason').value;
+      if (reasonVal === 'Other') {
+        reasonVal = document.getElementById('reason_other').value.trim();
+      }
+
       var payload = {
-        product_type:             data.product_type             || '',
-        first_name:               data.first_name               || '',
-        last_name:                data.last_name                || '',
-        mobile_phone:             data.mobile_phone             || '',
-        home_phone:               data.home_phone               || '',
-        email:                    data.email                    || '',
-        city:                     data.city                     || '',
-        state:                    data.state                    || '',
-        has_beneficiary:          data.has_beneficiary          || '',
-        beneficiary_relationship: data.beneficiary_relationship || '',
-        reason:                   data.reason                   || '',
+        product_type: productInput ? productInput.value : '',
+        first_name: document.getElementById('first_name').value.trim(),
+        last_name: document.getElementById('last_name').value.trim(),
+        age: parseInt(document.getElementById('age').value, 10) || null,
+        mobile_phone: document.getElementById('mobile_phone').value.trim(),
+        home_phone: document.getElementById('home_phone').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        city: document.getElementById('city').value.trim(),
+        state: document.getElementById('state').value,
+        has_beneficiary: benInput ? benInput.value : '',
+        beneficiary_relationship: document.getElementById('beneficiary_relationship').value.trim(),
+        reason: reasonVal,
+        contact_preference: document.getElementById('contact_preference').value
       };
 
-      try {
-        var response = await fetch('/submit', {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify(payload)
-        });
+      var btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
 
-        var result = await response.json();
-
-        if (result.status === 'ok') {
-          btn.textContent = '✓ Submitted Successfully';
-          btn.style.background = 'var(--saddle)';
-          var state = encodeURIComponent(payload.state || '');
-          window.location.href = 'thank_you.html?state=' + state;
-        } else {
-          btn.disabled = false;
-          btn.textContent = 'Submit My Information →';
-          alert('Something went wrong: ' + result.message);
-        }
-
-      } catch (err) {
+      fetch('/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(function(res) {
+        if (!res.ok) throw new Error('Server error');
+        return res.json();
+      })
+      .then(function() {
+        var state = encodeURIComponent(payload.state);
+        window.location.href = '/thank_you.html?state=' + state;
+      })
+      .catch(function() {
+        errEl.textContent = 'Something went wrong. Please try again or call us directly.';
+        errEl.classList.add('visible');
         btn.disabled = false;
-        btn.textContent = 'Submit My Information →';
-        alert('Could not reach the server. Make sure Flask is running.');
-        console.error(err);
-      }
+        btn.innerHTML = 'Get My Free Quote &rarr;';
+      });
     });
   </script>
-
 </body>
 </html>
