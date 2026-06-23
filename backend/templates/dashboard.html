@@ -1251,6 +1251,10 @@
         <div class="edit-section-label">Agent</div>
 
         <div class="edit-field">
+          <label>Favorite Hobby / Security Q</label>
+          <input type="text" id="ef-hobby-${lead.id}" value="${v(lead.hobby)}" placeholder="e.g. Hiking, cooking, golf…"/>
+        </div>
+        <div class="edit-field">
           <label>Assigned Agent</label>
           <input type="text" id="ef-agent-${lead.id}" value="${v(lead.assigned_agent)}" placeholder="e.g. Josh"/>
         </div>
@@ -1316,6 +1320,7 @@
       tobacco:                  g('ef-tobacco-')?.value || null,
       major_conditions:         g('ef-conditions-')?.value || null,
       medications:              g('ef-medications-')?.value || null,
+      hobby:                    g('ef-hobby-')?.value || null,
       assigned_agent:           g('ef-agent-')?.value || null,
     };
 

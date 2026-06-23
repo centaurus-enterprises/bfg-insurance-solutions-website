@@ -516,6 +516,12 @@
         </select>
       </div>
 
+      <div class="field-group" style="margin-top:0.25rem;">
+        <label for="hobby">Favorite hobby or pastime <span class="opt">(optional)</span></label>
+        <input type="text" id="hobby" name="hobby" placeholder="e.g. Hiking, cooking, golf…"/>
+        <span style="font-size:0.72rem;color:var(--text-light);margin-top:0.2rem;display:block;">This helps your agent confirm they're speaking with the right person when they call.</span>
+      </div>
+
       <button type="submit" class="submit-btn" id="submit-btn">Get My Free Quote &rarr;</button>
       <p class="form-note">Your information is private and never sold. No spam, ever.</p>
 
@@ -621,7 +627,8 @@
         has_beneficiary: benInput ? benInput.value : '',
         beneficiary_relationship: document.getElementById('beneficiary_relationship').value.trim(),
         reason: reasonVal,
-        contact_preference: document.getElementById('contact_preference').value
+        contact_preference: document.getElementById('contact_preference').value,
+        hobby: document.getElementById('hobby').value.trim()
       };
 
       var btn = document.getElementById('submit-btn');

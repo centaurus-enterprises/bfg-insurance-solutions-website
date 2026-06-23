@@ -398,6 +398,7 @@ def update_status(lead_id):
                 tobacco                  = %s,
                 major_conditions         = %s,
                 medications              = %s,
+                hobby                    = %s,
                 assigned_agent           = %s
             WHERE id = %s
         """, (
@@ -425,6 +426,7 @@ def update_status(lead_id):
             to_bool(data.get("tobacco")),
             data.get("major_conditions"),
             data.get("medications"),
+            data.get("hobby"),
             data.get("assigned_agent"),
             lead_id
         ))
@@ -935,7 +937,7 @@ def submit():
                 mobile_phone, home_phone, email,
                 city, state,
                 has_beneficiary, beneficiary_relationship,
-                reason, contact_preference, age
+                reason, contact_preference, age, hobby
             ) VALUES (
                 %(product_type)s, %(first_name)s, %(last_name)s,
                 %(mobile_phone)s, %(home_phone)s, %(email)s,
@@ -957,6 +959,7 @@ def submit():
             "reason":                   data.get("reason"),
             "contact_preference":       data.get("contact_preference"),
             "age":                      data.get("age"),
+            "hobby":                    data.get("hobby"),
         })
 
         conn.commit()
