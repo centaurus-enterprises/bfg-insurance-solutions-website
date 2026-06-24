@@ -522,8 +522,67 @@
         <span style="font-size:0.72rem;color:var(--text-light);margin-top:0.2rem;display:block;">This helps your agent confirm they're speaking with the right person when they call.</span>
       </div>
 
+      <hr class="divider"/>
+
+      <!-- TCPA / LEGAL CONSENT BLOCK -->
+      <div id="consent-block" style="
+        background:#f9f0e8;
+        border:1px solid #d9b99a;
+        border-radius:10px;
+        padding:1.1rem 1.15rem;
+        margin-bottom:1rem;
+        font-size:0.72rem;
+        line-height:1.65;
+        color:#4a3a2a;
+        max-height:220px;
+        overflow-y:auto;
+      ">
+        <strong style="display:block;font-size:0.78rem;margin-bottom:0.6rem;color:#2C1A0E;">
+          MORTGAGE PROTECTION &amp; LIFE INSURANCE — REQUEST &amp; CONTACT AUTHORIZATION<br/>
+          <span style="font-weight:400;">Brown Financial Group &nbsp;|&nbsp; Joshua S. Brown, NPN 22098686, CA Lic. 4509549 &nbsp;|&nbsp; John M. Brown, NPN 21148038 &nbsp;|&nbsp; 537 Linda Ln, Chula Vista, CA 91910</span>
+        </strong>
+
+        <strong>1. INFORMATION REQUEST.</strong> By submitting this form, I confirm that I am voluntarily requesting information about mortgage protection life insurance and related term life insurance products and services from Brown Financial Group, a licensed independent insurance agency. Agents: Joshua S. Brown (NPN 22098686, CA Lic. 4509549) and John M. Brown (NPN 21148038), with a principal business address of 537 Linda Ln, Chula Vista, CA 91910.<br/><br/>
+
+        <strong>2. CONTACT AUTHORIZATION.</strong> I authorize Brown Financial Group and its licensed insurance agents, representatives, employees, contractors, service providers, and authorized support staff acting strictly on its behalf and solely for the purpose of responding to my insurance information request, subject to confidentiality obligations and in accordance with the Privacy Notice at thebrownfinancialgroup.com/privacy, to contact me at the telephone number(s) and email address I have provided.<br/><br/>
+
+        <strong>3. PRODUCT SCOPE.</strong> This authorization is limited to mortgage protection life insurance and term life insurance directly related to my inquiry. Contact regarding any additional insurance products or services not directly related to my original inquiry will require my separate, specific authorization.<br/><br/>
+
+        <strong>4. TCPA CONSENT.</strong> I expressly consent to receive calls and text messages at the mobile number I provide, including calls or messages made using an automatic telephone dialing system (including technology that dials from a stored list of numbers or uses random or sequential number generation), automated dialing technology, artificial intelligence voice, artificial voice, or prerecorded voice message, even if my number is listed on a federal, state, or company-specific Do Not Call registry.<br/><br/>
+
+        <strong>5. MESSAGE RATES &amp; OPT-OUT.</strong> I understand that message and data rates may apply. I may opt out of text messages at any time by replying STOP, QUIT, END, CANCEL, or UNSUBSCRIBE. I may reply HELP for assistance. Message frequency will vary based on my inquiry status, up to 10 messages per month (including conversational replies).<br/><br/>
+
+        <strong>6. ALTERNATE OPT-OUT / NO PURCHASE REQUIRED.</strong> I may also revoke my consent at any time by calling (619) 905-7488 or emailing josh@thebrownfinancialgroup.com with "UNSUBSCRIBE" in the subject line. Revocation requests are honored within two (2) business days for text messages and immediately for calls. I understand that my consent is not required as a condition of purchasing any property, goods, or services.<br/><br/>
+
+        <strong>7. EMAIL COMMUNICATIONS (CAN-SPAM).</strong> All commercial email messages sent to the email address I provide will comply with the CAN-SPAM Act (15 U.S.C. § 7701). Each email will include: (a) a clear identification that it is an advertisement; (b) the valid physical postal address of Brown Financial Group (537 Linda Ln, Chula Vista, CA 91910); and (c) a clear explanation of how to opt out of future emails. Opt-out requests will be honored within ten (10) business days.<br/><br/>
+
+        <strong>8. ONE-TO-ONE CONSENT NOTICE.</strong> My consent provided through this form authorizes contact exclusively by Brown Financial Group. My consent does not authorize contact by any other insurance agency, company, or third party. If I reached this form through an online video, advertisement, or referral source, my consent is specific to Brown Financial Group only.<br/><br/>
+
+        <strong>9. PRIVACY NOTICE.</strong> The personal information I provide is collected and used in accordance with Brown Financial Group's Privacy Notice, available at <a href="/privacy.html" target="_blank" style="color:#7B3F1E;">thebrownfinancialgroup.com/privacy</a>. If I am a California resident, I have additional rights under the CCPA as described in the Privacy Notice. Brown Financial Group does not sell personal information to third parties.<br/><br/>
+
+        <strong>10. AGE CERTIFICATION.</strong> I certify that I am 18 years of age or older. This form is not intended for individuals under 18 years of age. Brown Financial Group does not knowingly collect personal information from minors.<br/><br/>
+
+        <strong>11. RECORD RETENTION.</strong> My electronic submission, including my checkbox selection, typed information, IP address, date and time stamp, web form source, and the consent language displayed to me at the time of submission, will be retained for a minimum of five (5) years from the date of submission as proof of my request, authorization, consent, and acknowledgment, in accordance with applicable federal and state law, including the Telephone Consumer Protection Act and applicable state insurance record-keeping requirements. Records will be maintained by Brown Financial Group and will be made available to regulators or in legal proceedings upon lawful request.
+      </div>
+
+      <!-- E-SIGN DISCLOSURE -->
+      <p style="font-size:0.72rem;color:#4a3a2a;margin-bottom:0.6rem;line-height:1.5;">
+        <strong>ELECTRONIC SIGNATURE NOTICE:</strong> By checking the box below and clicking "Get My Free Quote," you are providing your electronic signature, which has the same legal force and effect as a handwritten signature under the Electronic Signatures in Global and National Commerce Act (E-SIGN Act), 15 U.S.C. § 7001, and applicable state electronic transaction laws. You agree that electronic records of this transaction satisfy any legal requirement that such records be maintained in writing.
+      </p>
+
+      <!-- CONSENT CHECKBOX -->
+      <label style="display:flex;align-items:flex-start;gap:0.65rem;cursor:pointer;margin-bottom:1.25rem;">
+        <input type="checkbox" id="consent-check" name="consent" style="
+          width:18px;height:18px;min-width:18px;
+          margin-top:2px;cursor:pointer;accent-color:#7B3F1E;
+        " required/>
+        <span style="font-size:0.78rem;color:#3A2A1A;line-height:1.5;">
+          I have read and agree to the Request &amp; Contact Authorization above. I understand that my electronic checkbox selection constitutes my legal consent and electronic signature, and that consent is not required to purchase insurance.
+        </span>
+      </label>
+
       <button type="submit" class="submit-btn" id="submit-btn">Get My Free Quote &rarr;</button>
-      <p class="form-note">Your information is private and never sold. No spam, ever.</p>
+      <p class="form-note">Your information is private and never sold. &nbsp;|&nbsp; <a href="/privacy.html" target="_blank" style="color:var(--cognac);">Privacy Notice</a></p>
 
     </form>
   </main>
@@ -590,6 +649,15 @@
       req('first_name'); req('last_name'); req('age'); req('mobile_phone'); req('email');
       req('city'); req('state'); req('reason'); req('contact_preference');
 
+      // Consent checkbox
+      var consentCheck = document.getElementById('consent-check');
+      if (!consentCheck.checked) {
+        consentCheck.style.outline = '2px solid var(--error)';
+        ok = false;
+      } else {
+        consentCheck.style.outline = '';
+      }
+
       // Reason other
       if (document.getElementById('reason').value === 'Other') {
         req('reason_other');
@@ -600,7 +668,7 @@
       if (benYes) req('beneficiary_relationship');
 
       if (!ok) {
-        errEl.textContent = 'Please fill in all required fields.';
+        errEl.textContent = 'Please fill in all required fields and check the consent box.';
         errEl.classList.add('visible');
         errEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
