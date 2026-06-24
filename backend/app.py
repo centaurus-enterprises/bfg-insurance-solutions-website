@@ -943,7 +943,7 @@ def submit():
                 %(mobile_phone)s, %(home_phone)s, %(email)s,
                 %(city)s, %(state)s,
                 %(has_beneficiary)s, %(beneficiary_relationship)s,
-                %(reason)s, %(contact_preference)s, %(age)s
+                %(reason)s, %(contact_preference)s, %(age)s, %(hobby)s
             )
         """, {
             "product_type":             data.get("product_type"),
