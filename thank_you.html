@@ -288,22 +288,6 @@
       line-height: 1.5;
     }
 
-    .btn-back {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 0.82rem;
-      color: var(--text-light);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0;
-      margin-bottom: 1.5rem;
-      transition: color 0.2s;
-    }
-
-    .btn-back:hover { color: var(--cognac); }
-
     @media (max-width: 500px) {
       .connect-grid { grid-template-columns: 1fr; }
       .booking-grid { grid-template-columns: 1fr; }
@@ -383,12 +367,6 @@
 
       <!-- STATE: CALL ME -->
       <div id="state-call" style="display:none;">
-        <button class="btn-back" onclick="showChoice()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
-          </svg>
-          Back
-        </button>
         <div class="thank-eyebrow">Got it</div>
         <h1>We'll be in <span>touch soon</span></h1>
         <p class="thank-body">One of our agents will review your details and reach out within 24 hours to walk you through your options. No pressure — just a conversation.</p>
@@ -423,12 +401,6 @@
 
       <!-- STATE: BOOK -->
       <div id="state-book" style="display:none;">
-        <button class="btn-back" onclick="showChoice()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
-          </svg>
-          Back
-        </button>
         <div class="thank-eyebrow">One more step</div>
         <h1>Pick a time that <span>works for you</span></h1>
         <p class="thank-body">Choose a phone or Zoom consultation — whichever works best for you.</p>
