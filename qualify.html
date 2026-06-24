@@ -418,18 +418,31 @@
         </div>
         <div class="field-group">
           <label for="mobile_phone">Mobile Phone <span style="color:var(--error)">*</span></label>
-          <input type="tel" id="mobile_phone" name="mobile_phone" placeholder="(555) 000-0000" autocomplete="tel" required/>
+          <div style="display:flex;align-items:center;gap:0.4rem;">
+            <span style="padding:0.7rem 0.6rem;background:var(--parchment-dark);border:1.5px solid var(--parchment-mid);border-radius:var(--radius);font-size:0.85rem;color:var(--text-light);white-space:nowrap;">+1</span>
+            <input type="tel" id="mobile_phone" name="mobile_phone" placeholder="(619) 555-0000" autocomplete="tel" required maxlength="14" style="flex:1;"/>
+          </div>
         </div>
       </div>
 
       <div class="field-row">
         <div class="field-group">
-          <label for="home_phone">Home Phone <span class="opt">(optional)</span></label>
-          <input type="tel" id="home_phone" name="home_phone" placeholder="(555) 000-0000" autocomplete="tel-home"/>
-        </div>
-        <div class="field-group">
           <label for="email">Email <span style="color:var(--error)">*</span></label>
           <input type="email" id="email" name="email" placeholder="jane@email.com" autocomplete="email" required/>
+        </div>
+        <div class="field-group">
+          <label>Gender <span style="color:var(--error)">*</span></label>
+          <div class="pill-group">
+            <label class="pill" id="pill-gender-m">
+              <input type="radio" name="gender" value="Male"/>Male
+            </label>
+            <label class="pill" id="pill-gender-f">
+              <input type="radio" name="gender" value="Female"/>Female
+            </label>
+            <label class="pill" id="pill-gender-o">
+              <input type="radio" name="gender" value="Other"/>Other
+            </label>
+          </div>
         </div>
       </div>
 
@@ -438,6 +451,13 @@
           <label for="city">City <span style="color:var(--error)">*</span></label>
           <input type="text" id="city" name="city" placeholder="Los Angeles" autocomplete="address-level2" required/>
         </div>
+        <div class="field-group">
+          <label for="zip">ZIP Code <span style="color:var(--error)">*</span></label>
+          <input type="text" id="zip" name="zip" placeholder="90210" maxlength="10" autocomplete="postal-code" required/>
+        </div>
+      </div>
+
+      <div class="field-row single">
         <div class="field-group">
           <label for="state">State <span style="color:var(--error)">*</span></label>
           <select id="state" name="state" required>
@@ -467,6 +487,18 @@
 
       <!-- COVERAGE DETAILS -->
       <div class="section-label">Coverage Details</div>
+
+      <div class="field-group">
+        <label>Do you use tobacco or nicotine products? <span style="color:var(--error)">*</span></label>
+        <div class="pill-group">
+          <label class="pill" id="pill-tobacco-yes">
+            <input type="radio" name="tobacco" value="yes"/>Yes
+          </label>
+          <label class="pill" id="pill-tobacco-no">
+            <input type="radio" name="tobacco" value="no"/>No
+          </label>
+        </div>
+      </div>
 
       <div class="field-group">
         <label>Do you have a beneficiary in mind?</label>
@@ -517,8 +549,8 @@
       </div>
 
       <div class="field-group" style="margin-top:0.25rem;">
-        <label for="hobby">Favorite hobby or pastime <span class="opt">(optional)</span></label>
-        <input type="text" id="hobby" name="hobby" placeholder="e.g. Hiking, cooking, golf…"/>
+        <label for="hobby">Favorite hobby or pastime <span style="color:var(--error)">*</span></label>
+        <input type="text" id="hobby" name="hobby" placeholder="e.g. Hiking, cooking, golf…" required/>
         <span style="font-size:0.72rem;color:var(--text-light);margin-top:0.2rem;display:block;">This helps your agent confirm they're speaking with the right person when they call.</span>
       </div>
 
@@ -596,7 +628,7 @@
       });
     });
 
-    // Pill selection
+    // Pill selection (handles all pill groups)
     document.querySelectorAll('.pill').forEach(function(pill) {
       pill.addEventListener('click', function() {
         var name = pill.querySelector('input').name;
@@ -606,9 +638,8 @@
         pill.classList.add('selected');
 
         if (name === 'has_beneficiary') {
-          var val = pill.querySelector('input').value;
           var wrap = document.getElementById('beneficiary-rel-wrap');
-          if (val === 'Yes') {
+          if (pill.querySelector('input').value === 'Yes') {
             wrap.classList.add('visible');
           } else {
             wrap.classList.remove('visible');
@@ -616,6 +647,22 @@
           }
         }
       });
+    });
+
+    // Phone auto-format: (619) 555-0000  — US only, max 14 chars
+    document.getElementById('mobile_phone').addEventListener('input', function() {
+      var digits = this.value.replace(/\D/g, '').slice(0, 10);
+      var formatted = '';
+      if (digits.length === 0) {
+        formatted = '';
+      } else if (digits.length <= 3) {
+        formatted = '(' + digits;
+      } else if (digits.length <= 6) {
+        formatted = '(' + digits.slice(0,3) + ') ' + digits.slice(3);
+      } else {
+        formatted = '(' + digits.slice(0,3) + ') ' + digits.slice(3,6) + '-' + digits.slice(6);
+      }
+      this.value = formatted;
     });
 
     // Reason "Other" textarea
@@ -635,8 +682,6 @@
 
       var errEl = document.getElementById('form-error');
       errEl.classList.remove('visible');
-
-      // Clear previous errors
       document.querySelectorAll('.error').forEach(function(el) { el.classList.remove('error'); });
 
       var ok = true;
@@ -647,25 +692,24 @@
       }
 
       req('first_name'); req('last_name'); req('age'); req('mobile_phone'); req('email');
-      req('city'); req('state'); req('reason'); req('contact_preference');
+      req('city'); req('zip'); req('state'); req('reason'); req('contact_preference'); req('hobby');
+
+      // Gender required
+      if (!document.querySelector('input[name="gender"]:checked')) ok = false;
+
+      // Tobacco required
+      if (!document.querySelector('input[name="tobacco"]:checked')) ok = false;
 
       // Consent checkbox
       var consentCheck = document.getElementById('consent-check');
-      if (!consentCheck.checked) {
-        consentCheck.style.outline = '2px solid var(--error)';
-        ok = false;
-      } else {
-        consentCheck.style.outline = '';
-      }
+      if (!consentCheck.checked) { consentCheck.style.outline = '2px solid var(--error)'; ok = false; }
+      else { consentCheck.style.outline = ''; }
 
       // Reason other
-      if (document.getElementById('reason').value === 'Other') {
-        req('reason_other');
-      }
+      if (document.getElementById('reason').value === 'Other') req('reason_other');
 
       // Beneficiary relationship if yes
-      var benYes = document.querySelector('.pill#pill-ben-yes.selected');
-      if (benYes) req('beneficiary_relationship');
+      if (document.querySelector('.pill#pill-ben-yes.selected')) req('beneficiary_relationship');
 
       if (!ok) {
         errEl.textContent = 'Please fill in all required fields and check the consent box.';
@@ -674,29 +718,31 @@
         return;
       }
 
-      var productInput = document.querySelector('input[name="product_type"]:checked');
-      var benInput = document.querySelector('input[name="has_beneficiary"]:checked');
+      var productInput  = document.querySelector('input[name="product_type"]:checked');
+      var benInput      = document.querySelector('input[name="has_beneficiary"]:checked');
+      var genderInput   = document.querySelector('input[name="gender"]:checked');
+      var tobaccoInput  = document.querySelector('input[name="tobacco"]:checked');
 
       var reasonVal = document.getElementById('reason').value;
-      if (reasonVal === 'Other') {
-        reasonVal = document.getElementById('reason_other').value.trim();
-      }
+      if (reasonVal === 'Other') reasonVal = document.getElementById('reason_other').value.trim();
 
       var payload = {
-        product_type: productInput ? productInput.value : '',
-        first_name: document.getElementById('first_name').value.trim(),
-        last_name: document.getElementById('last_name').value.trim(),
-        age: parseInt(document.getElementById('age').value, 10) || null,
-        mobile_phone: document.getElementById('mobile_phone').value.trim(),
-        home_phone: document.getElementById('home_phone').value.trim(),
-        email: document.getElementById('email').value.trim(),
-        city: document.getElementById('city').value.trim(),
-        state: document.getElementById('state').value,
-        has_beneficiary: benInput ? benInput.value : '',
+        product_type:             productInput  ? productInput.value  : '',
+        first_name:               document.getElementById('first_name').value.trim(),
+        last_name:                document.getElementById('last_name').value.trim(),
+        age:                      parseInt(document.getElementById('age').value, 10) || null,
+        mobile_phone:             '+1' + document.getElementById('mobile_phone').value.replace(/\D/g,''),
+        email:                    document.getElementById('email').value.trim(),
+        gender:                   genderInput   ? genderInput.value   : '',
+        city:                     document.getElementById('city').value.trim(),
+        zip:                      document.getElementById('zip').value.trim(),
+        state:                    document.getElementById('state').value,
+        tobacco:                  tobaccoInput  ? tobaccoInput.value  : '',
+        has_beneficiary:          benInput      ? benInput.value      : '',
         beneficiary_relationship: document.getElementById('beneficiary_relationship').value.trim(),
-        reason: reasonVal,
-        contact_preference: document.getElementById('contact_preference').value,
-        hobby: document.getElementById('hobby').value.trim()
+        reason:                   reasonVal,
+        contact_preference:       document.getElementById('contact_preference').value,
+        hobby:                    document.getElementById('hobby').value.trim()
       };
 
       var btn = document.getElementById('submit-btn');

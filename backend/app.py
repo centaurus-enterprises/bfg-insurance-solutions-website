@@ -903,6 +903,24 @@ def apply():
 
 
 # ─────────────────────────────────────────────
+# ONE-TIME MIGRATION (delete after use)
+# ─────────────────────────────────────────────
+
+@app.route("/run-migration-b3z7p1")
+def run_migration_b():
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        cur.execute("ALTER TABLE leads ADD COLUMN IF NOT EXISTS gender VARCHAR(10)")
+        conn.commit()
+        cur.close()
+        conn.close()
+        return "OK: gender column added", 200
+    except Exception as e:
+        return f"Error: {e}", 500
+
+
+# ─────────────────────────────────────────────
 # FORM SUBMISSION (public)
 # ─────────────────────────────────────────────
 
@@ -935,14 +953,14 @@ def submit():
         cur.execute("""
             INSERT INTO leads (
                 product_type, first_name, last_name,
-                mobile_phone, home_phone, email,
-                city, state,
+                mobile_phone, email, gender,
+                city, zip, state, tobacco,
                 has_beneficiary, beneficiary_relationship,
                 reason, contact_preference, age, hobby
             ) VALUES (
                 %(product_type)s, %(first_name)s, %(last_name)s,
-                %(mobile_phone)s, %(home_phone)s, %(email)s,
-                %(city)s, %(state)s,
+                %(mobile_phone)s, %(email)s, %(gender)s,
+                %(city)s, %(zip)s, %(state)s, %(tobacco)s,
                 %(has_beneficiary)s, %(beneficiary_relationship)s,
                 %(reason)s, %(contact_preference)s, %(age)s, %(hobby)s
             )
@@ -951,10 +969,12 @@ def submit():
             "first_name":               data.get("first_name"),
             "last_name":                data.get("last_name"),
             "mobile_phone":             data.get("mobile_phone"),
-            "home_phone":               data.get("home_phone"),
             "email":                    data.get("email"),
+            "gender":                   data.get("gender"),
             "city":                     data.get("city"),
+            "zip":                      data.get("zip"),
             "state":                    data.get("state"),
+            "tobacco":                  True if data.get("tobacco") == "yes" else (False if data.get("tobacco") == "no" else None),
             "has_beneficiary":          data.get("has_beneficiary"),
             "beneficiary_relationship": data.get("beneficiary_relationship"),
             "reason":                   data.get("reason"),
