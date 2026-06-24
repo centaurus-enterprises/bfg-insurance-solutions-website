@@ -960,13 +960,13 @@ def submit():
                 mobile_phone, email, gender,
                 city, zip, state, tobacco,
                 has_beneficiary, beneficiary_relationship,
-                reason, contact_preference, age, hobby
+                reason, age, hobby
             ) VALUES (
                 %(product_type)s, %(first_name)s, %(last_name)s,
                 %(mobile_phone)s, %(email)s, %(gender)s,
                 %(city)s, %(zip)s, %(state)s, %(tobacco)s,
                 %(has_beneficiary)s, %(beneficiary_relationship)s,
-                %(reason)s, %(contact_preference)s, %(age)s, %(hobby)s
+                %(reason)s, %(age)s, %(hobby)s
             )
         """, {
             "product_type":             data.get("product_type"),
@@ -982,7 +982,6 @@ def submit():
             "has_beneficiary":          data.get("has_beneficiary"),
             "beneficiary_relationship": data.get("beneficiary_relationship"),
             "reason":                   data.get("reason"),
-            "contact_preference":       data.get("contact_preference"),
             "age":                      data.get("age"),
             "hobby":                    data.get("hobby"),
         })

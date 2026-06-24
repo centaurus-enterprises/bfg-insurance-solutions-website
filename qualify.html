@@ -537,17 +537,6 @@
         <textarea id="reason_other" name="reason_other" maxlength="100" placeholder="Brief description (100 characters max)"></textarea>
       </div>
 
-      <div class="field-group">
-        <label for="contact_preference">Best way to reach you <span style="color:var(--error)">*</span></label>
-        <select id="contact_preference" name="contact_preference" required>
-          <option value="" disabled selected>Select preference</option>
-          <option value="Phone call">Phone call</option>
-          <option value="Text message">Text message</option>
-          <option value="Email">Email</option>
-          <option value="Video call">Video call</option>
-        </select>
-      </div>
-
       <div class="field-group" style="margin-top:0.25rem;">
         <label for="hobby">Favorite hobby or pastime <span style="color:var(--error)">*</span></label>
         <input type="text" id="hobby" name="hobby" placeholder="e.g. Hiking, cooking, golf…" required/>
@@ -692,7 +681,7 @@
       }
 
       req('first_name'); req('last_name'); req('age'); req('mobile_phone'); req('email');
-      req('city'); req('zip'); req('state'); req('reason'); req('contact_preference'); req('hobby');
+      req('city'); req('zip'); req('state'); req('reason'); req('hobby');
 
       // Gender required
       if (!document.querySelector('input[name="gender"]:checked')) ok = false;
@@ -741,7 +730,6 @@
         has_beneficiary:          benInput      ? benInput.value      : '',
         beneficiary_relationship: document.getElementById('beneficiary_relationship').value.trim(),
         reason:                   reasonVal,
-        contact_preference:       document.getElementById('contact_preference').value,
         hobby:                    document.getElementById('hobby').value.trim()
       };
 
