@@ -911,11 +911,15 @@ def run_migration_b():
     try:
         conn = get_connection()
         cur  = conn.cursor()
-        cur.execute("ALTER TABLE leads ADD COLUMN IF NOT EXISTS gender VARCHAR(10)")
+        for sql in [
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS gender VARCHAR(10)",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS zip VARCHAR(20)",
+        ]:
+            cur.execute(sql)
         conn.commit()
         cur.close()
         conn.close()
-        return "OK: gender column added", 200
+        return "OK: gender and zip columns added", 200
     except Exception as e:
         return f"Error: {e}", 500
 
