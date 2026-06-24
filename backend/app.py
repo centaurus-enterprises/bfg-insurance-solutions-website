@@ -901,42 +901,6 @@ def apply():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
-# ─────────────────────────────────────────────
-# ONE-TIME MIGRATION (delete after use)
-# ─────────────────────────────────────────────
-
-@app.route("/run-migration-a7x9q2")
-def run_migration():
-    try:
-        conn = get_connection()
-        cur  = conn.cursor()
-        results = []
-        migrations = [
-            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS age INTEGER",
-            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS hobby VARCHAR(255)",
-            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS minor_conditions TEXT",
-            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS best_time VARCHAR(100)",
-            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS has_beneficiary VARCHAR(10)",
-            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS beneficiary_relationship VARCHAR(100)",
-            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS reason TEXT",
-            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS monthly_budget VARCHAR(50)",
-            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS dob DATE",
-            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS medications TEXT",
-            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS assigned_agent VARCHAR(100)",
-        ]
-        for sql in migrations:
-            try:
-                cur.execute(sql)
-                results.append(f"OK: {sql}")
-            except Exception as e:
-                results.append(f"SKIP: {sql} — {e}")
-        conn.commit()
-        cur.close()
-        conn.close()
-        return "<br>".join(results), 200
-    except Exception as e:
-        return f"Connection error: {e}", 500
-
 
 # ─────────────────────────────────────────────
 # FORM SUBMISSION (public)
