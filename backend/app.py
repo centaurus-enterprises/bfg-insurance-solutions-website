@@ -19,13 +19,58 @@ app.secret_key = os.getenv("SECRET_KEY", secrets.token_hex(32))
 # ─────────────────────────────────────────────
 
 SITE_ROOT = os.path.join(os.path.dirname(__file__), "..")
+MAINTENANCE = os.getenv("MAINTENANCE_MODE", "").lower() == "true"
+
+MAINTENANCE_HTML = """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Coming Soon | Brown Financial Group</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700;900&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'DM Sans',sans-serif;background:#2C1A0E;color:#F5EFE6;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:2rem;}
+    .wrap{max-width:480px;}
+    .logo{font-family:'Raleway',sans-serif;font-size:1.5rem;font-weight:900;color:#fff;letter-spacing:.02em;margin-bottom:2.5rem;}
+    .logo span{color:#C08552;}
+    h1{font-family:'Raleway',sans-serif;font-size:2.2rem;font-weight:700;line-height:1.2;margin-bottom:1rem;}
+    p{font-size:1rem;line-height:1.7;color:#c8b89a;margin-bottom:2rem;}
+    .divider{width:48px;height:3px;background:#7B3F1E;border-radius:2px;margin:0 auto 2rem;}
+    a{color:#C08552;text-decoration:none;}
+    a:hover{text-decoration:underline;}
+    .contact{font-size:0.875rem;color:#a08060;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="logo">Brown<span>Financial Group</span></div>
+    <h1>Something great is coming.</h1>
+    <div class="divider"></div>
+    <p>We're putting the finishing touches on our new website. Check back soon — we can't wait to show you what we've built.</p>
+    <p class="contact">In the meantime, reach us at<br/><a href="mailto:josh@thebrownfinancialgroup.com">josh@thebrownfinancialgroup.com</a></p>
+  </div>
+</body>
+</html>"""
+
+MAINTENANCE_PASS = {"/login", "/admin", "/logout", "/lead/"}
+
+def is_protected(path):
+    for prefix in MAINTENANCE_PASS:
+        if path.startswith(prefix):
+            return True
+    return False
 
 @app.route("/")
 def home():
+    if MAINTENANCE and not is_protected("/"):
+        return MAINTENANCE_HTML, 200
     return send_from_directory(SITE_ROOT, "index.html")
 
 @app.route("/<path:filename>")
 def static_site(filename):
+    if MAINTENANCE and not is_protected("/" + filename):
+        return MAINTENANCE_HTML, 200
     return send_from_directory(SITE_ROOT, filename)
 
 
