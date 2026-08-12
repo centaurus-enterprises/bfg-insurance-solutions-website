@@ -64,7 +64,7 @@ MAINTENANCE_HTML = """<!DOCTYPE html>
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Coming Soon | Brown Financial Group</title>
+  <title>Coming Soon | BFG Insurance Solutions</title>
   <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700;900&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
@@ -82,11 +82,11 @@ MAINTENANCE_HTML = """<!DOCTYPE html>
 </head>
 <body>
   <div class="wrap">
-    <div class="logo">Brown<span>Financial Group</span></div>
+    <div class="logo">BFG<span>Insurance Solutions</span></div>
     <h1>Something great is coming.</h1>
     <div class="divider"></div>
     <p>We're putting the finishing touches on our new website. Check back soon — we can't wait to show you what we've built.</p>
-    <p class="contact">In the meantime, reach us at<br/><a href="mailto:josh@thebrownfinancialgroup.com">josh@thebrownfinancialgroup.com</a></p>
+    <p class="contact">In the meantime, reach us at<br/><a href="mailto:john.brown@centaurusenterprises.com">john.brown@centaurusenterprises.com</a></p>
   </div>
 </body>
 </html>"""
@@ -275,7 +275,7 @@ def send_lead_notification(data: dict):
         </table>
 
         <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid #f0e4d4">
-          <a href="https://thebrownfinancialgroup.com/admin"
+          <a href="https://protect-mortgage.com/admin"
              style="display:inline-block;background:#C08552;color:#ffffff;font-weight:700;font-size:0.875rem;padding:0.65rem 1.4rem;border-radius:6px;text-decoration:none">
             View in Dashboard →
           </a>
@@ -980,7 +980,7 @@ def apply():
         """
 
         recipients = [
-            "josh@thebrownfinancialgroup.com",
+            "john.brown@centaurusenterprises.com",
             "johnmbrown@outlook.com"
         ]
 

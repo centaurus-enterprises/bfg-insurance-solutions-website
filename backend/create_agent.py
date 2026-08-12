@@ -34,7 +34,7 @@ def agent_exists(cur, username: str, email: str) -> bool:
 
 
 def create_agent():
-    print("\n── Brown Financial Group: Create Agent ──────────────────────")
+    print("\n── BFG Insurance Solutions: Create Agent ──────────────────────")
     print("This script creates a new agent account in the database.")
     print("────────────────────────────────────────────────────\n")
 
