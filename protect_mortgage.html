@@ -307,8 +307,8 @@
           <input type="tel" id="phone" name="phone" placeholder="(555) 555-0000" autocomplete="tel" inputmode="numeric" required/>
         </div>
         <div class="field-group">
-          <label for="date_of_birth">Date of Birth <span style="color:var(--error)">*</span></label>
-          <input type="date" id="date_of_birth" name="date_of_birth" autocomplete="bday" required/>
+          <label for="age">Age <span style="color:var(--error)">*</span></label>
+          <input type="number" id="age" name="age" placeholder="35" inputmode="numeric" min="18" max="118" step="1" required/>
         </div>
       </div>
 
@@ -487,13 +487,17 @@
       }
 
       req('first_name'); req('last_name'); req('phone'); req('email');
-      req('zip'); req('date_of_birth'); req('mortgage_balance'); req('code_word');
+      req('zip'); req('age'); req('mortgage_balance'); req('code_word');
 
       if (!/^\(\d{3}\) \d{3}-\d{4}$/.test(document.getElementById('phone').value.trim())) {
         document.getElementById('phone').classList.add('error'); ok = false;
       }
       if (!/^\d{5}$/.test(document.getElementById('zip').value.trim())) {
         document.getElementById('zip').classList.add('error'); ok = false;
+      }
+      var ageVal = parseInt(document.getElementById('age').value, 10);
+      if (!Number.isInteger(ageVal) || ageVal < 18 || ageVal > 118) {
+        document.getElementById('age').classList.add('error'); ok = false;
       }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('email').value.trim())) {
         document.getElementById('email').classList.add('error'); ok = false;
@@ -539,7 +543,7 @@
         phone:             '+1' + document.getElementById('phone').value.replace(/\D/g, ''),
         email:             document.getElementById('email').value.trim(),
         zip:               document.getElementById('zip').value.trim(),
-        date_of_birth:     document.getElementById('date_of_birth').value,
+        age:               ageVal,
         mortgage_balance:  document.getElementById('mortgage_balance').value,
         homeowner:         homeownerInput.value,
         tobacco_use:       tobaccoInput.value,
