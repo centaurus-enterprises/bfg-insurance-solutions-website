@@ -497,7 +497,7 @@ def update_status(lead_id):
                 tobacco                  = %s,
                 major_conditions         = %s,
                 medications              = %s,
-                hobby                    = %s,
+                code_word                = %s,
                 assigned_agent           = %s
             WHERE id = %s
         """, (
@@ -525,7 +525,7 @@ def update_status(lead_id):
             to_bool(data.get("tobacco")),
             data.get("major_conditions"),
             data.get("medications"),
-            data.get("hobby"),
+            data.get("code_word"),
             data.get("assigned_agent"),
             lead_id
         ))
