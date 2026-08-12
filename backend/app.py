@@ -410,6 +410,37 @@ def create_agent_via_url():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
+@app.route("/reset-agent-password-t9x4z")
+def reset_agent_password():
+    """Temporary one-time password reset, bypassing the duplicate-guard so
+    it works even if the account already exists but the password is
+    unknown. Query params: username, password (both required). Delete once
+    the login issue is resolved."""
+    username = (request.args.get("username") or "").strip().lower()
+    password = (request.args.get("password") or "").strip()
+    if not username or not password:
+        return jsonify({"status": "error", "message": "username and password query params are required."}), 400
+
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        cur.execute("SELECT id FROM agents WHERE username = %s", (username,))
+        if not cur.fetchone():
+            cur.close()
+            conn.close()
+            return jsonify({"status": "error", "message": f"No agent found with username '{username}'."}), 404
+
+        salt    = secrets.token_hex(16)
+        pw_hash = f"{salt}:{hashlib.sha256((salt + password).encode()).hexdigest()}"
+        cur.execute("UPDATE agents SET password_hash = %s, is_active = TRUE WHERE username = %s", (pw_hash, username))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({"status": "ok", "message": f"Password reset for '{username}'."})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
 # ─────────────────────────────────────────────
 # AUTH — LOGIN / LOGOUT
 # ─────────────────────────────────────────────
