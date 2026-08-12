@@ -370,6 +370,46 @@ def debug_agents():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
+@app.route("/create-agent-w3fk8")
+def create_agent_via_url():
+    """Temporary one-time agent creation, reachable directly on the deployed
+    app so it can't land in the wrong database. Query params: username,
+    password (required); email, full_name, admin, notify (optional).
+    Delete once the login issue is resolved."""
+    username = (request.args.get("username") or "").strip().lower()
+    password = (request.args.get("password") or "").strip()
+    if not username or not password:
+        return jsonify({"status": "error", "message": "username and password query params are required."}), 400
+
+    full_name = request.args.get("full_name", "Josh Brown").strip()
+    email     = (request.args.get("email") or f"{username}@centaurusenterprises.com").strip().lower()
+    is_admin  = request.args.get("admin", "yes").lower() != "no"
+    notify    = request.args.get("notify", "yes").lower() != "no"
+
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        cur.execute("SELECT id FROM agents WHERE username = %s OR email = %s", (username, email))
+        if cur.fetchone():
+            cur.close()
+            conn.close()
+            return jsonify({"status": "error", "message": f"An agent with username '{username}' or email '{email}' already exists."}), 400
+
+        salt    = secrets.token_hex(16)
+        pw_hash = f"{salt}:{hashlib.sha256((salt + password).encode()).hexdigest()}"
+
+        cur.execute("""
+            INSERT INTO agents (full_name, email, username, password_hash, is_admin, notify_on_lead, is_active)
+            VALUES (%s, %s, %s, %s, %s, %s, TRUE)
+        """, (full_name, email, username, pw_hash, is_admin, notify))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({"status": "ok", "message": f"Agent '{username}' created.", "username": username, "is_admin": is_admin})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
 # ─────────────────────────────────────────────
 # AUTH — LOGIN / LOGOUT
 # ─────────────────────────────────────────────
