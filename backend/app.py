@@ -342,6 +342,34 @@ def db_test():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
+@app.route("/debug-agents-q7m2x")
+def debug_agents():
+    """Temporary read-only diagnostic — lists agents in whatever database
+    this deployed app is actually connected to. No password hashes
+    returned. Delete once the login issue is resolved."""
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        cur.execute("SELECT id, username, email, is_admin, is_active, created_at FROM agents ORDER BY id")
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+        return jsonify({
+            "status": "ok",
+            "count": len(rows),
+            "agents": [
+                {
+                    "id": r[0], "username": r[1], "email": r[2],
+                    "is_admin": r[3], "is_active": r[4],
+                    "created_at": r[5].isoformat() if r[5] else None,
+                }
+                for r in rows
+            ]
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
 # ─────────────────────────────────────────────
 # AUTH — LOGIN / LOGOUT
 # ─────────────────────────────────────────────
