@@ -1251,7 +1251,7 @@ def submit_mortgage_protection():
 
     required_fields = [
         "first_name", "last_name", "phone", "email", "zip",
-        "date_of_birth", "mortgage_balance", "homeowner",
+        "age", "mortgage_balance", "homeowner",
         "tobacco_use", "code_word",
     ]
     for field in required_fields:
@@ -1268,6 +1268,13 @@ def submit_mortgage_protection():
     zip_code = data.get("zip", "").strip()
     if not re.fullmatch(r"\d{5}", zip_code):
         return jsonify({"status": "error", "field": "zip", "message": "Enter a valid 5-digit ZIP code."}), 400
+
+    try:
+        age = int(data.get("age"))
+        if age < 18 or age > 118:
+            raise ValueError
+    except (TypeError, ValueError):
+        return jsonify({"status": "error", "field": "age", "message": "Enter a valid age between 18 and 118."}), 400
 
     if data.get("homeowner") not in ("yes", "no"):
         return jsonify({"status": "error", "field": "homeowner", "message": "Please answer this question."}), 400
@@ -1303,7 +1310,7 @@ def submit_mortgage_protection():
         cur.execute("""
             INSERT INTO leads (
                 product_type, first_name, last_name, mobile_phone, email,
-                zip, dob, tobacco, homeowner, mortgage_balance,
+                zip, age, tobacco, homeowner, mortgage_balance,
                 code_word, code_word_set_at, code_word_confirmed,
                 gclid, gbraid, wbraid,
                 consent_version, consent_text, trustedform_cert_url,
@@ -1311,7 +1318,7 @@ def submit_mortgage_protection():
                 lead_source, lead_source_bucket
             ) VALUES (
                 %(product_type)s, %(first_name)s, %(last_name)s, %(mobile_phone)s, %(email)s,
-                %(zip)s, %(dob)s, %(tobacco)s, %(homeowner)s, %(mortgage_balance)s,
+                %(zip)s, %(age)s, %(tobacco)s, %(homeowner)s, %(mortgage_balance)s,
                 %(code_word)s, %(code_word_set_at)s, %(code_word_confirmed)s,
                 %(gclid)s, %(gbraid)s, %(wbraid)s,
                 %(consent_version)s, %(consent_text)s, %(trustedform_cert_url)s,
@@ -1325,7 +1332,7 @@ def submit_mortgage_protection():
             "mobile_phone":         "+1" + phone_digits if len(phone_digits) == 10 else "+" + phone_digits,
             "email":                data.get("email", "").strip(),
             "zip":                  zip_code,
-            "dob":                  data.get("date_of_birth"),
+            "age":                  age,
             "tobacco":              data.get("tobacco_use") == "yes",
             "homeowner":            data.get("homeowner"),
             "mortgage_balance":     data.get("mortgage_balance"),
