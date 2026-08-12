@@ -1,9 +1,10 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session, send_from_directory
 from flask_cors import CORS
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from db import get_connection
 import hashlib
 import os
+import re
 import secrets
 from dotenv import load_dotenv
 
@@ -12,6 +13,43 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 app.secret_key = os.getenv("SECRET_KEY", secrets.token_hex(32))
+
+
+# ─────────────────────────────────────────────
+# MORTGAGE PROTECTION FUNNEL — CONFIG
+# (protect-mortgage.com — see CLAUDE.md / .claude/rules)
+# ─────────────────────────────────────────────
+
+# ZIP allowlist — California only per CLAUDE.md §3. Add ranges here to add
+# states; this is the config change, not a code change, and still requires
+# written confirmation from John before enabling another state.
+MP_ALLOWED_ZIP_RANGES = [(90001, 96162)]
+
+MP_CODE_WORD_BLOCKLIST = {"password", "code", "codeword", "test", "none", "na"}
+MP_CODE_WORD_PROFANITY_BLOCKLIST = {"fuck", "shit", "bitch", "asshole", "cunt", "nigger", "faggot"}
+
+
+def mp_zip_allowed(zip_code):
+    try:
+        z = int(zip_code)
+    except (TypeError, ValueError):
+        return False
+    return any(lo <= z <= hi for lo, hi in MP_ALLOWED_ZIP_RANGES)
+
+
+def mp_validate_code_word(raw, first_name, last_name):
+    """Returns an error message string, or None if the code word is valid."""
+    word = (raw or "").strip()
+    if not re.fullmatch(r"[A-Za-z]{3,20}", word):
+        return "Code word must be 3-20 letters, no numbers or spaces."
+    lower = word.lower()
+    if lower == (first_name or "").strip().lower() or lower == (last_name or "").strip().lower():
+        return "Please choose a code word other than your own name."
+    if lower in MP_CODE_WORD_BLOCKLIST:
+        return "That word is too common — please pick something more memorable."
+    if lower in MP_CODE_WORD_PROFANITY_BLOCKLIST:
+        return "Please choose a different word."
+    return None
 
 
 # ─────────────────────────────────────────────
@@ -969,6 +1007,41 @@ def run_migration_b():
         return f"Error: {e}", 500
 
 
+@app.route("/run-migration-mp9k2q")
+def run_migration_mortgage_protection():
+    """One-time migration adding columns needed by the protect-mortgage.com
+    intake (/submit-mortgage-protection). Delete after use."""
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        for sql in [
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS code_word VARCHAR(20)",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS code_word_set_at TIMESTAMPTZ",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS code_word_confirmed VARCHAR(20)",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS code_word_confirmed_at TIMESTAMPTZ",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS homeowner VARCHAR(10)",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS mortgage_balance VARCHAR(20)",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS gclid VARCHAR(255)",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS gbraid VARCHAR(255)",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS wbraid VARCHAR(255)",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS consent_version VARCHAR(10)",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS consent_text TEXT",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS trustedform_cert_url VARCHAR(500)",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS submitted_url TEXT",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS ip_address VARCHAR(64)",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS user_agent VARCHAR(500)",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS lead_source VARCHAR(100)",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS lead_source_bucket VARCHAR(20)",
+        ]:
+            cur.execute(sql)
+        conn.commit()
+        cur.close()
+        conn.close()
+        return "OK: mortgage protection columns added", 200
+    except Exception as e:
+        return f"Error: {e}", 500
+
+
 # ─────────────────────────────────────────────
 # FORM SUBMISSION (public)
 # ─────────────────────────────────────────────
@@ -1044,6 +1117,133 @@ def submit():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+
+# ─────────────────────────────────────────────
+# MORTGAGE PROTECTION INTAKE (public) — protect-mortgage.com
+# Browser never posts to the CRM directly; this is the server-side layer.
+# Client-side validation is UX only — everything below is re-validated here.
+# ─────────────────────────────────────────────
+
+@app.route("/submit-mortgage-protection", methods=["POST"])
+def submit_mortgage_protection():
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({"status": "error", "message": "No data received."}), 400
+
+    required_fields = [
+        "first_name", "last_name", "phone", "email", "zip",
+        "date_of_birth", "mortgage_balance", "homeowner",
+        "tobacco_use", "code_word",
+    ]
+    for field in required_fields:
+        if not str(data.get(field, "")).strip():
+            return jsonify({"status": "error", "field": field, "message": "This field is required."}), 400
+
+    phone_digits = re.sub(r"\D", "", data.get("phone", ""))
+    if len(phone_digits) not in (10, 11) or (len(phone_digits) == 11 and phone_digits[0] != "1"):
+        return jsonify({"status": "error", "field": "phone", "message": "Enter a valid 10-digit US phone number."}), 400
+
+    if not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", data.get("email", "").strip()):
+        return jsonify({"status": "error", "field": "email", "message": "Enter a valid email address."}), 400
+
+    zip_code = data.get("zip", "").strip()
+    if not re.fullmatch(r"\d{5}", zip_code):
+        return jsonify({"status": "error", "field": "zip", "message": "Enter a valid 5-digit ZIP code."}), 400
+
+    if data.get("homeowner") not in ("yes", "no"):
+        return jsonify({"status": "error", "field": "homeowner", "message": "Please answer this question."}), 400
+
+    if data.get("tobacco_use") not in ("yes", "no"):
+        return jsonify({"status": "error", "field": "tobacco_use", "message": "Please answer this question."}), 400
+
+    code_word_error = mp_validate_code_word(
+        data.get("code_word", ""), data.get("first_name", ""), data.get("last_name", "")
+    )
+    if code_word_error:
+        return jsonify({"status": "error", "field": "code_word", "message": code_word_error}), 400
+
+    # Soft declines — not an error, not a lead. Checked after validation so a
+    # malformed submission is still rejected rather than silently declined.
+    if data.get("homeowner") == "no":
+        return jsonify({
+            "status": "declined",
+            "message": "Thanks for your interest — mortgage protection coverage through this program requires homeownership. We're not able to help with this request right now."
+        })
+
+    if not mp_zip_allowed(zip_code):
+        return jsonify({
+            "status": "declined",
+            "message": "Thanks for your interest — this program is not yet available in your area."
+        })
+
+    now = datetime.now(timezone.utc)
+
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        cur.execute("""
+            INSERT INTO leads (
+                product_type, first_name, last_name, mobile_phone, email,
+                zip, dob, tobacco, homeowner, mortgage_balance,
+                code_word, code_word_set_at, code_word_confirmed,
+                gclid, gbraid, wbraid,
+                consent_version, consent_text, trustedform_cert_url,
+                submitted_url, ip_address, user_agent,
+                lead_source, lead_source_bucket
+            ) VALUES (
+                %(product_type)s, %(first_name)s, %(last_name)s, %(mobile_phone)s, %(email)s,
+                %(zip)s, %(dob)s, %(tobacco)s, %(homeowner)s, %(mortgage_balance)s,
+                %(code_word)s, %(code_word_set_at)s, %(code_word_confirmed)s,
+                %(gclid)s, %(gbraid)s, %(wbraid)s,
+                %(consent_version)s, %(consent_text)s, %(trustedform_cert_url)s,
+                %(submitted_url)s, %(ip_address)s, %(user_agent)s,
+                %(lead_source)s, %(lead_source_bucket)s
+            )
+        """, {
+            "product_type":         "Mortgage Protection",
+            "first_name":           data.get("first_name", "").strip(),
+            "last_name":            data.get("last_name", "").strip(),
+            "mobile_phone":         "+1" + phone_digits if len(phone_digits) == 10 else "+" + phone_digits,
+            "email":                data.get("email", "").strip(),
+            "zip":                  zip_code,
+            "dob":                  data.get("date_of_birth"),
+            "tobacco":              data.get("tobacco_use") == "yes",
+            "homeowner":            data.get("homeowner"),
+            "mortgage_balance":     data.get("mortgage_balance"),
+            "code_word":            data.get("code_word", "").strip(),
+            "code_word_set_at":     now,
+            "code_word_confirmed":  "pending",
+            "gclid":                data.get("gclid") or None,
+            "gbraid":               data.get("gbraid") or None,
+            "wbraid":               data.get("wbraid") or None,
+            "consent_version":      "1.0",
+            "consent_text":         data.get("consent_text", ""),
+            "trustedform_cert_url": data.get("trustedform_cert_url") or None,
+            "submitted_url":        data.get("submitted_url", ""),
+            "ip_address":           request.headers.get("X-Forwarded-For", request.remote_addr or ""),
+            "user_agent":           request.headers.get("User-Agent", ""),
+            "lead_source":          "protect-mortgage.com",
+            "lead_source_bucket":   "approved",
+        })
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        send_lead_notification({
+            "first_name":   data.get("first_name", "").strip(),
+            "last_name":    data.get("last_name", "").strip(),
+            "product_type": "mortgage-protection",
+            "mobile_phone": data.get("phone", ""),
+            "email":        data.get("email", ""),
+            "state":        "",
+            "city":         "",
+        })
+
+        return jsonify({"status": "ok"})
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 
 # ─────────────────────────────────────────────
