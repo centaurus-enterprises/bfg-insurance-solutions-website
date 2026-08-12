@@ -99,11 +99,27 @@ def is_protected(path):
             return True
     return False
 
+# Hosts that should land on the mortgage-protection intake instead of the
+# main multi-product site. Once DNS points protect-mortgage.com at this
+# service (see .claude/rules/infra.md), the domain root becomes the ad
+# landing page — the two funnels stay on separate URLs but the same service.
+MORTGAGE_PROTECTION_HOSTS = {"protect-mortgage.com", "www.protect-mortgage.com"}
+
+def is_mortgage_protection_host():
+    host = (request.host or "").lower().split(":")[0]
+    return host in MORTGAGE_PROTECTION_HOSTS
+
 @app.route("/")
 def home():
     if MAINTENANCE and not is_protected("/"):
         return MAINTENANCE_HTML, 200
+    if is_mortgage_protection_host():
+        return send_from_directory(SITE_ROOT, "protect_mortgage.html")
     return send_from_directory(SITE_ROOT, "index.html")
+
+@app.route("/thank-you")
+def mortgage_protection_thank_you():
+    return send_from_directory(SITE_ROOT, "mortgage_thank_you.html")
 
 @app.route("/<path:filename>")
 def static_site(filename):
@@ -1200,7 +1216,7 @@ def submit_mortgage_protection():
                 %(lead_source)s, %(lead_source_bucket)s
             )
         """, {
-            "product_type":         "Mortgage Protection",
+            "product_type":         "mortgage-protection",
             "first_name":           data.get("first_name", "").strip(),
             "last_name":            data.get("last_name", "").strip(),
             "mobile_phone":         "+1" + phone_digits if len(phone_digits) == 10 else "+" + phone_digits,

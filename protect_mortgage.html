@@ -564,7 +564,7 @@
       .then(function(res) { return res.json().then(function(body) { return { ok: res.ok, body: body }; }); })
       .then(function(result) {
         if (result.body.status === 'ok') {
-          window.location.href = '/mortgage_thank_you.html';
+          window.location.href = '/thank-you';
         } else if (result.body.status === 'declined') {
           document.getElementById('mp-form').style.display = 'none';
           var declineEl = document.getElementById('decline-message');
