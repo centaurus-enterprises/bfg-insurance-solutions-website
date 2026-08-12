@@ -12,3 +12,6 @@ __pycache__/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Claude Code local settings (machine-specific, not shared)
+.claude/settings.local.json
