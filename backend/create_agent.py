@@ -10,13 +10,9 @@ This will prompt you for the agent's details and insert a new
 row into the agents table with a securely hashed password.
 """
 
-import psycopg2
 import hashlib
-import os
 import secrets
-from dotenv import load_dotenv
-
-load_dotenv()
+from db import get_connection
 
 
 def hash_password(password: str) -> str:
@@ -27,16 +23,6 @@ def hash_password(password: str) -> str:
     salt = secrets.token_hex(16)
     hashed = hashlib.sha256((salt + password).encode()).hexdigest()
     return f"{salt}:{hashed}"
-
-
-def get_connection():
-    return psycopg2.connect(
-        host=os.getenv("DB_HOST"),
-        port=os.getenv("DB_PORT"),
-        dbname=os.getenv("DB_NAME"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD")
-    )
 
 
 def agent_exists(cur, username: str, email: str) -> bool:

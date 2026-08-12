@@ -99,11 +99,27 @@ def is_protected(path):
             return True
     return False
 
+# Hosts that should land on the mortgage-protection intake instead of the
+# main multi-product site. Once DNS points protect-mortgage.com at this
+# service (see .claude/rules/infra.md), the domain root becomes the ad
+# landing page — the two funnels stay on separate URLs but the same service.
+MORTGAGE_PROTECTION_HOSTS = {"protect-mortgage.com", "www.protect-mortgage.com"}
+
+def is_mortgage_protection_host():
+    host = (request.host or "").lower().split(":")[0]
+    return host in MORTGAGE_PROTECTION_HOSTS
+
 @app.route("/")
 def home():
     if MAINTENANCE and not is_protected("/"):
         return MAINTENANCE_HTML, 200
+    if is_mortgage_protection_host():
+        return send_from_directory(SITE_ROOT, "protect_mortgage.html")
     return send_from_directory(SITE_ROOT, "index.html")
+
+@app.route("/thank-you")
+def mortgage_protection_thank_you():
+    return send_from_directory(SITE_ROOT, "mortgage_thank_you.html")
 
 @app.route("/<path:filename>")
 def static_site(filename):
@@ -1042,6 +1058,109 @@ def run_migration_mortgage_protection():
         return f"Error: {e}", 500
 
 
+@app.route("/run-migration-init-h4v9t")
+def run_migration_init():
+    """One-time setup for a brand-new, empty Postgres instance. Creates
+    leads and agents from scratch with every column referenced anywhere in
+    this app (legacy multi-product form, export whitelist, dashboard, and
+    the mortgage-protection funnel) so the two ALTER-TABLE migrations above
+    aren't required to run first. Safe to re-run — CREATE TABLE IF NOT
+    EXISTS never touches a table that already has data. Delete after use."""
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS leads (
+                id SERIAL PRIMARY KEY,
+                submitted_at TIMESTAMP DEFAULT NOW(),
+                product_type VARCHAR(100),
+                first_name VARCHAR(100),
+                last_name VARCHAR(100),
+                age INTEGER,
+                gender VARCHAR(10),
+                mobile_phone VARCHAR(50),
+                home_phone VARCHAR(50),
+                email VARCHAR(255),
+                city VARCHAR(100),
+                zip VARCHAR(20),
+                state VARCHAR(100),
+                dob DATE,
+                tobacco BOOLEAN,
+                has_beneficiary VARCHAR(10),
+                beneficiary_relationship VARCHAR(100),
+                beneficiary VARCHAR(10),
+                beneficiary_rel VARCHAR(100),
+                currently_insured BOOLEAN,
+                coverage_amount VARCHAR(50),
+                monthly_budget VARCHAR(50),
+                budget VARCHAR(50),
+                reason TEXT,
+                height_ft INTEGER,
+                height_in INTEGER,
+                weight INTEGER,
+                major_conditions TEXT,
+                minor_conditions TEXT,
+                medications TEXT,
+                hobby VARCHAR(255),
+                contact_preference VARCHAR(50),
+                best_time VARCHAR(50),
+                assigned_agent VARCHAR(100),
+                status VARCHAR(50) DEFAULT 'new',
+                notes TEXT,
+                mp_lender VARCHAR(255),
+                mp_balance VARCHAR(50),
+                mp_monthly VARCHAR(50),
+                mp_years_remaining VARCHAR(50),
+                mp_purchase_year VARCHAR(10),
+                term_length VARCHAR(50),
+                term_reason TEXT,
+                term_annual_income VARCHAR(50),
+                wl_goal TEXT,
+                iul_annual_income VARCHAR(50),
+                iul_goal TEXT,
+                iul_investment_exp TEXT,
+                lb_concern TEXT,
+                lb_family_history TEXT,
+                code_word VARCHAR(20),
+                code_word_set_at TIMESTAMPTZ,
+                code_word_confirmed VARCHAR(20),
+                code_word_confirmed_at TIMESTAMPTZ,
+                homeowner VARCHAR(10),
+                mortgage_balance VARCHAR(20),
+                gclid VARCHAR(255),
+                gbraid VARCHAR(255),
+                wbraid VARCHAR(255),
+                consent_version VARCHAR(10),
+                consent_text TEXT,
+                trustedform_cert_url VARCHAR(500),
+                submitted_url TEXT,
+                ip_address VARCHAR(64),
+                user_agent VARCHAR(500),
+                lead_source VARCHAR(100),
+                lead_source_bucket VARCHAR(20)
+            )
+        """)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS agents (
+                id SERIAL PRIMARY KEY,
+                full_name VARCHAR(255) NOT NULL,
+                email VARCHAR(255) UNIQUE NOT NULL,
+                username VARCHAR(100) UNIQUE NOT NULL,
+                password_hash VARCHAR(255) NOT NULL,
+                is_admin BOOLEAN DEFAULT FALSE,
+                notify_on_lead BOOLEAN DEFAULT TRUE,
+                is_active BOOLEAN DEFAULT TRUE,
+                created_at TIMESTAMP DEFAULT NOW()
+            )
+        """)
+        conn.commit()
+        cur.close()
+        conn.close()
+        return "OK: leads and agents tables created", 200
+    except Exception as e:
+        return f"Error: {e}", 500
+
+
 # ─────────────────────────────────────────────
 # FORM SUBMISSION (public)
 # ─────────────────────────────────────────────
@@ -1200,7 +1319,7 @@ def submit_mortgage_protection():
                 %(lead_source)s, %(lead_source_bucket)s
             )
         """, {
-            "product_type":         "Mortgage Protection",
+            "product_type":         "mortgage-protection",
             "first_name":           data.get("first_name", "").strip(),
             "last_name":            data.get("last_name", "").strip(),
             "mobile_phone":         "+1" + phone_digits if len(phone_digits) == 10 else "+" + phone_digits,
