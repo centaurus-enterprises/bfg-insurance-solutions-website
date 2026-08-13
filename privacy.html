@@ -14,8 +14,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Privacy Notice</title>
   <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="style.css"/>
   <style>
+    :root {
+      --espresso: #2C1A0E;
+      --cognac: #7B3F1E;
+      --parchment: #F5EFE6;
+      --parchment-dark: #EDE3D6;
+      --parchment-mid: #D9CCBA;
+      --text: #3A2A1A;
+      --text-light: #7A6A5A;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--parchment);
+      color: var(--text);
+    }
     .privacy-wrap {
       max-width: 800px;
       margin: 0 auto;
@@ -76,23 +90,18 @@
       color: var(--espresso);
       margin-bottom: 0.5rem;
     }
+    .site-footer {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 5% 2.5rem;
+      font-size: 0.8rem;
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .site-footer a { color: var(--cognac); }
   </style>
 </head>
 <body>
-
-  <!-- NAV -->
-  <nav class="navbar">
-    <a href="/" class="logo">
-      <img src="logo.png" alt="BFG Insurance Solutions" onerror="this.style.display='none'"/>
-      <span>BFG Insurance Solutions</span>
-    </a>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="products.html">Products</a></li>
-      <li><a href="qualify.html" target="_blank" class="nav-cta">See If You Qualify</a></li>
-    </ul>
-  </nav>
 
   <main class="privacy-wrap">
 
@@ -194,39 +203,10 @@
 
   </main>
 
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <div class="footer-logo">BFG Insurance Solutions</div>
-        <p>Independent life insurance specialists serving families nationwide.</p>
-        <p style="font-size:0.8rem;margin-top:0.5rem;">Joshua S. Brown — NPN 22098686 — CA Lic. 4509549<br/>John M. Brown — NPN 21148038 — CA Lic. 4374779</p>
-      </div>
-      <div class="footer-col">
-        <h4>Products</h4>
-        <ul>
-          <li><a href="term_life.html">Term Life</a></li>
-          <li><a href="whole_life.html">Whole Life</a></li>
-          <li><a href="iul.html">IUL</a></li>
-          <li><a href="final_expense.html">Final Expense</a></li>
-          <li><a href="mortgage_protection.html">Mortgage Protection</a></li>
-          <li><a href="living_benefits.html">Living Benefits</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Company</h4>
-        <ul>
-          <li><a href="about.html">About Us</a></li>
-          <li><a href="careers.html">Careers</a></li>
-          <li><a href="privacy.html">Privacy Notice</a></li>
-          <li><a href="/login">Agent Portal</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>&copy; 2026 BFG Insurance Solutions. All rights reserved. &nbsp;|&nbsp; <a href="privacy.html">Privacy Notice</a></p>
-      <p style="font-size:0.78rem;margin-top:0.3rem;opacity:0.7;">Licensed insurance agent. Not all products available in all states. This website is for informational purposes only and does not constitute a binding offer of insurance.</p>
-    </div>
+  <footer class="site-footer">
+    This is a solicitation for insurance offered by John M. Brown, CA Lic. #4374779, and Joshua Brown, CA Lic. #4509549. Licensed in California and additional states; not all products are available in all states. Rates and availability vary based on age, health, coverage amount, and state of residence. Not affiliated with, endorsed by, or sponsored by any mortgage lender, loan servicer, or government agency.
+    <br/><br/>
+    <a href="/privacy.html">Privacy Notice</a> &nbsp;|&nbsp; <a href="/terms.html">Terms of Use</a>
   </footer>
 
 </body>
