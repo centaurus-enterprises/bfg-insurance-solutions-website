@@ -225,8 +225,8 @@
       max-width: 560px;
       padding: 0 1.25rem 2.5rem;
       text-align: center;
-      font-size: 0.72rem;
-      color: var(--text-light);
+      font-size: 0.8rem;
+      color: var(--text);
       line-height: 1.6;
     }
 
@@ -314,6 +314,17 @@
 
       <div class="field-row">
         <div class="field-group full">
+          <label for="sex">Sex (used for insurance rating) <span style="color:var(--error)">*</span></label>
+          <select id="sex" name="sex" required>
+            <option value="" disabled selected>Select one</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-group full">
           <label for="email">Email <span style="color:var(--error)">*</span></label>
           <input type="email" id="email" name="email" placeholder="jane@example.com" autocomplete="email" required/>
         </div>
@@ -373,12 +384,12 @@
       <div class="consent-box">
         <strong style="display:block;font-size:0.78rem;margin-bottom:0.6rem;color:var(--espresso);">
           MORTGAGE PROTECTION &amp; LIFE INSURANCE &mdash; REQUEST &amp; CONTACT AUTHORIZATION<br/>
-          <span style="font-weight:400;">BFG Insurance Solutions &nbsp;|&nbsp; Joshua Brown, NPN 22098686, CA Lic. 4509549 &nbsp;|&nbsp; John M. Brown, NPN 21148038, CA Lic. 4374779 &nbsp;|&nbsp; 537 Linda Ln, Chula Vista, CA 91910</span>
+          <span style="font-weight:400;">Joshua Brown, NPN 22098686, CA Lic. #4509549 &nbsp;|&nbsp; John M. Brown, NPN 21148038, CA Lic. #4374779 &nbsp;|&nbsp; 537 Linda Ln, Chula Vista, CA 91910</span>
         </strong>
 
-        <strong>1. INFORMATION REQUEST.</strong> By submitting this form, I confirm that I am voluntarily requesting information about mortgage protection life insurance and related term life insurance products and services from BFG Insurance Solutions, a licensed independent insurance agency. Agents: Joshua Brown (NPN 22098686, CA Lic. 4509549) and John M. Brown (NPN 21148038, CA Lic. 4374779), with a principal business address of 537 Linda Ln, Chula Vista, CA 91910.<br/><br/>
+        <strong>1. INFORMATION REQUEST.</strong> By submitting this form, I confirm that I am voluntarily requesting information about mortgage protection life insurance and related term life insurance products and services from licensed insurance producers Joshua Brown (NPN 22098686, CA Lic. #4509549) and John M. Brown (NPN 21148038, CA Lic. #4374779), with a principal business address of 537 Linda Ln, Chula Vista, CA 91910.<br/><br/>
 
-        <strong>2. CONTACT AUTHORIZATION.</strong> I authorize BFG Insurance Solutions and its licensed insurance agents, representatives, employees, contractors, service providers, and authorized support staff acting strictly on its behalf and solely for the purpose of responding to my insurance information request, subject to confidentiality obligations and in accordance with the Privacy Notice at protect-mortgage.com/privacy, to contact me at the telephone number(s) and email address I have provided.<br/><br/>
+        <strong>2. CONTACT AUTHORIZATION.</strong> I authorize John M. Brown, CA Lic. #4374779, and Joshua Brown, CA Lic. #4509549, and their authorized representatives, employees, contractors, and service providers acting strictly on their behalf and solely for the purpose of responding to my insurance information request, subject to confidentiality obligations and in accordance with the Privacy Notice at protect-mortgage.com/privacy, to contact me at the telephone number(s) and email address I have provided.<br/><br/>
 
         <strong>3. PRODUCT SCOPE.</strong> This authorization is limited to mortgage protection life insurance and term life insurance directly related to my inquiry. Contact regarding any additional insurance products or services not directly related to my original inquiry will require my separate, specific authorization.<br/><br/>
 
@@ -388,15 +399,15 @@
 
         <strong>6. ALTERNATE OPT-OUT / NO PURCHASE REQUIRED.</strong> I may also revoke my consent at any time by calling (619) 905-7488 or emailing john.brown@centaurusenterprises.com with &ldquo;UNSUBSCRIBE&rdquo; in the subject line. Revocation requests are honored within two (2) business days for text messages and immediately for calls. I understand that my consent is not required as a condition of purchasing any property, goods, or services.<br/><br/>
 
-        <strong>7. EMAIL COMMUNICATIONS (CAN-SPAM).</strong> All commercial email messages sent to the email address I provide will comply with the CAN-SPAM Act (15 U.S.C. &sect; 7701). Each email will include: (a) a clear identification that it is an advertisement; (b) the valid physical postal address of BFG Insurance Solutions (537 Linda Ln, Chula Vista, CA 91910); and (c) a clear explanation of how to opt out of future emails. Opt-out requests will be honored within ten (10) business days.<br/><br/>
+        <strong>7. EMAIL COMMUNICATIONS (CAN-SPAM).</strong> All commercial email messages sent to the email address I provide will comply with the CAN-SPAM Act (15 U.S.C. &sect; 7701). Each email will include: (a) a clear identification that it is an advertisement; (b) our valid physical postal address (537 Linda Ln, Chula Vista, CA 91910); and (c) a clear explanation of how to opt out of future emails. Opt-out requests will be honored within ten (10) business days.<br/><br/>
 
-        <strong>8. ONE-TO-ONE CONSENT NOTICE.</strong> My consent provided through this form authorizes contact exclusively by BFG Insurance Solutions. My consent does not authorize contact by any other insurance agency, company, or third party. If I reached this form through an online video, advertisement, or referral source, my consent is specific to BFG Insurance Solutions only.<br/><br/>
+        <strong>8. ONE-TO-ONE CONSENT NOTICE.</strong> My consent provided through this form authorizes contact exclusively by John M. Brown and Joshua Brown. My consent does not authorize contact by any other insurance agent, agency, company, or third party. If I reached this form through an online video, advertisement, or referral source, my consent is specific to John M. Brown and Joshua Brown only.<br/><br/>
 
-        <strong>9. PRIVACY NOTICE.</strong> The personal information I provide is collected and used in accordance with BFG Insurance Solutions&rsquo; Privacy Notice, available at <a href="/privacy.html" target="_blank" style="color:var(--cognac);">protect-mortgage.com/privacy</a>. If I am a California resident, I have additional rights under the CCPA as described in the Privacy Notice. BFG Insurance Solutions does not sell personal information to third parties.<br/><br/>
+        <strong>9. PRIVACY NOTICE.</strong> The personal information I provide is collected and used in accordance with the Privacy Notice available at <a href="/privacy.html" target="_blank" style="color:var(--cognac);">protect-mortgage.com/privacy</a>. If I am a California resident, I have additional rights under the CCPA as described in the Privacy Notice. We do not sell personal information to third parties.<br/><br/>
 
-        <strong>10. AGE CERTIFICATION.</strong> I certify that I am 18 years of age or older. This form is not intended for individuals under 18 years of age. BFG Insurance Solutions does not knowingly collect personal information from minors.<br/><br/>
+        <strong>10. AGE CERTIFICATION.</strong> I certify that I am 18 years of age or older. This form is not intended for individuals under 18 years of age. We do not knowingly collect personal information from minors.<br/><br/>
 
-        <strong>11. RECORD RETENTION.</strong> My electronic submission, including my checkbox selection, typed information, IP address, date and time stamp, web form source, and the consent language displayed to me at the time of submission, will be retained for a minimum of five (5) years from the date of submission as proof of my request, authorization, consent, and acknowledgment, in accordance with applicable federal and state law, including the Telephone Consumer Protection Act and applicable state insurance record-keeping requirements. Records will be maintained by BFG Insurance Solutions and will be made available to regulators or in legal proceedings upon lawful request.
+        <strong>11. RECORD RETENTION.</strong> My electronic submission, including my checkbox selection, typed information, IP address, date and time stamp, web form source, and the consent language displayed to me at the time of submission, will be retained for a minimum of five (5) years from the date of submission as proof of my request, authorization, consent, and acknowledgment, in accordance with applicable federal and state law, including the Telephone Consumer Protection Act and applicable state insurance record-keeping requirements. Records will be maintained by John M. Brown and Joshua Brown and will be made available to regulators or in legal proceedings upon lawful request.
       </div>
 
       <p style="font-size:0.72rem;color:#4a3a2a;margin-bottom:0.6rem;line-height:1.5;">
@@ -409,14 +420,13 @@
       </label>
 
       <button type="submit" class="submit-btn" id="submit-btn">Get My Free Quote &rarr;</button>
-      <p class="form-note">Your information is private and never sold. &nbsp;|&nbsp; <a href="/privacy.html" target="_blank" style="color:var(--cognac);">Privacy Notice</a></p>
+      <p class="form-note">Your information is private and never sold. &nbsp;|&nbsp; <a href="/privacy.html" target="_blank" style="color:var(--cognac);">Privacy Notice</a> &nbsp;|&nbsp; <a href="/terms.html" target="_blank" style="color:var(--cognac);">Terms of Use</a></p>
 
     </form>
   </main>
 
   <footer class="site-footer">
-    Licensed in California and additional states; not all products are available in all states.<br/>
-    BFG Insurance Solutions &mdash; John M. Brown, CA Lic. #4374779 &middot; Joshua Brown, CA Lic. #4509549
+    This is a solicitation for insurance offered by John M. Brown, CA Lic. #4374779, and Joshua Brown, CA Lic. #4509549. Licensed in California and additional states; not all products are available in all states. Rates and availability vary based on age, health, coverage amount, and state of residence. Not affiliated with, endorsed by, or sponsored by any mortgage lender, loan servicer, or government agency.
   </footer>
 
   <script>
@@ -487,7 +497,7 @@
       }
 
       req('first_name'); req('last_name'); req('phone'); req('email');
-      req('zip'); req('age'); req('mortgage_balance'); req('code_word');
+      req('zip'); req('age'); req('sex'); req('mortgage_balance'); req('code_word');
 
       if (!/^\(\d{3}\) \d{3}-\d{4}$/.test(document.getElementById('phone').value.trim())) {
         document.getElementById('phone').classList.add('error'); ok = false;
@@ -544,6 +554,7 @@
         email:             document.getElementById('email').value.trim(),
         zip:               document.getElementById('zip').value.trim(),
         age:               ageVal,
+        sex:               document.getElementById('sex').value,
         mortgage_balance:  document.getElementById('mortgage_balance').value,
         homeowner:         homeownerInput.value,
         tobacco_use:       tobaccoInput.value,
