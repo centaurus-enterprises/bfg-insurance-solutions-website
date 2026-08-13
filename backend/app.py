@@ -6,6 +6,7 @@ import hashlib
 import os
 import re
 import secrets
+import requests
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -50,6 +51,42 @@ def mp_validate_code_word(raw, first_name, last_name):
     if lower in MP_CODE_WORD_PROFANITY_BLOCKLIST:
         return "Please choose a different word."
     return None
+
+
+TRUSTEDFORM_API_KEY = os.getenv("TRUSTEDFORM_API_KEY")
+
+
+def mp_retain_trustedform_certificate(cert_url, email, phone):
+    """POSTs to the TrustedForm certificate URL to retain/claim it via the
+    ActiveProspect Retain API. Never raises -- a TrustedForm failure must
+    never block a lead from saving. Returns (retained: bool, detail: dict)
+    where detail always includes a 'reason' key on failure and the raw
+    status_code/body on any HTTP response received."""
+    if not TRUSTEDFORM_API_KEY:
+        return False, {"reason": "TRUSTEDFORM_API_KEY not configured"}
+    if not cert_url:
+        return False, {"reason": "no certificate URL provided"}
+    if not cert_url.startswith("https://cert.trustedform.com/"):
+        return False, {"reason": "certificate URL is not a trustedform.com cert URL"}
+
+    try:
+        resp = requests.post(
+            cert_url,
+            auth=("API", TRUSTEDFORM_API_KEY),
+            headers={
+                "api-version": "4.0",
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+            json={
+                "retain": {},
+                "match_lead": {"email": email or "", "phone": phone or ""},
+            },
+            timeout=10,
+        )
+        return resp.status_code == 200, {"status_code": resp.status_code, "body": resp.text[:2000]}
+    except requests.RequestException as e:
+        return False, {"reason": str(e)}
 
 
 # ─────────────────────────────────────────────
@@ -685,6 +722,7 @@ def export_leads():
         "tobacco", "height_ft", "height_in", "weight",
         "major_conditions", "minor_conditions", "medications",
         "contact_preference", "best_time", "hobby",
+        "code_word", "trustedform_cert_url", "trustedform_retained", "trustedform_retained_at",
         "assigned_agent", "status", "notes"
     ]
     safe_columns = [c for c in columns if c in all_columns]
@@ -1106,6 +1144,27 @@ def run_migration_mortgage_protection():
         return f"Error: {e}", 500
 
 
+@app.route("/run-migration-tf-k2x9p")
+def run_migration_trustedform_retain():
+    """One-time migration adding columns for the TrustedForm Retain API
+    result. Delete after use."""
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        for sql in [
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS trustedform_retained BOOLEAN",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS trustedform_retained_at TIMESTAMPTZ",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS trustedform_retain_response TEXT",
+        ]:
+            cur.execute(sql)
+        conn.commit()
+        cur.close()
+        conn.close()
+        return "OK: trustedform retain columns added", 200
+    except Exception as e:
+        return f"Error: {e}", 500
+
+
 @app.route("/run-migration-init-h4v9t")
 def run_migration_init():
     """One-time setup for a brand-new, empty Postgres instance. Creates
@@ -1185,7 +1244,10 @@ def run_migration_init():
                 ip_address VARCHAR(64),
                 user_agent VARCHAR(500),
                 lead_source VARCHAR(100),
-                lead_source_bucket VARCHAR(20)
+                lead_source_bucket VARCHAR(20),
+                trustedform_retained BOOLEAN,
+                trustedform_retained_at TIMESTAMPTZ,
+                trustedform_retain_response TEXT
             )
         """)
         cur.execute("""
@@ -1376,6 +1438,7 @@ def submit_mortgage_protection():
                 %(submitted_url)s, %(ip_address)s, %(user_agent)s,
                 %(lead_source)s, %(lead_source_bucket)s
             )
+            RETURNING id
         """, {
             "product_type":         "mortgage-protection",
             "first_name":           data.get("first_name", "").strip(),
@@ -1404,6 +1467,7 @@ def submit_mortgage_protection():
             "lead_source_bucket":   "approved",
         })
 
+        lead_id = cur.fetchone()[0]
         conn.commit()
         cur.close()
         conn.close()
@@ -1417,6 +1481,31 @@ def submit_mortgage_protection():
             "state":        "",
             "city":         "",
         })
+
+        # Retain/verify the TrustedForm certificate. The lead is already
+        # saved at this point -- a failure here must never surface as an
+        # error to the consumer or affect the response.
+        try:
+            mobile_phone = "+1" + phone_digits if len(phone_digits) == 10 else "+" + phone_digits
+            retained, detail = mp_retain_trustedform_certificate(
+                data.get("trustedform_cert_url") or None,
+                data.get("email", "").strip(),
+                mobile_phone,
+            )
+            retain_conn = get_connection()
+            retain_cur  = retain_conn.cursor()
+            retain_cur.execute("""
+                UPDATE leads SET
+                    trustedform_retained = %s,
+                    trustedform_retained_at = %s,
+                    trustedform_retain_response = %s
+                WHERE id = %s
+            """, (retained, datetime.now(timezone.utc), str(detail)[:2000], lead_id))
+            retain_conn.commit()
+            retain_cur.close()
+            retain_conn.close()
+        except Exception:
+            pass
 
         return jsonify({"status": "ok"})
 
