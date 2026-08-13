@@ -676,7 +676,7 @@ def export_leads():
     # Whitelist columns to prevent SQL injection
     all_columns = [
         "id", "submitted_at", "product_type", "first_name", "last_name",
-        "age", "email", "mobile_phone", "home_phone", "city", "state", "zip",
+        "age", "gender", "email", "mobile_phone", "home_phone", "city", "state", "zip",
         "coverage_amount", "budget", "currently_insured", "beneficiary", "beneficiary_rel",
         "mp_lender", "mp_balance", "mp_monthly", "mp_years_remaining", "mp_purchase_year",
         "term_length", "term_reason", "term_annual_income", "wl_goal",
@@ -1299,7 +1299,7 @@ def submit_mortgage_protection():
 
     required_fields = [
         "first_name", "last_name", "phone", "email", "zip",
-        "age", "mortgage_balance", "homeowner",
+        "age", "sex", "mortgage_balance", "homeowner",
         "tobacco_use", "code_word",
     ]
     for field in required_fields:
@@ -1323,6 +1323,9 @@ def submit_mortgage_protection():
             raise ValueError
     except (TypeError, ValueError):
         return jsonify({"status": "error", "field": "age", "message": "Enter a valid age between 18 and 118."}), 400
+
+    if data.get("sex") not in ("male", "female"):
+        return jsonify({"status": "error", "field": "sex", "message": "Please select Male or Female."}), 400
 
     if data.get("homeowner") not in ("yes", "no"):
         return jsonify({"status": "error", "field": "homeowner", "message": "Please answer this question."}), 400
@@ -1358,7 +1361,7 @@ def submit_mortgage_protection():
         cur.execute("""
             INSERT INTO leads (
                 product_type, first_name, last_name, mobile_phone, email,
-                zip, age, tobacco, homeowner, mortgage_balance,
+                zip, age, gender, tobacco, homeowner, mortgage_balance,
                 code_word, code_word_set_at, code_word_confirmed,
                 gclid, gbraid, wbraid,
                 consent_version, consent_text, trustedform_cert_url,
@@ -1366,7 +1369,7 @@ def submit_mortgage_protection():
                 lead_source, lead_source_bucket
             ) VALUES (
                 %(product_type)s, %(first_name)s, %(last_name)s, %(mobile_phone)s, %(email)s,
-                %(zip)s, %(age)s, %(tobacco)s, %(homeowner)s, %(mortgage_balance)s,
+                %(zip)s, %(age)s, %(gender)s, %(tobacco)s, %(homeowner)s, %(mortgage_balance)s,
                 %(code_word)s, %(code_word_set_at)s, %(code_word_confirmed)s,
                 %(gclid)s, %(gbraid)s, %(wbraid)s,
                 %(consent_version)s, %(consent_text)s, %(trustedform_cert_url)s,
@@ -1381,6 +1384,7 @@ def submit_mortgage_protection():
             "email":                data.get("email", "").strip(),
             "zip":                  zip_code,
             "age":                  age,
+            "gender":               data.get("sex"),
             "tobacco":              data.get("tobacco_use") == "yes",
             "homeowner":            data.get("homeowner"),
             "mortgage_balance":     data.get("mortgage_balance"),
