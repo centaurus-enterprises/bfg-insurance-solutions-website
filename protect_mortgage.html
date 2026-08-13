@@ -266,21 +266,23 @@
 
     <form id="mp-form" novalidate>
 
-      <!-- TrustedForm: standard public embed, account-agnostic on the client side.
-           Attaches xxTrustedFormCertUrl / xxTrustedFormPingUrl hidden fields to
-           the nearest enclosing <form> automatically. -->
+      <!-- TrustedForm: account-registered snippet from the ActiveProspect dashboard.
+           Attaches an xxTrustedFormCertUrl hidden field to the nearest
+           enclosing <form> automatically. -->
       <script type="text/javascript">
-      (function() {
-        var tf = document.createElement('script');
-        tf.type = 'text/javascript'; tf.async = true;
-        tf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
-          '://api.trustedform.com/trustedform.js?provide_referrer=' + escape(document.referrer) +
-          '&field=xxTrustedFormCertUrl&ping_field=xxTrustedFormPingUrl&l=' + new Date().getTime() + Math.random();
-        var s = document.getElementsByTagName('script')[0];
-        s.parentNode.insertBefore(tf, s);
-      })();
+        (function() {
+          var tf = document.createElement('script');
+          tf.type = 'text/javascript';
+          tf.async = true;
+          tf.src = ("https:" == document.location.protocol ? 'https' : 'http') +
+            '://api.trustedform.com/trustedform.js?field=xxTrustedFormCertUrl&use_tagged_consent=true&l=' +
+            new Date().getTime() + Math.random();
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(tf, s);
+        })();
       </script>
-      <noscript><img src="https://api.trustedform.com/ns.gif" alt="" style="display:none;"/></noscript>
+      <noscript>
+        <img src='https://api.trustedform.com/ns.gif' />
+      </noscript>
 
       <!-- Click-ID capture — populated on load from the query string, never from cookies -->
       <input type="hidden" id="gclid" name="gclid"/>
