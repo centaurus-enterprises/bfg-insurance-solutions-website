@@ -985,7 +985,9 @@
     {key:"weight",label:"Weight"}, {key:"major_conditions",label:"Major Conditions"},
     {key:"minor_conditions",label:"Minor Conditions"}, {key:"medications",label:"Medications"},
     {key:"contact_preference",label:"Contact Pref"}, {key:"best_time",label:"Best Time"},
-    {key:"code_word",label:"Code Word"}, {key:"assigned_agent",label:"Agent"},
+    {key:"code_word",label:"Code Word"},
+    {key:"trustedform_retained",label:"TrustedForm Retained"}, {key:"trustedform_cert_url",label:"TrustedForm Cert URL"},
+    {key:"assigned_agent",label:"Agent"},
     {key:"status",label:"Status"}, {key:"notes",label:"Notes"},
   ];
 
@@ -1253,6 +1255,12 @@
         <div class="edit-field">
           <label>Code Word</label>
           <input type="text" id="ef-code_word-${lead.id}" value="${v(lead.code_word)}" placeholder="e.g. Sunshine"/>
+        </div>
+        <div class="edit-field">
+          <label>TrustedForm Certificate</label>
+          <div style="padding:0.6rem 0;font-size:0.85rem;font-weight:600;color:${lead.trustedform_retained === true ? '#22C55E' : (lead.trustedform_retained === false ? '#EF4444' : '#9a7a6a')};">
+            ${lead.trustedform_retained === true ? '✓ Retained — callable' : (lead.trustedform_retained === false ? '✗ Not retained — do not dial' : '— Not yet processed')}
+          </div>
         </div>
         <div class="edit-field">
           <label>Assigned Agent</label>
