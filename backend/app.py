@@ -342,6 +342,54 @@ def db_test():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
+@app.route("/debug-notifications-r5m8v")
+def debug_notifications():
+    """Temporary read-only diagnostic for the lead-notification pipeline.
+    No secrets/passwords returned -- just whether the SendGrid env vars are
+    set, who would actually receive a new-lead email right now, and the
+    most recent mortgage-protection lead's timestamps (confirms the DB
+    write side of the chain). Delete once the notification issue is
+    resolved."""
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        cur.execute("SELECT full_name, email, notify_on_lead, is_active FROM agents ORDER BY id")
+        all_agents = cur.fetchall()
+        cur.execute("""
+            SELECT id, first_name, last_name, submitted_at, code_word, code_word_set_at
+            FROM leads WHERE product_type = 'mortgage-protection'
+            ORDER BY id DESC LIMIT 5
+        """)
+        recent_leads = cur.fetchall()
+        cur.close()
+        conn.close()
+
+        return jsonify({
+            "status": "ok",
+            "sendgrid_api_key_set": bool(os.getenv("SENDGRID_API_KEY")),
+            "mail_sender_set":      bool(os.getenv("MAIL_SENDER")),
+            "mail_sender_value":    os.getenv("MAIL_SENDER") or None,
+            "all_agents": [
+                {"full_name": a[0], "email": a[1], "notify_on_lead": a[2], "is_active": a[3]}
+                for a in all_agents
+            ],
+            "would_notify": [
+                a[1] for a in all_agents if a[2] and a[3]
+            ],
+            "recent_mortgage_protection_leads": [
+                {
+                    "id": l[0], "name": f"{l[1]} {l[2]}",
+                    "submitted_at": l[3].isoformat() if l[3] else None,
+                    "code_word": l[4],
+                    "code_word_set_at": l[5].isoformat() if l[5] else None,
+                }
+                for l in recent_leads
+            ],
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
 # ─────────────────────────────────────────────
 # AUTH — LOGIN / LOGOUT
 # ─────────────────────────────────────────────
