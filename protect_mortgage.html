@@ -310,7 +310,7 @@
         </div>
         <div class="field-group">
           <label for="age">Age <span style="color:var(--error)">*</span></label>
-          <input type="number" id="age" name="age" placeholder="35" inputmode="numeric" min="18" max="118" step="1" required/>
+          <input type="text" id="age" name="age" placeholder="35" inputmode="numeric" maxlength="3" required/>
         </div>
       </div>
 
@@ -507,8 +507,9 @@
       if (!/^\d{5}$/.test(document.getElementById('zip').value.trim())) {
         document.getElementById('zip').classList.add('error'); ok = false;
       }
-      var ageVal = parseInt(document.getElementById('age').value, 10);
-      if (!Number.isInteger(ageVal) || ageVal < 18 || ageVal > 118) {
+      var ageRaw = document.getElementById('age').value.trim();
+      var ageVal = parseInt(ageRaw, 10);
+      if (!/^\d{1,3}$/.test(ageRaw) || !Number.isInteger(ageVal) || ageVal < 18 || ageVal > 100) {
         document.getElementById('age').classList.add('error'); ok = false;
       }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('email').value.trim())) {

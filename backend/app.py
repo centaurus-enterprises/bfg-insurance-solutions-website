@@ -158,10 +158,18 @@ def home():
 def mortgage_protection_thank_you():
     return send_from_directory(SITE_ROOT, "mortgage_thank_you.html")
 
+# protect-mortgage.com is a self-contained funnel: the intake form, its
+# thank-you page, and these two legal pages. It must never be able to
+# reach the main multi-product site (index.html, about.html, etc.) --
+# this domain is slated to move elsewhere later anyway.
+MORTGAGE_PROTECTION_ALLOWED_FILES = {"privacy.html", "terms.html"}
+
 @app.route("/<path:filename>")
 def static_site(filename):
     if MAINTENANCE and not is_protected("/" + filename):
         return MAINTENANCE_HTML, 200
+    if is_mortgage_protection_host() and filename not in MORTGAGE_PROTECTION_ALLOWED_FILES:
+        return "Not Found", 404
     return send_from_directory(SITE_ROOT, filename)
 
 
@@ -1380,11 +1388,14 @@ def submit_mortgage_protection():
         return jsonify({"status": "error", "field": "zip", "message": "Enter a valid 5-digit ZIP code."}), 400
 
     try:
-        age = int(data.get("age"))
-        if age < 18 or age > 118:
+        age_raw = str(data.get("age", "")).strip()
+        if not re.fullmatch(r"\d{1,3}", age_raw):
+            raise ValueError
+        age = int(age_raw)
+        if age < 18 or age > 100:
             raise ValueError
     except (TypeError, ValueError):
-        return jsonify({"status": "error", "field": "age", "message": "Enter a valid age between 18 and 118."}), 400
+        return jsonify({"status": "error", "field": "age", "message": "Enter a valid age between 18 and 100."}), 400
 
     if data.get("sex") not in ("male", "female"):
         return jsonify({"status": "error", "field": "sex", "message": "Please select Male or Female."}), 400
