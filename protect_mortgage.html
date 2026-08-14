@@ -485,7 +485,26 @@
       return null;
     }
 
-    document.getElementById('mp-form').addEventListener('submit', function(e) {
+    // TrustedForm's script populates xxTrustedFormCertUrl asynchronously
+    // after page load. If the form is filled out and submitted quickly
+    // (autofill, fast testers), the field can still be empty at the
+    // moment of submit -- wait briefly for it before giving up.
+    function waitForTrustedFormCert(maxWaitMs) {
+      return new Promise(function(resolve) {
+        var start = Date.now();
+        (function poll() {
+          var field = document.getElementsByName('xxTrustedFormCertUrl')[0];
+          var val = field ? field.value : '';
+          if (val || Date.now() - start >= maxWaitMs) {
+            resolve(val);
+          } else {
+            setTimeout(poll, 150);
+          }
+        })();
+      });
+    }
+
+    document.getElementById('mp-form').addEventListener('submit', async function(e) {
       e.preventDefault();
 
       var errEl = document.getElementById('form-error');
@@ -550,6 +569,12 @@
         return;
       }
 
+      var btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
+
+      var certUrl = await waitForTrustedFormCert(2500);
+
       var payload = {
         first_name:       document.getElementById('first_name').value.trim(),
         last_name:        document.getElementById('last_name').value.trim(),
@@ -567,12 +592,8 @@
         wbraid:            document.getElementById('wbraid').value,
         submitted_url:     document.getElementById('submitted_url').value,
         consent_text:      document.querySelector('.consent-box').innerText,
-        trustedform_cert_url: (document.getElementsByName('xxTrustedFormCertUrl')[0] || {}).value || ''
+        trustedform_cert_url: certUrl
       };
-
-      var btn = document.getElementById('submit-btn');
-      btn.disabled = true;
-      btn.textContent = 'Submitting…';
 
       fetch('/submit-mortgage-protection', {
         method: 'POST',
