@@ -16,8 +16,21 @@
   </script>
 
   <!-- Event snippet for MP Lead - Site Form Submit -->
+  <!-- Fires only once per successful submission: the token is a one-time
+       value minted server-side and only ever appended to this URL by a
+       genuine backend-confirmed redirect. Recording it in localStorage
+       blocks refresh/back-forward/direct-navigation from re-firing or
+       phantom-firing this conversion. -->
   <script>
-  gtag('event', 'conversion', {'send_to': 'AW-18193879267/jLl8CIfe39wcEOOhwuND'});
+  (function() {
+    var params = new URLSearchParams(window.location.search);
+    var token = params.get('ct');
+    if (!token) { return; }
+    var storageKey = 'mp_conversion_fired_' + token;
+    if (window.localStorage.getItem(storageKey)) { return; }
+    window.localStorage.setItem(storageKey, '1');
+    gtag('event', 'conversion', {'send_to': 'AW-18193879267/jLl8CIfe39wcEOOhwuND'});
+  })();
   </script>
 
   <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700;900&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>

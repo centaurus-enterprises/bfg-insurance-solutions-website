@@ -1518,7 +1518,7 @@ def submit_mortgage_protection():
         except Exception:
             pass
 
-        return jsonify({"status": "ok"})
+        return jsonify({"status": "ok", "conversion_token": secrets.token_urlsafe(16)})
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
