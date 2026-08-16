@@ -1503,6 +1503,8 @@ def submit_mortgage_protection():
                 data.get("email", "").strip(),
                 mobile_phone,
             )
+            if isinstance(detail, dict):
+                detail = {**detail, "client_diagnostic": data.get("trustedform_diagnostic") or None}
             retain_conn = get_connection()
             retain_cur  = retain_conn.cursor()
             retain_cur.execute("""
