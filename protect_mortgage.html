@@ -268,12 +268,17 @@
 
       <!-- TrustedForm: account-registered snippet from the ActiveProspect dashboard.
            Attaches an xxTrustedFormCertUrl hidden field to the nearest
-           enclosing <form> automatically. -->
+           enclosing <form> automatically. onload/onerror record whether the
+           script itself ever loaded, so a missing cert at submit time can be
+           told apart from "the script was blocked" vs "it just ran slow." -->
       <script type="text/javascript">
+        window.mpTrustedFormScriptStatus = 'loading';
         (function() {
           var tf = document.createElement('script');
           tf.type = 'text/javascript';
           tf.async = true;
+          tf.onload = function() { window.mpTrustedFormScriptStatus = 'loaded'; };
+          tf.onerror = function() { window.mpTrustedFormScriptStatus = 'blocked_or_failed'; };
           tf.src = ("https:" == document.location.protocol ? 'https' : 'http') +
             '://api.trustedform.com/trustedform.js?field=xxTrustedFormCertUrl&use_tagged_consent=true&l=' +
             new Date().getTime() + Math.random();
@@ -488,15 +493,20 @@
     // TrustedForm's script populates xxTrustedFormCertUrl asynchronously
     // after page load. If the form is filled out and submitted quickly
     // (autofill, fast testers), the field can still be empty at the
-    // moment of submit -- wait briefly for it before giving up.
+    // moment of submit -- wait for it before giving up. Resolves with a
+    // diagnostic string alongside the value so a failure can be traced back
+    // to "script never loaded" vs "loaded but never certified in time."
     function waitForTrustedFormCert(maxWaitMs) {
       return new Promise(function(resolve) {
         var start = Date.now();
         (function poll() {
           var field = document.getElementsByName('xxTrustedFormCertUrl')[0];
           var val = field ? field.value : '';
-          if (val || Date.now() - start >= maxWaitMs) {
-            resolve(val);
+          if (val) {
+            resolve({ value: val, diagnostic: 'resolved' });
+          } else if (Date.now() - start >= maxWaitMs) {
+            var scriptStatus = window.mpTrustedFormScriptStatus || 'unknown';
+            resolve({ value: '', diagnostic: 'timed_out_after_' + maxWaitMs + 'ms_script_' + scriptStatus });
           } else {
             setTimeout(poll, 150);
           }
@@ -573,7 +583,7 @@
       btn.disabled = true;
       btn.textContent = 'Submitting…';
 
-      var certUrl = await waitForTrustedFormCert(2500);
+      var certResult = await waitForTrustedFormCert(6000);
 
       var payload = {
         first_name:       document.getElementById('first_name').value.trim(),
@@ -592,7 +602,8 @@
         wbraid:            document.getElementById('wbraid').value,
         submitted_url:     document.getElementById('submitted_url').value,
         consent_text:      document.querySelector('.consent-box').innerText,
-        trustedform_cert_url: certUrl
+        trustedform_cert_url: certResult.value,
+        trustedform_diagnostic: certResult.diagnostic
       };
 
       fetch('/submit-mortgage-protection', {
