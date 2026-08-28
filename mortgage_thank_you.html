@@ -16,20 +16,59 @@
   </script>
 
   <!-- Event snippet for MP Lead - Site Form Submit -->
-  <!-- Fires only once per successful submission: the token is a one-time
-       value minted server-side and only ever appended to this URL by a
-       genuine backend-confirmed redirect. Recording it in localStorage
-       blocks refresh/back-forward/direct-navigation from re-firing or
-       phantom-firing this conversion. -->
+  <!-- The ct token by itself is NOT proof of a real submission -- it's
+       redeemed server-side via /claim-conversion. An arbitrary, missing,
+       or expired token is rejected there and the event never fires. A
+       valid, unexpired token (even a repeat of one already claimed)
+       returns the SAME transaction_id every time, specifically so this
+       page can retry: if the browser loses the response, closes, or the
+       gtag call itself fails right after this, a later load of this exact
+       URL (refresh, Back/Forward) can safely retry with the same
+       transaction_id. Google Ads deduplicates conversions by (conversion
+       action, transaction_id), so re-sending it is a no-op on their side,
+       not a double count.
+
+       localStorage is written only from gtag's event_callback (or after
+       event_timeout elapses as a fallback), i.e. only once the event
+       command has actually been processed -- not immediately after the
+       fetch resolves. That's deliberate: if we set it right after the
+       fetch instead, a tab closed between that write and the beacon
+       actually going out would permanently suppress the conversion
+       client-side even though Ads never received it, with no way to
+       retry. Leaving localStorage unset until the callback fires means a
+       dropped hit just gets retried on the next load instead. -->
   <script>
   (function() {
     var params = new URLSearchParams(window.location.search);
     var token = params.get('ct');
     if (!token) { return; }
-    var storageKey = 'mp_conversion_fired_' + token;
+    var storageKey = 'mp_conversion_recorded_' + token;
     if (window.localStorage.getItem(storageKey)) { return; }
-    window.localStorage.setItem(storageKey, '1');
-    gtag('event', 'conversion', {'send_to': 'AW-18193879267/jLl8CIfe39wcEOOhwuND'});
+
+    fetch('/claim-conversion', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: token })
+    })
+      .then(function(res) { return res.json().then(function(body) { return { ok: res.ok, body: body }; }); })
+      .then(function(result) {
+        if (!result.ok || !result.body || result.body.status !== 'ok') { return; }
+
+        var recorded = false;
+        function markRecorded() {
+          if (recorded) { return; }
+          recorded = true;
+          window.localStorage.setItem(storageKey, '1');
+        }
+
+        gtag('event', 'conversion', {
+          'send_to': 'AW-18193879267/jLl8CIfe39wcEOOhwuND',
+          'transaction_id': result.body.transaction_id,
+          'event_callback': markRecorded,
+          'event_timeout': 2000
+        });
+      })
+      .catch(function() { /* network failure: no claim, no conversion -- fine to retry on next load */ });
   })();
   </script>
 

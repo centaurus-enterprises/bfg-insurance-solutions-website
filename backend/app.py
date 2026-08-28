@@ -1255,8 +1255,15 @@ def run_migration_init():
                 lead_source_bucket VARCHAR(20),
                 trustedform_retained BOOLEAN,
                 trustedform_retained_at TIMESTAMPTZ,
-                trustedform_retain_response TEXT
+                trustedform_retain_response TEXT,
+                conversion_token VARCHAR(64),
+                conversion_token_expires_at TIMESTAMPTZ,
+                conversion_claimed_at TIMESTAMPTZ
             )
+        """)
+        cur.execute("""
+            CREATE UNIQUE INDEX IF NOT EXISTS idx_leads_conversion_token
+            ON leads (conversion_token) WHERE conversion_token IS NOT NULL
         """)
         cur.execute("""
             CREATE TABLE IF NOT EXISTS agents (
@@ -1428,6 +1435,13 @@ def submit_mortgage_protection():
 
     now = datetime.now(timezone.utc)
 
+    # Minted only on this success path -- a declined or failed submission
+    # (both handled above/below) never reaches this line, so it never gets
+    # a token to redeem. Persisted on the lead row itself and redeemed
+    # exactly once via the atomic UPDATE in /claim-conversion.
+    conversion_token = secrets.token_urlsafe(24)
+    conversion_token_expires_at = now + timedelta(hours=24)
+
     try:
         conn = get_connection()
         cur  = conn.cursor()
@@ -1439,7 +1453,8 @@ def submit_mortgage_protection():
                 gclid, gbraid, wbraid,
                 consent_version, consent_text, trustedform_cert_url,
                 submitted_url, ip_address, user_agent,
-                lead_source, lead_source_bucket
+                lead_source, lead_source_bucket,
+                conversion_token, conversion_token_expires_at
             ) VALUES (
                 %(product_type)s, %(first_name)s, %(last_name)s, %(mobile_phone)s, %(email)s,
                 %(zip)s, %(age)s, %(gender)s, %(tobacco)s, %(homeowner)s, %(mortgage_balance)s,
@@ -1447,7 +1462,8 @@ def submit_mortgage_protection():
                 %(gclid)s, %(gbraid)s, %(wbraid)s,
                 %(consent_version)s, %(consent_text)s, %(trustedform_cert_url)s,
                 %(submitted_url)s, %(ip_address)s, %(user_agent)s,
-                %(lead_source)s, %(lead_source_bucket)s
+                %(lead_source)s, %(lead_source_bucket)s,
+                %(conversion_token)s, %(conversion_token_expires_at)s
             )
             RETURNING id
         """, {
@@ -1476,6 +1492,8 @@ def submit_mortgage_protection():
             "user_agent":           request.headers.get("User-Agent", ""),
             "lead_source":          "protect-mortgage.com",
             "lead_source_bucket":   "approved",
+            "conversion_token":            conversion_token,
+            "conversion_token_expires_at": conversion_token_expires_at,
         })
 
         lead_id = cur.fetchone()[0]
@@ -1520,10 +1538,70 @@ def submit_mortgage_protection():
         except Exception:
             pass
 
-        return jsonify({"status": "ok", "conversion_token": secrets.token_urlsafe(16)})
+        return jsonify({"status": "ok", "conversion_token": conversion_token})
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/claim-conversion", methods=["POST"])
+def claim_conversion():
+    """Redeems a mortgage-protection conversion token for a stable
+    transaction_id, safely retryable.
+
+    The thank-you page calls this before firing the Google Ads conversion
+    event. A token is only ever valid if it was minted by a successful
+    /submit-mortgage-protection call (declines and errors never mint one)
+    and hasn't expired -- arbitrary and expired tokens are always rejected,
+    even if the token was claimed before it expired.
+
+    A *valid, unexpired* token is intentionally NOT single-use: the first
+    claim and every subsequent claim of the same token both return the
+    same transaction_id. This is what makes client-side retry safe -- if
+    the browser loses the response, closes, or the gtag call fails right
+    after this returns, the thank-you page (or a refresh/back-forward
+    reload of it) can call this again and get the same transaction_id back
+    to retry firing the conversion. Google Ads deduplicates conversions by
+    (conversion action, transaction_id), so re-sending the same id is a
+    no-op on their side rather than a double count.
+
+    The single UPDATE ... SET conversion_claimed_at = COALESCE(...)
+    RETURNING id is still exactly one atomic state transition per lead
+    row, not "check then write": if conversion_claimed_at is already NULL,
+    COALESCE sets it to now; if it's already set (a repeat or concurrent
+    claim), COALESCE leaves it unchanged. Postgres row-level locking on
+    that UPDATE serializes concurrent claims of the same token, so the
+    underlying NULL -> timestamp transition happens exactly once no matter
+    how many requests race for it, and every one of them -- first,
+    concurrent, or years-later-but-still-unexpired -- gets back the same id.
+    """
+    data = request.get_json(silent=True) or {}
+    token = (data.get("token") or "").strip()
+    if not token:
+        return jsonify({"status": "error", "message": "Missing conversion token."}), 400
+
+    now = datetime.now(timezone.utc)
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        cur.execute("""
+            UPDATE leads
+            SET conversion_claimed_at = COALESCE(conversion_claimed_at, %(now)s)
+            WHERE conversion_token = %(token)s
+              AND conversion_token_expires_at > %(now)s
+            RETURNING id
+        """, {"now": now, "token": token})
+        row = cur.fetchone()
+        conn.commit()
+        cur.close()
+        conn.close()
+    except Exception:
+        return jsonify({"status": "error", "message": "Unable to verify conversion token."}), 500
+
+    if not row:
+        return jsonify({"status": "error", "message": "Invalid or expired conversion token."}), 400
+
+    return jsonify({"status": "ok", "transaction_id": str(row[0])})
 
 
 # ─────────────────────────────────────────────
