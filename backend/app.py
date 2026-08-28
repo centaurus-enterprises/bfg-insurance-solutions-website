@@ -1173,32 +1173,6 @@ def run_migration_trustedform_retain():
         return f"Error: {e}", 500
 
 
-@app.route("/run-migration-conv-tok-x7q2m")
-def run_migration_conversion_token():
-    """One-time migration adding server-side conversion-token columns for
-    exactly-once Google Ads conversion authorization on the mortgage
-    protection funnel. conversion_token is minted at successful submit,
-    conversion_token_expires_at bounds its validity window, and
-    conversion_claimed_at is set atomically by /claim-conversion the first
-    (and only) time the token is redeemed. Delete after use."""
-    try:
-        conn = get_connection()
-        cur  = conn.cursor()
-        for sql in [
-            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS conversion_token VARCHAR(64)",
-            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS conversion_token_expires_at TIMESTAMPTZ",
-            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS conversion_claimed_at TIMESTAMPTZ",
-            "CREATE UNIQUE INDEX IF NOT EXISTS idx_leads_conversion_token ON leads (conversion_token) WHERE conversion_token IS NOT NULL",
-        ]:
-            cur.execute(sql)
-        conn.commit()
-        cur.close()
-        conn.close()
-        return "OK: conversion token columns added", 200
-    except Exception as e:
-        return f"Error: {e}", 500
-
-
 @app.route("/run-migration-init-h4v9t")
 def run_migration_init():
     """One-time setup for a brand-new, empty Postgres instance. Creates
@@ -1572,18 +1546,34 @@ def submit_mortgage_protection():
 
 @app.route("/claim-conversion", methods=["POST"])
 def claim_conversion():
-    """Redeems a mortgage-protection conversion token exactly once.
+    """Redeems a mortgage-protection conversion token for a stable
+    transaction_id, safely retryable.
 
     The thank-you page calls this before firing the Google Ads conversion
     event. A token is only ever valid if it was minted by a successful
-    /submit-mortgage-protection call (declines and errors never mint one),
-    hasn't already been claimed, and hasn't expired. The UPDATE ... WHERE
-    conversion_claimed_at IS NULL ... RETURNING id is the whole mechanism:
-    Postgres row-level locking means concurrent requests for the same
-    token serialize on that row, so only the first one to commit can ever
-    see conversion_claimed_at still NULL and successfully claim it -- every
-    other concurrent or later request (arbitrary token, reused token,
-    refresh, back/forward) affects zero rows and is rejected.
+    /submit-mortgage-protection call (declines and errors never mint one)
+    and hasn't expired -- arbitrary and expired tokens are always rejected,
+    even if the token was claimed before it expired.
+
+    A *valid, unexpired* token is intentionally NOT single-use: the first
+    claim and every subsequent claim of the same token both return the
+    same transaction_id. This is what makes client-side retry safe -- if
+    the browser loses the response, closes, or the gtag call fails right
+    after this returns, the thank-you page (or a refresh/back-forward
+    reload of it) can call this again and get the same transaction_id back
+    to retry firing the conversion. Google Ads deduplicates conversions by
+    (conversion action, transaction_id), so re-sending the same id is a
+    no-op on their side rather than a double count.
+
+    The single UPDATE ... SET conversion_claimed_at = COALESCE(...)
+    RETURNING id is still exactly one atomic state transition per lead
+    row, not "check then write": if conversion_claimed_at is already NULL,
+    COALESCE sets it to now; if it's already set (a repeat or concurrent
+    claim), COALESCE leaves it unchanged. Postgres row-level locking on
+    that UPDATE serializes concurrent claims of the same token, so the
+    underlying NULL -> timestamp transition happens exactly once no matter
+    how many requests race for it, and every one of them -- first,
+    concurrent, or years-later-but-still-unexpired -- gets back the same id.
     """
     data = request.get_json(silent=True) or {}
     token = (data.get("token") or "").strip()
@@ -1596,9 +1586,8 @@ def claim_conversion():
         cur  = conn.cursor()
         cur.execute("""
             UPDATE leads
-            SET conversion_claimed_at = %(now)s
+            SET conversion_claimed_at = COALESCE(conversion_claimed_at, %(now)s)
             WHERE conversion_token = %(token)s
-              AND conversion_claimed_at IS NULL
               AND conversion_token_expires_at > %(now)s
             RETURNING id
         """, {"now": now, "token": token})
@@ -1610,7 +1599,7 @@ def claim_conversion():
         return jsonify({"status": "error", "message": "Unable to verify conversion token."}), 500
 
     if not row:
-        return jsonify({"status": "error", "message": "Invalid or already-used conversion token."}), 400
+        return jsonify({"status": "error", "message": "Invalid or expired conversion token."}), 400
 
     return jsonify({"status": "ok", "transaction_id": str(row[0])})
 

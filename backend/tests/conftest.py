@@ -33,21 +33,30 @@ os.environ.pop("MAIL_SENDER", None)
 os.environ.pop("TRUSTEDFORM_API_KEY", None)
 os.environ.pop("MAINTENANCE_MODE", None)
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPO_ROOT = os.path.dirname(BACKEND_DIR)
+sys.path.insert(0, BACKEND_DIR)
 
 import pytest  # noqa: E402
 from app import app as flask_app  # noqa: E402
 from db import get_connection  # noqa: E402
+from migrate_conversion_token import run_migration as run_conversion_token_migration  # noqa: E402
 
 
 @pytest.fixture(scope="session", autouse=True)
 def _migrate_schema():
-    """Ensure leads/agents tables and the conversion-token columns exist."""
+    """Ensure leads/agents tables and the conversion-token columns exist.
+
+    The base leads/agents tables still come from the pre-existing
+    /run-migration-init-h4v9t route (unrelated to this change, left as-is).
+    The conversion-token columns come from migrate_conversion_token.py's
+    own function, called directly -- not over HTTP -- matching how Render
+    now runs it as a Pre-Deploy Command rather than a public route.
+    """
     c = flask_app.test_client()
     init_resp = c.get("/run-migration-init-h4v9t")
     assert init_resp.status_code == 200, init_resp.data
-    conv_resp = c.get("/run-migration-conv-tok-x7q2m")
-    assert conv_resp.status_code == 200, conv_resp.data
+    run_conversion_token_migration()
     yield
 
 
@@ -104,6 +113,9 @@ def count_leads():
     cur.close()
     conn.close()
     return n
+
+
+MORTGAGE_THANK_YOU_PATH = os.path.join(REPO_ROOT, "mortgage_thank_you.html")
 
 
 def expire_token(token):
