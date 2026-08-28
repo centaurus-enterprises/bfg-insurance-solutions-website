@@ -16,20 +16,40 @@
   </script>
 
   <!-- Event snippet for MP Lead - Site Form Submit -->
-  <!-- Fires only once per successful submission: the token is a one-time
-       value minted server-side and only ever appended to this URL by a
-       genuine backend-confirmed redirect. Recording it in localStorage
-       blocks refresh/back-forward/direct-navigation from re-firing or
-       phantom-firing this conversion. -->
+  <!-- Fires only once per successful submission. The ct token by itself is
+       NOT proof of a real submission -- it's redeemed server-side via
+       /claim-conversion, which atomically flips conversion_claimed_at on
+       the matching lead row exactly once (Postgres row-level locking on
+       that UPDATE is what makes concurrent claims of the same token safe).
+       An arbitrary, missing, expired, or already-claimed token is rejected
+       there and the event never fires. The localStorage guard is a client-
+       side fast path only (skips a redundant network call on refresh/
+       back-forward) -- it is not what makes this exactly-once, the server
+       claim is. -->
   <script>
   (function() {
     var params = new URLSearchParams(window.location.search);
     var token = params.get('ct');
     if (!token) { return; }
-    var storageKey = 'mp_conversion_fired_' + token;
+    var storageKey = 'mp_conversion_claimed_' + token;
     if (window.localStorage.getItem(storageKey)) { return; }
-    window.localStorage.setItem(storageKey, '1');
-    gtag('event', 'conversion', {'send_to': 'AW-18193879267/jLl8CIfe39wcEOOhwuND'});
+
+    fetch('/claim-conversion', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: token })
+    })
+      .then(function(res) { return res.json().then(function(body) { return { ok: res.ok, body: body }; }); })
+      .then(function(result) {
+        if (result.ok && result.body && result.body.status === 'ok') {
+          window.localStorage.setItem(storageKey, '1');
+          gtag('event', 'conversion', {
+            'send_to': 'AW-18193879267/jLl8CIfe39wcEOOhwuND',
+            'transaction_id': result.body.transaction_id
+          });
+        }
+      })
+      .catch(function() { /* network failure: no claim, no conversion -- fine to retry on next load */ });
   })();
   </script>
 
