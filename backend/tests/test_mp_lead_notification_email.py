@@ -91,7 +91,7 @@ def render_notification(monkeypatch, lead_overrides=None):
         "sex": "male",
         "homeowner": "yes",
         "tobacco_use": "no",
-        "mortgage_balance": "$250,000–$500,000",
+        "mortgage_balance": "250k_500k",
         "submitted_at_utc": datetime(2026, 8, 28, 18, 58, tzinfo=timezone.utc),
     }
     if lead_overrides:
@@ -106,6 +106,19 @@ def render_notification(monkeypatch, lead_overrides=None):
 def test_subject_uses_first_and_last_name(monkeypatch):
     message = render_notification(monkeypatch)
     assert message.subject == "New Lead: John Brown — Mortgage Protection"
+
+
+def test_subject_strips_control_characters(monkeypatch):
+    message = render_notification(monkeypatch, lead_overrides={
+        "first_name": "John\r\nBcc: bad@example.com",
+        "last_name": "Brown\t",
+    })
+    assert "\r" not in message.subject
+    assert "\n" not in message.subject
+    assert "\t" not in message.subject
+    assert message.subject == (
+        "New Lead: John Bcc: bad@example.com Brown — Mortgage Protection"
+    )
 
 
 def test_brand_is_bfg_insurance_solutions(monkeypatch):
@@ -148,9 +161,11 @@ def test_tobacco_is_present_as_no(monkeypatch):
     assert ">No<" in body
 
 
-def test_mortgage_balance_is_present(monkeypatch):
+def test_mortgage_balance_enum_is_displayed_human_readable(monkeypatch):
     message = render_notification(monkeypatch)
-    assert "$250,000" in message.html_content
+    body = message.html_content
+    assert "$250,000 – $500,000" in body
+    assert "250k_500k" not in body
 
 
 def test_phone_and_email_are_present(monkeypatch):
@@ -188,6 +203,13 @@ def test_malicious_html_in_consumer_field_is_escaped(monkeypatch):
     assert "<script>alert(1)</script>" not in body
     assert "&lt;script&gt;alert(1)&lt;/script&gt;" in body
     assert "<b>onload=alert(1)</b>" not in body
+
+
+def test_email_does_not_assert_consent_was_captured(monkeypatch):
+    message = render_notification(monkeypatch)
+    body = message.html_content
+    assert ">Consent<" not in body
+    assert ">Captured<" not in body
 
 
 def test_dashboard_link_is_present(monkeypatch):
