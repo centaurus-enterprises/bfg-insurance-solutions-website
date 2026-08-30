@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session, send_from_directory
 from flask_cors import CORS
 from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 from db import get_connection
 import hashlib
+import html
 import os
 import re
 import secrets
@@ -316,6 +318,171 @@ def send_lead_notification(data: dict):
           <tr>
             <td style="padding:0.6rem 0;color:#9a7a6a;font-weight:600">Submitted</td>
             <td style="padding:0.6rem 0;color:#2C1810">{submitted}</td>
+          </tr>
+        </table>
+
+        <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid #f0e4d4">
+          <a href="https://protect-mortgage.com/admin"
+             style="display:inline-block;background:#C08552;color:#ffffff;font-weight:700;font-size:0.875rem;padding:0.65rem 1.4rem;border-radius:6px;text-decoration:none">
+            View in Dashboard →
+          </a>
+        </div>
+      </div>
+    </div>
+    """
+
+    try:
+        sg = SendGridAPIClient(api_key)
+        for recipient_email, recipient_name in recipients:
+            message = Mail(
+                from_email=sender,
+                to_emails=recipient_email,
+                subject=subject,
+                html_content=html_body
+            )
+            sg.send(message)
+    except Exception:
+        pass  # Never block a lead save due to email failure
+
+
+def mp_format_pacific_timestamp(submitted_at_utc):
+    """Converts a UTC datetime to a Pacific-local display string with the
+    correct PST/PDT designation, DST-aware. Storage stays UTC -- this is
+    presentation only."""
+    local = submitted_at_utc.astimezone(ZoneInfo("America/Los_Angeles"))
+    return local.strftime("%b %d, %Y · %I:%M %p %Z")
+
+
+def send_mortgage_protection_lead_notification(lead: dict):
+    """
+    Sends the new-lead alert email for the protect-mortgage.com / Mortgage
+    Protection funnel only. Deliberately separate from send_lead_notification
+    (which serves the other, legacy product forms posted via /submit) so this
+    funnel's email reflects its own current 11-field intake instead of
+    unrelated legacy fields those forms collect.
+    Failures are silent so a mail issue never blocks a lead from being saved.
+    """
+    from sendgrid import SendGridAPIClient
+    from sendgrid.helpers.mail import Mail
+
+    api_key = os.getenv("SENDGRID_API_KEY")
+    sender  = os.getenv("MAIL_SENDER")
+
+    if not api_key or not sender:
+        return
+
+    try:
+        conn = get_connection()
+        cur  = conn.cursor()
+        cur.execute(
+            "SELECT email, full_name FROM agents WHERE notify_on_lead = TRUE AND is_active = TRUE"
+        )
+        recipients = cur.fetchall()
+        cur.close()
+        conn.close()
+    except Exception:
+        return
+
+    if not recipients:
+        return
+
+    first            = html.escape(lead.get("first_name", ""))
+    last             = html.escape(lead.get("last_name", ""))
+    code_word        = html.escape(lead.get("code_word", ""))
+    phone            = html.escape(lead.get("phone_display", "—"))
+    email            = html.escape(lead.get("email", "—"))
+    zip_code         = html.escape(lead.get("zip", "—"))
+    age              = html.escape(str(lead.get("age", "—")))
+    sex              = html.escape((lead.get("sex") or "—").capitalize())
+    homeowner        = "Yes" if lead.get("homeowner") == "yes" else "No"
+    tobacco          = "Yes" if lead.get("tobacco_use") == "yes" else "No"
+    mortgage_labels = {
+        "under_100k": "Under $100,000",
+        "100k_250k": "$100,000 – $250,000",
+        "250k_500k": "$250,000 – $500,000",
+        "500k_750k": "$500,000 – $750,000",
+        "750k_plus": "$750,000+",
+    }
+    raw_mortgage_balance = lead.get("mortgage_balance") or "—"
+    mortgage_balance = html.escape(
+        mortgage_labels.get(raw_mortgage_balance, raw_mortgage_balance)
+    )
+    submitted        = mp_format_pacific_timestamp(lead["submitted_at_utc"])
+
+    subject_first = re.sub(r"[\x00-\x1f\x7f]+", " ", str(lead.get("first_name", ""))).strip()
+    subject_last = re.sub(r"[\x00-\x1f\x7f]+", " ", str(lead.get("last_name", ""))).strip()
+    subject_name = " ".join(part for part in (subject_first, subject_last) if part)
+    subject = f"New Lead: {subject_name} — Mortgage Protection"
+
+    html_body = f"""
+    <div style="font-family:'DM Sans',Arial,sans-serif;max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #e8d5c0;border-radius:8px;overflow:hidden">
+      <div style="background:#4B2E2B;padding:1.25rem 1.5rem">
+        <p style="font-family:Arial,sans-serif;font-size:1.15rem;font-weight:800;color:#ffffff;margin:0">
+          BFG <span style="color:#C08552">Insurance Solutions</span>
+        </p>
+        <p style="font-size:0.75rem;color:#c8a882;margin:0.2rem 0 0;letter-spacing:0.08em;text-transform:uppercase">New Mortgage Protection Lead</p>
+      </div>
+      <div style="padding:1.5rem">
+        <h2 style="font-size:1.1rem;color:#4B2E2B;margin:0 0 1.25rem">{first} {last}</h2>
+
+        <div style="background:#fff4e6;border:1px solid #f0c896;border-radius:6px;padding:0.75rem 1rem;margin-bottom:1.5rem">
+          <p style="font-size:0.7rem;color:#9a5a1a;margin:0 0 0.15rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase">Code Word</p>
+          <p style="font-size:1.35rem;color:#7a3d00;margin:0;font-weight:800">{code_word}</p>
+        </div>
+
+        <p style="font-size:0.7rem;color:#9a7a6a;margin:0 0 0.4rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase">Contact</p>
+        <table style="width:100%;border-collapse:collapse;font-size:0.875rem;margin-bottom:1.25rem">
+          <tr style="border-bottom:1px solid #f0e4d4">
+            <td style="padding:0.5rem 0;color:#9a7a6a;width:160px;font-weight:600">Mobile</td>
+            <td style="padding:0.5rem 0;color:#2C1810">{phone}</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0e4d4">
+            <td style="padding:0.5rem 0;color:#9a7a6a;font-weight:600">Email</td>
+            <td style="padding:0.5rem 0;color:#2C1810">{email}</td>
+          </tr>
+          <tr>
+            <td style="padding:0.5rem 0;color:#9a7a6a;font-weight:600">ZIP Code</td>
+            <td style="padding:0.5rem 0;color:#2C1810">{zip_code}</td>
+          </tr>
+        </table>
+
+        <p style="font-size:0.7rem;color:#9a7a6a;margin:0 0 0.4rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase">Applicant</p>
+        <table style="width:100%;border-collapse:collapse;font-size:0.875rem;margin-bottom:1.25rem">
+          <tr style="border-bottom:1px solid #f0e4d4">
+            <td style="padding:0.5rem 0;color:#9a7a6a;width:160px;font-weight:600">Age</td>
+            <td style="padding:0.5rem 0;color:#2C1810">{age}</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0e4d4">
+            <td style="padding:0.5rem 0;color:#9a7a6a;font-weight:600">Sex</td>
+            <td style="padding:0.5rem 0;color:#2C1810">{sex}</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0e4d4">
+            <td style="padding:0.5rem 0;color:#9a7a6a;font-weight:600">Homeowner</td>
+            <td style="padding:0.5rem 0;color:#2C1810">{homeowner}</td>
+          </tr>
+          <tr>
+            <td style="padding:0.5rem 0;color:#9a7a6a;font-weight:600">Tobacco</td>
+            <td style="padding:0.5rem 0;color:#2C1810">{tobacco}</td>
+          </tr>
+        </table>
+
+        <p style="font-size:0.7rem;color:#9a7a6a;margin:0 0 0.4rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase">Mortgage</p>
+        <table style="width:100%;border-collapse:collapse;font-size:0.875rem;margin-bottom:1.25rem">
+          <tr>
+            <td style="padding:0.5rem 0;color:#9a7a6a;width:160px;font-weight:600">Remaining Balance</td>
+            <td style="padding:0.5rem 0;color:#2C1810">{mortgage_balance}</td>
+          </tr>
+        </table>
+
+        <p style="font-size:0.7rem;color:#9a7a6a;margin:0 0 0.4rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase">Lead Information</p>
+        <table style="width:100%;border-collapse:collapse;font-size:0.875rem">
+          <tr style="border-bottom:1px solid #f0e4d4">
+            <td style="padding:0.5rem 0;color:#9a7a6a;width:160px;font-weight:600">Product</td>
+            <td style="padding:0.5rem 0;color:#2C1810">Mortgage Protection</td>
+          </tr>
+          <tr>
+            <td style="padding:0.5rem 0;color:#9a7a6a;font-weight:600">Submitted</td>
+            <td style="padding:0.5rem 0;color:#2C1810">{submitted}</td>
           </tr>
         </table>
 
@@ -1501,14 +1668,22 @@ def submit_mortgage_protection():
         cur.close()
         conn.close()
 
-        send_lead_notification({
-            "first_name":   data.get("first_name", "").strip(),
-            "last_name":    data.get("last_name", "").strip(),
-            "product_type": "mortgage-protection",
-            "mobile_phone": data.get("phone", ""),
-            "email":        data.get("email", ""),
-            "state":        "",
-            "city":         "",
+        phone_display = "({}) {}-{}".format(
+            phone_digits[-10:-7], phone_digits[-7:-4], phone_digits[-4:]
+        )
+        send_mortgage_protection_lead_notification({
+            "first_name":       data.get("first_name", "").strip(),
+            "last_name":        data.get("last_name", "").strip(),
+            "code_word":        data.get("code_word", "").strip(),
+            "phone_display":    phone_display,
+            "email":            data.get("email", "").strip(),
+            "zip":              zip_code,
+            "age":              age,
+            "sex":              data.get("sex"),
+            "homeowner":        data.get("homeowner"),
+            "tobacco_use":      data.get("tobacco_use"),
+            "mortgage_balance": data.get("mortgage_balance"),
+            "submitted_at_utc": now,
         })
 
         # Retain/verify the TrustedForm certificate. The lead is already
