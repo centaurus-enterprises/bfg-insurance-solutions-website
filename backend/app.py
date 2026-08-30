@@ -358,7 +358,7 @@ def send_mortgage_protection_lead_notification(lead: dict):
     Sends the new-lead alert email for the protect-mortgage.com / Mortgage
     Protection funnel only. Deliberately separate from send_lead_notification
     (which serves the other, legacy product forms posted via /submit) so this
-    funnel's email reflects its own current 10-field intake instead of
+    funnel's email reflects its own current 11-field intake instead of
     unrelated legacy fields those forms collect.
     Failures are silent so a mail issue never blocks a lead from being saved.
     """
@@ -396,10 +396,23 @@ def send_mortgage_protection_lead_notification(lead: dict):
     sex              = html.escape((lead.get("sex") or "—").capitalize())
     homeowner        = "Yes" if lead.get("homeowner") == "yes" else "No"
     tobacco          = "Yes" if lead.get("tobacco_use") == "yes" else "No"
-    mortgage_balance = html.escape(lead.get("mortgage_balance", "—"))
+    mortgage_labels = {
+        "under_100k": "Under $100,000",
+        "100k_250k": "$100,000 – $250,000",
+        "250k_500k": "$250,000 – $500,000",
+        "500k_750k": "$500,000 – $750,000",
+        "750k_plus": "$750,000+",
+    }
+    raw_mortgage_balance = lead.get("mortgage_balance") or "—"
+    mortgage_balance = html.escape(
+        mortgage_labels.get(raw_mortgage_balance, raw_mortgage_balance)
+    )
     submitted        = mp_format_pacific_timestamp(lead["submitted_at_utc"])
 
-    subject = f"New Lead: {lead.get('first_name', '')} {lead.get('last_name', '')} — Mortgage Protection"
+    subject_first = re.sub(r"[\x00-\x1f\x7f]+", " ", str(lead.get("first_name", ""))).strip()
+    subject_last = re.sub(r"[\x00-\x1f\x7f]+", " ", str(lead.get("last_name", ""))).strip()
+    subject_name = " ".join(part for part in (subject_first, subject_last) if part)
+    subject = f"New Lead: {subject_name} — Mortgage Protection"
 
     html_body = f"""
     <div style="font-family:'DM Sans',Arial,sans-serif;max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #e8d5c0;border-radius:8px;overflow:hidden">
@@ -466,10 +479,6 @@ def send_mortgage_protection_lead_notification(lead: dict):
           <tr style="border-bottom:1px solid #f0e4d4">
             <td style="padding:0.5rem 0;color:#9a7a6a;width:160px;font-weight:600">Product</td>
             <td style="padding:0.5rem 0;color:#2C1810">Mortgage Protection</td>
-          </tr>
-          <tr style="border-bottom:1px solid #f0e4d4">
-            <td style="padding:0.5rem 0;color:#9a7a6a;font-weight:600">Consent</td>
-            <td style="padding:0.5rem 0;color:#2C1810">Captured</td>
           </tr>
           <tr>
             <td style="padding:0.5rem 0;color:#9a7a6a;font-weight:600">Submitted</td>
