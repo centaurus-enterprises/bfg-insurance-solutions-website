@@ -437,14 +437,105 @@
   </footer>
 
   <script>
-    // Click-ID capture — read from query string on load, never from cookies
-    (function() {
+    // Click-ID capture — same-tab persistence only, never cookies or localStorage.
+    // A URL containing any click ID is a complete, fresh attribution set: IDs
+    // omitted from that URL are deliberately removed so separate ad clicks can
+    // never be combined.
+    var MP_CLICK_ID_STORAGE_KEYS = {
+      gclid: 'bfg_mp_click_gclid',
+      gbraid: 'bfg_mp_click_gbraid',
+      wbraid: 'bfg_mp_click_wbraid',
+      savedAt: 'bfg_mp_click_saved_at',
+      landingUrl: 'bfg_mp_click_landing_url'
+    };
+    var MP_CLICK_ID_TTL_MS = 2 * 60 * 60 * 1000;
+
+    function mpSessionStorageGet(key) {
+      try {
+        return window.sessionStorage.getItem(key);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function mpSessionStorageSet(key, value) {
+      try {
+        window.sessionStorage.setItem(key, value);
+      } catch (e) {
+        // Current-URL attribution and the form continue to work without storage.
+      }
+    }
+
+    function mpSessionStorageRemove(key) {
+      try {
+        window.sessionStorage.removeItem(key);
+      } catch (e) {
+        // Storage may be blocked; cleanup failure must not break the form.
+      }
+    }
+
+    function clearMpClickAttribution() {
+      mpSessionStorageRemove(MP_CLICK_ID_STORAGE_KEYS.gclid);
+      mpSessionStorageRemove(MP_CLICK_ID_STORAGE_KEYS.gbraid);
+      mpSessionStorageRemove(MP_CLICK_ID_STORAGE_KEYS.wbraid);
+      mpSessionStorageRemove(MP_CLICK_ID_STORAGE_KEYS.savedAt);
+      mpSessionStorageRemove(MP_CLICK_ID_STORAGE_KEYS.landingUrl);
+    }
+
+    function populateMpClickAttribution() {
+      var clickIdNames = ['gclid', 'gbraid', 'wbraid'];
       var params = new URLSearchParams(window.location.search);
-      document.getElementById('gclid').value  = params.get('gclid')  || '';
-      document.getElementById('gbraid').value = params.get('gbraid') || '';
-      document.getElementById('wbraid').value = params.get('wbraid') || '';
-      document.getElementById('submitted_url').value = window.location.href;
-    })();
+      var hasFreshAttribution = clickIdNames.some(function(name) {
+        return params.has(name);
+      });
+      var submittedUrl = window.location.href;
+
+      if (hasFreshAttribution) {
+        clickIdNames.forEach(function(name) {
+          var value = params.has(name) ? params.get(name) : '';
+          document.getElementById(name).value = value;
+          if (params.has(name)) {
+            mpSessionStorageSet(MP_CLICK_ID_STORAGE_KEYS[name], value);
+          } else {
+            mpSessionStorageRemove(MP_CLICK_ID_STORAGE_KEYS[name]);
+          }
+        });
+        mpSessionStorageSet(MP_CLICK_ID_STORAGE_KEYS.savedAt, String(Date.now()));
+        mpSessionStorageSet(MP_CLICK_ID_STORAGE_KEYS.landingUrl, submittedUrl);
+      } else {
+        var savedAtRaw = mpSessionStorageGet(MP_CLICK_ID_STORAGE_KEYS.savedAt);
+        var landingUrl = mpSessionStorageGet(MP_CLICK_ID_STORAGE_KEYS.landingUrl);
+        var savedAt = savedAtRaw === null ? NaN : Number(savedAtRaw);
+        var age = Date.now() - savedAt;
+        var storedIds = {
+          gclid: mpSessionStorageGet(MP_CLICK_ID_STORAGE_KEYS.gclid),
+          gbraid: mpSessionStorageGet(MP_CLICK_ID_STORAGE_KEYS.gbraid),
+          wbraid: mpSessionStorageGet(MP_CLICK_ID_STORAGE_KEYS.wbraid)
+        };
+        var hasStoredId = clickIdNames.some(function(name) {
+          return storedIds[name] !== null;
+        });
+        var storageIsValid = Number.isFinite(savedAt) && age >= 0 &&
+          age <= MP_CLICK_ID_TTL_MS && typeof landingUrl === 'string' &&
+          landingUrl.length > 0 && hasStoredId;
+
+        if (storageIsValid) {
+          clickIdNames.forEach(function(name) {
+            document.getElementById(name).value = storedIds[name] || '';
+          });
+          submittedUrl = landingUrl;
+        } else {
+          clearMpClickAttribution();
+          clickIdNames.forEach(function(name) {
+            document.getElementById(name).value = '';
+          });
+        }
+      }
+
+      document.getElementById('submitted_url').value = submittedUrl;
+    }
+
+    populateMpClickAttribution();
 
     // Phone auto-format: (555) 555-0000 — US only, max 14 chars displayed
     document.getElementById('phone').addEventListener('input', function() {
@@ -614,8 +705,10 @@
       .then(function(res) { return res.json().then(function(body) { return { ok: res.ok, body: body }; }); })
       .then(function(result) {
         if (result.body.status === 'ok') {
+          clearMpClickAttribution();
           window.location.href = '/thank-you?ct=' + encodeURIComponent(result.body.conversion_token || '');
         } else if (result.body.status === 'declined') {
+          clearMpClickAttribution();
           document.getElementById('mp-form').style.display = 'none';
           var declineEl = document.getElementById('decline-message');
           declineEl.textContent = result.body.message || 'Thanks for your interest — based on your answers, we\'re not able to help with this request right now.';
