@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow"/>
   <title>Thank You | BFG Insurance Solutions</title>
 
-  <!-- Google tag (gtag.js) — existing production measurement preserved -->
+  <!-- Google tag (gtag.js) — existing measurement preserved unchanged -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18193879267"></script>
   <script>
   window.dataLayer = window.dataLayer || [];
@@ -15,7 +15,28 @@
   gtag('config', 'AW-18193879267');
   </script>
 
-  <!-- Existing conversion authorization / deduplication mechanism preserved. -->
+  <!-- Event snippet for MP Lead - Site Form Submit -->
+  <!-- The ct token by itself is NOT proof of a real submission -- it's
+       redeemed server-side via /claim-conversion. An arbitrary, missing,
+       or expired token is rejected there and the event never fires. A
+       valid, unexpired token (even a repeat of one already claimed)
+       returns the SAME transaction_id every time, specifically so this
+       page can retry: if the browser loses the response, closes, or the
+       gtag call itself fails right after this, a later load of this exact
+       URL (refresh, Back/Forward) can safely retry with the same
+       transaction_id. Google Ads deduplicates conversions by (conversion
+       action, transaction_id), so re-sending it is a no-op on their side,
+       not a double count.
+
+       localStorage is written only from gtag's event_callback (or after
+       event_timeout elapses as a fallback), i.e. only once the event
+       command has actually been processed -- not immediately after the
+       fetch resolves. That's deliberate: if we set it right after the
+       fetch instead, a tab closed between that write and the beacon
+       actually going out would permanently suppress the conversion
+       client-side even though Ads never received it, with no way to
+       retry. Leaving localStorage unset until the callback fires means a
+       dropped hit just gets retried on the next load instead. -->
   <script>
   (function() {
     var params = new URLSearchParams(window.location.search);
@@ -51,78 +72,109 @@
   })();
   </script>
 
-  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700;900&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --espresso: #2C1A0E;
+      --cognac: #7B3F1E;
+      --parchment: #F5EFE6;
+      --parchment-dark: #EDE3D6;
+      --text: #3A2A1A;
+      --text-light: #6F6256;
+      --white: #FFFFFF;
+    }
     body {
       font-family: 'DM Sans', sans-serif;
-      background: #F5EFE6;
-      color: #3A2A1A;
+      background: var(--parchment);
+      color: var(--text);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      text-align: center;
-      padding: 2rem;
+      padding: 2rem 1.25rem;
     }
     .wrap {
-      max-width: 520px;
       width: 100%;
-      background: #fff;
-      border: 1px solid #EDE3D6;
+      max-width: 640px;
+      background: var(--white);
+      border: 1px solid #D9CCBA;
       border-radius: 14px;
-      padding: 2.5rem 2rem;
-      box-shadow: 0 14px 35px rgba(44, 26, 14, 0.07);
+      padding: 2.5rem;
+      box-shadow: 0 10px 30px rgba(44,26,14,.08);
     }
     .brand {
       font-family: 'Raleway', sans-serif;
-      font-size: 0.8rem;
+      font-size: .78rem;
       font-weight: 900;
+      letter-spacing: .11em;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #7B3F1E;
-      margin-bottom: 1.1rem;
+      color: var(--cognac);
+      margin-bottom: 1.6rem;
     }
+    .identity {
+      border-left: 4px solid var(--cognac);
+      padding-left: 1rem;
+      margin-bottom: 1.75rem;
+    }
+    .identity .name {
+      font-family: 'Raleway', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--espresso);
+      margin-bottom: .15rem;
+    }
+    .identity .business { font-weight: 600; color: var(--text); }
     h1 {
       font-family: 'Raleway', sans-serif;
-      font-size: 1.9rem;
+      font-size: clamp(1.7rem, 4vw, 2.2rem);
       font-weight: 700;
-      color: #2C1A0E;
-      line-height: 1.25;
-      margin-bottom: 0.8rem;
+      color: var(--espresso);
+      line-height: 1.2;
+      margin-bottom: 1rem;
     }
-    .divider { width: 48px; height: 3px; background: #7B3F1E; border-radius: 2px; margin: 0 auto 1.5rem; }
-    p { font-size: 1rem; line-height: 1.7; color: #4a3a2a; margin-bottom: 1rem; }
-    .producer {
-      margin: 1.75rem auto 0;
-      padding-top: 1.4rem;
-      border-top: 1px solid #EDE3D6;
+    p { font-size: 1rem; line-height: 1.72; color: #4a3a2a; margin-bottom: 1rem; }
+    .qualification {
+      margin-top: 1.4rem;
+      padding: 1rem 1.1rem;
+      background: var(--parchment-dark);
+      border-radius: 9px;
+      font-size: .92rem;
+      font-weight: 600;
+      line-height: 1.55;
+      color: var(--espresso);
     }
-    .producer-name {
-      font-family: 'Raleway', sans-serif;
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: #2C1A0E;
-      margin-bottom: 0.2rem;
+    .footer-note {
+      font-size: 0.78rem;
+      color: var(--text-light);
+      margin-top: 2rem;
+      line-height: 1.6;
+      border-top: 1px solid #E4D9CC;
+      padding-top: 1.25rem;
     }
-    .producer-business { font-weight: 600; color: #7B3F1E; margin-bottom: 0; }
-    .footer-note { font-size: 0.78rem; color: #7A6A5A; margin-top: 1.6rem; line-height: 1.6; }
+    @media (max-width: 560px) {
+      body { padding: 1rem; align-items: flex-start; }
+      .wrap { padding: 1.5rem; border-radius: 10px; }
+    }
   </style>
 </head>
 <body>
   <main class="wrap">
     <div class="brand">BFG Insurance Solutions</div>
-    <h1>Thank you. Your request has been received.</h1>
-    <div class="divider"></div>
-    <p>A BFG Insurance Solutions agent will review the information you submitted and contact you regarding your mortgage protection request.</p>
-    <p>Keep your Code Word in mind. Your BFG agent will say it first so you can verify that the contact is genuinely from BFG.</p>
 
-    <section class="producer" aria-label="Producer information">
-      <p class="producer-name">John M. Brown</p>
-      <p class="producer-business">BFG Insurance Solutions</p>
-    </section>
+    <div class="identity" aria-label="Producer identity">
+      <div class="name">John M. Brown</div>
+      <div class="business">BFG Insurance Solutions</div>
+      <!-- State/license presentation is intentionally omitted until a verified
+           state/license value is safely available from the controlled source. -->
+    </div>
 
-    <p class="footer-note">BFG Insurance Solutions is the operating DBA of Centaurus Enterprises LLC. Insurance availability and product options vary by state and individual circumstances. Not affiliated with, endorsed by, or sponsored by any mortgage lender, loan servicer, or government agency.</p>
+    <h1>Thank you — we received your request.</h1>
+    <p>Your mortgage protection request has been received by BFG Insurance Solutions. John M. Brown will review the information you submitted. If your request is eligible to proceed under our current service area and contact controls, John may contact you using the contact methods you authorized. When he contacts you, he will say your Code Word first so you can recognize the contact as coming from BFG Insurance Solutions.</p>
+
+    <p class="qualification">Submitting this request does not guarantee eligibility, approval, price, policy issuance, or coverage.</p>
+
+    <p class="footer-note">BFG Insurance Solutions is a DBA of Centaurus Enterprises LLC. Not affiliated with, endorsed by, or sponsored by any mortgage lender, loan servicer, or government agency.</p>
   </main>
 </body>
 </html>

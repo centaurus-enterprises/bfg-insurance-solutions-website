@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mortgage Protection Quote Request | BFG Insurance Solutions</title>
 
-  <!-- Existing Google tag preserved unchanged for this minimal layout/field batch. -->
+  <!-- Existing Google tag preserved unchanged. -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18193879267"></script>
   <script>
   window.dataLayer = window.dataLayer || [];
@@ -18,60 +18,183 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --espresso:#2C1A0E; --cognac:#7B3F1E; --saddle:#A0522D;
-      --parchment:#F5EFE6; --parchment-dark:#EDE3D6; --parchment-mid:#D9CCBA;
-      --white:#FFFFFF; --text:#3A2A1A; --text-light:#7A6A5A;
-      --error:#C0392B; --success:#27AE60; --radius:10px;
+      --espresso: #2C1A0E;
+      --cognac: #7B3F1E;
+      --saddle: #A0522D;
+      --parchment: #F5EFE6;
+      --parchment-dark: #EDE3D6;
+      --parchment-mid: #D9CCBA;
+      --white: #FFFFFF;
+      --text: #3A2A1A;
+      --text-light: #7A6A5A;
+      --error: #C0392B;
+      --radius: 10px;
     }
     body {
-      font-family:'DM Sans',sans-serif; background:var(--parchment); color:var(--text);
-      min-height:100vh; display:flex; flex-direction:column; align-items:center;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--parchment);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-    .form-header { width:100%; background:var(--espresso); padding:1rem 1.5rem; text-align:center; }
-    .brand { font-family:'Raleway',sans-serif; color:var(--white); font-size:1rem; font-weight:800; letter-spacing:.04em; }
-    .brand-sub { color:var(--parchment-mid); font-size:.68rem; margin-top:.2rem; letter-spacing:.08em; text-transform:uppercase; }
-    main.form-card { width:100%; max-width:680px; padding:2rem 1.25rem 3rem; }
-    .form-headline { font-family:'Raleway',sans-serif; font-size:1.65rem; font-weight:700; color:var(--espresso); line-height:1.25; margin-bottom:.45rem; }
-    .form-sub { font-size:.9rem; color:var(--text-light); margin-bottom:1.5rem; }
-    .form-error { display:none; background:#FBEAE8; border:1px solid var(--error); color:var(--error); font-size:.85rem; padding:.7rem .9rem; border-radius:var(--radius); margin-bottom:1rem; }
-    .form-error.visible { display:block; }
-    .decline-message { display:none; background:var(--white); border:1px solid var(--parchment-mid); border-radius:var(--radius); padding:1.5rem; font-size:.95rem; line-height:1.6; }
-    .decline-message.visible { display:block; }
-    .section-label { font-size:.76rem; font-weight:700; color:var(--saddle); text-transform:uppercase; letter-spacing:.06em; margin:1.35rem 0 .6rem; }
-    .field-row { display:grid; grid-template-columns:1fr 1fr; gap:.85rem; margin-bottom:.85rem; }
-    .field-group { display:flex; flex-direction:column; gap:.32rem; min-width:0; }
-    .field-group.full { grid-column:1 / -1; }
-    label, legend { font-size:.8rem; font-weight:600; color:var(--text); }
-    fieldset { border:0; min-width:0; }
+    .form-header {
+      width: 100%;
+      background: var(--espresso);
+      padding: 1rem 1.5rem;
+      text-align: center;
+    }
+    .brand {
+      font-family: 'Raleway', sans-serif;
+      color: var(--white);
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: .025em;
+    }
+    .eyebrow {
+      display: block;
+      margin-top: .18rem;
+      color: var(--parchment-mid);
+      font-size: .68rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    main.form-card { width: 100%; max-width: 680px; padding: 2rem 1.25rem 2.5rem; }
+    .form-headline {
+      font-family: 'Raleway', sans-serif;
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: var(--espresso);
+      line-height: 1.2;
+      margin-bottom: 1.35rem;
+      text-align: center;
+    }
+    .form-error {
+      display: none;
+      background: #FBEAE8;
+      border: 1px solid var(--error);
+      color: var(--error);
+      font-size: .86rem;
+      padding: .75rem .9rem;
+      border-radius: var(--radius);
+      margin-bottom: 1rem;
+    }
+    .form-error.visible { display: block; }
+    .decline-message {
+      display: none;
+      background: var(--white);
+      border: 1px solid var(--parchment-mid);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      font-size: .95rem;
+      line-height: 1.6;
+    }
+    .decline-message.visible { display: block; }
+    .section-label {
+      font-size: .77rem;
+      font-weight: 700;
+      color: var(--saddle);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin: 1.25rem 0 .65rem;
+    }
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .8rem;
+      margin-bottom: .8rem;
+    }
+    .field-group { display: flex; flex-direction: column; gap: .34rem; min-width: 0; }
+    .field-group.full { grid-column: 1 / -1; }
+    .field-label, label.field-label, legend.field-label {
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    fieldset { border: 0; min-width: 0; }
     input[type="text"], input[type="tel"], input[type="email"], select {
-      font-family:inherit; font-size:.95rem; padding:.68rem .75rem; border:1px solid var(--parchment-mid);
-      border-radius:8px; background:var(--white); color:var(--text); width:100%; min-height:44px;
+      font-family: inherit;
+      font-size: .95rem;
+      padding: .68rem .75rem;
+      border: 1px solid var(--parchment-mid);
+      border-radius: 8px;
+      background: var(--white);
+      color: var(--text);
+      width: 100%;
     }
-    input.error, select.error { border-color:var(--error); background:#FDF4F3; }
-    .radio-row { display:flex; gap:.65rem; }
-    .radio-pill { flex:1; display:flex; align-items:center; justify-content:center; gap:.4rem; min-height:44px; padding:.65rem .75rem; border:1px solid var(--parchment-mid); border-radius:8px; background:var(--white); cursor:pointer; font-size:.9rem; font-weight:600; color:var(--text); }
-    .radio-pill input { accent-color:var(--cognac); }
-    .radio-pill.selected { border-color:var(--cognac); background:#FBF0E6; }
-    .radio-pill.error { border-color:var(--error); }
-    .divider { border:none; border-top:1px solid var(--parchment-mid); margin:1.45rem 0; }
-    .code-word-help { font-size:.78rem; color:var(--text-light); line-height:1.5; margin-top:.15rem; }
-    .consent-text { font-size:.79rem; line-height:1.65; color:#4a3a2a; margin:.85rem 0; }
-    .legal-links { font-size:.78rem; margin:.65rem 0 1rem; color:var(--text-light); }
-    .legal-links a, .form-note a { color:var(--cognac); }
-    .consent-label { display:flex; align-items:flex-start; gap:.65rem; cursor:pointer; margin-bottom:1.1rem; }
-    .consent-label input { width:18px; height:18px; min-width:18px; margin-top:2px; cursor:pointer; accent-color:var(--cognac); }
-    .consent-label span { font-size:.79rem; color:var(--text); line-height:1.5; }
-    .consent-label.error input { outline:2px solid var(--error); }
-    .submit-btn { width:100%; background:var(--cognac); color:var(--white); font-weight:700; font-size:1rem; padding:.88rem; border:0; border-radius:8px; cursor:pointer; }
-    .submit-btn:disabled { opacity:.6; cursor:default; }
-    .form-note { font-size:.73rem; color:var(--text-light); text-align:center; margin-top:.85rem; line-height:1.5; }
-    .site-footer { width:100%; max-width:680px; padding:0 1.25rem 2.5rem; text-align:center; font-size:.76rem; color:var(--text-light); line-height:1.6; }
-    .noscript-banner { width:100%; background:var(--error); color:var(--white); text-align:center; padding:.75rem 1rem; font-size:.85rem; }
-    @media (max-width:560px) {
-      main.form-card { padding-top:1.5rem; }
-      .field-row { grid-template-columns:1fr; gap:.75rem; }
-      .field-group.full { grid-column:auto; }
-      .form-headline { font-size:1.45rem; }
+    input.error, select.error { border-color: var(--error); background: #FDF4F3; }
+    .radio-row { display: flex; gap: .6rem; }
+    .radio-pill {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .4rem;
+      min-height: 44px;
+      padding: .65rem .75rem;
+      border: 1px solid var(--parchment-mid);
+      border-radius: 8px;
+      background: var(--white);
+      cursor: pointer;
+      font-size: .9rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .radio-pill input { accent-color: var(--cognac); }
+    .radio-pill.selected { border-color: var(--cognac); background: #FBF0E6; }
+    .radio-pill.error { border-color: var(--error); }
+    .help { font-size: .76rem; color: var(--text-light); line-height: 1.45; }
+    .divider { border: 0; border-top: 1px solid var(--parchment-mid); margin: 1.55rem 0; }
+    .consent-box {
+      background: rgba(255,255,255,.55);
+      border: 1px solid var(--parchment-mid);
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: .78rem;
+      line-height: 1.62;
+      color: #4a3a2a;
+      margin: .4rem 0 .65rem;
+    }
+    .legal-links { font-size: .78rem; margin-bottom: .85rem; }
+    .legal-links a, .form-note a { color: var(--cognac); }
+    .consent-label {
+      display: flex;
+      align-items: flex-start;
+      gap: .65rem;
+      cursor: pointer;
+      margin-bottom: 1rem;
+    }
+    .consent-label input {
+      width: 18px; height: 18px; min-width: 18px;
+      margin-top: 2px; cursor: pointer; accent-color: var(--cognac);
+    }
+    .consent-label span { font-size: .8rem; color: var(--text); line-height: 1.5; }
+    .consent-label.error input { outline: 2px solid var(--error); }
+    .submit-btn {
+      width: 100%;
+      background: var(--cognac);
+      color: var(--white);
+      font-weight: 700;
+      font-size: 1rem;
+      padding: .9rem;
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .submit-btn:disabled { opacity: .6; cursor: default; }
+    .form-note { font-size: .74rem; color: var(--text-light); text-align: center; margin-top: .85rem; }
+    .site-footer {
+      width: 100%; max-width: 680px; padding: 0 1.25rem 2.25rem;
+      text-align: center; font-size: .76rem; color: var(--text-light); line-height: 1.6;
+    }
+    .noscript-banner { width: 100%; background: var(--error); color: var(--white); text-align: center; padding: .75rem 1rem; font-size: .85rem; }
+    @media (max-width: 560px) {
+      main.form-card { padding-top: 1.4rem; }
+      .form-headline { font-size: 1.42rem; text-align: left; }
+      .field-row { grid-template-columns: 1fr; gap: .72rem; }
+      .field-group.full { grid-column: auto; }
     }
   </style>
 </head>
@@ -80,13 +203,11 @@
 
   <header class="form-header">
     <div class="brand">BFG Insurance Solutions</div>
-    <div class="brand-sub">Mortgage Protection</div>
+    <span class="eyebrow">Mortgage Protection</span>
   </header>
 
   <main class="form-card">
     <h1 class="form-headline">Request Your Mortgage Protection Quote</h1>
-    <p class="form-sub">Tell us a little about yourself and your mortgage so a BFG Insurance Solutions agent can review your request.</p>
-
     <div class="form-error" id="form-error">Please fill in all required fields.</div>
     <div class="decline-message" id="decline-message"></div>
 
@@ -106,66 +227,68 @@
           var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(tf, s);
         })();
       </script>
-      <noscript><img src='https://api.trustedform.com/ns.gif' alt="" /></noscript>
+      <noscript><img src='https://api.trustedform.com/ns.gif' alt=""/></noscript>
 
-      <!-- Existing click-ID capture fields preserved. -->
+      <!-- Existing click-ID fields and persistence behavior preserved. -->
       <input type="hidden" id="gclid" name="gclid"/>
       <input type="hidden" id="gbraid" name="gbraid"/>
       <input type="hidden" id="wbraid" name="wbraid"/>
       <input type="hidden" id="submitted_url" name="submitted_url"/>
-      <input type="hidden" id="sex" name="sex" value="" aria-hidden="true"/>
+      <!-- Compatibility field: visible control is Gender; backend continues to receive sex. -->
+      <input type="hidden" id="sex" name="sex"/>
 
       <div class="section-label">Your Information</div>
 
       <div class="field-row">
         <div class="field-group">
-          <label for="first_name">First Name <span aria-hidden="true">*</span></label>
-          <input type="text" id="first_name" name="first_name" placeholder="Jane" autocomplete="given-name" required/>
+          <label class="field-label" for="first_name">First Name <span style="color:var(--error)">*</span></label>
+          <input type="text" id="first_name" name="first_name" placeholder="Jane" autocomplete="given-name" maxlength="80" required/>
         </div>
         <div class="field-group">
-          <label for="last_name">Last Name <span aria-hidden="true">*</span></label>
-          <input type="text" id="last_name" name="last_name" placeholder="Smith" autocomplete="family-name" required/>
+          <label class="field-label" for="last_name">Last Name <span style="color:var(--error)">*</span></label>
+          <input type="text" id="last_name" name="last_name" placeholder="Smith" autocomplete="family-name" maxlength="80" required/>
         </div>
       </div>
 
       <div class="field-row">
-        <fieldset class="field-group" id="gender-group">
-          <legend>Gender <span aria-hidden="true">*</span></legend>
+        <fieldset class="field-group">
+          <legend class="field-label">Gender <span style="color:var(--error)">*</span></legend>
           <div class="radio-row" id="gender-row">
             <label class="radio-pill"><input type="radio" name="gender" value="male"/> Male</label>
             <label class="radio-pill"><input type="radio" name="gender" value="female"/> Female</label>
           </div>
         </fieldset>
         <div class="field-group">
-          <label for="age">Age <span aria-hidden="true">*</span></label>
+          <label class="field-label" for="age">Age <span style="color:var(--error)">*</span></label>
           <input type="text" id="age" name="age" placeholder="35" inputmode="numeric" maxlength="3" required/>
+          <span class="help">Enter your age in whole years.</span>
         </div>
       </div>
 
       <div class="field-row">
         <div class="field-group">
-          <label for="phone">Phone <span aria-hidden="true">*</span></label>
-          <input type="tel" id="phone" name="phone" placeholder="(555) 555-0000" autocomplete="tel" inputmode="numeric" data-tf-element-role="consent-grantor-phone" required/>
+          <label class="field-label" for="phone">Phone <span style="color:var(--error)">*</span></label>
+          <input type="tel" id="phone" name="phone" placeholder="(555) 555-0000" autocomplete="tel" inputmode="tel" data-tf-element-role="consent-grantor-phone" required/>
         </div>
         <div class="field-group">
-          <label for="email">Email <span aria-hidden="true">*</span></label>
-          <input type="email" id="email" name="email" placeholder="jane@example.com" autocomplete="email" data-tf-element-role="consent-grantor-email" required/>
+          <label class="field-label" for="email">Email <span style="color:var(--error)">*</span></label>
+          <input type="email" id="email" name="email" placeholder="jane@example.com" autocomplete="email" maxlength="254" data-tf-element-role="consent-grantor-email" required/>
         </div>
       </div>
 
       <div class="field-row">
         <div class="field-group">
-          <label for="zip">ZIP Code <span aria-hidden="true">*</span></label>
+          <label class="field-label" for="zip">ZIP Code <span style="color:var(--error)">*</span></label>
           <input type="text" id="zip" name="zip" placeholder="90210" inputmode="numeric" maxlength="5" autocomplete="postal-code" required/>
         </div>
         <div class="field-group">
-          <label for="mortgage_balance">Approximate Mortgage Balance <span aria-hidden="true">*</span></label>
+          <label class="field-label" for="mortgage_balance">Approximate Mortgage Balance <span style="color:var(--error)">*</span></label>
           <select id="mortgage_balance" name="mortgage_balance" required>
             <option value="" disabled selected>Select one</option>
             <option value="under_100k">Under $100,000</option>
-            <option value="100k_249999">$100,000–$249,999</option>
-            <option value="250k_499999">$250,000–$499,999</option>
-            <option value="500k_749999">$500,000–$749,999</option>
+            <option value="100k_249999">$100,000&ndash;$249,999</option>
+            <option value="250k_499999">$250,000&ndash;$499,999</option>
+            <option value="500k_749999">$500,000&ndash;$749,999</option>
             <option value="750k_plus">$750,000 or more</option>
           </select>
         </div>
@@ -173,7 +296,8 @@
 
       <div class="field-row">
         <fieldset class="field-group full">
-          <legend>Tobacco Use <span aria-hidden="true">*</span></legend>
+          <legend class="field-label">Tobacco Use <span style="color:var(--error)">*</span></legend>
+          <span class="help">Do you currently use tobacco products?</span>
           <div class="radio-row" id="tobacco-row">
             <label class="radio-pill"><input type="radio" name="tobacco_use" value="yes"/> Yes</label>
             <label class="radio-pill"><input type="radio" name="tobacco_use" value="no"/> No</label>
@@ -186,40 +310,60 @@
 
       <div class="field-row">
         <div class="field-group full">
-          <label for="code_word">Code Word <span aria-hidden="true">*</span></label>
-          <input type="text" id="code_word" name="code_word" placeholder="e.g. Sunshine" maxlength="20" autocomplete="off" data-tf-sensitive="true" required/>
-          <p class="code-word-help">Choose a word your BFG Insurance Solutions agent will say first when contacting you so you can verify the call is genuinely from BFG. Use 3–20 letters.</p>
+          <label class="field-label" for="code_word">Code Word <span style="color:var(--error)">*</span></label>
+          <input type="text" id="code_word" name="code_word" placeholder="e.g. Sunshine"
+                 autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="20"
+                 data-tf-sensitive="true" required/>
+          <p class="help">Choose a word your BFG Insurance Solutions agent will say first when contacting you so you can verify the call is genuinely from BFG. Use 3&ndash;20 letters.</p>
         </div>
       </div>
 
-      <div class="consent-text" id="consent-text" data-tf-element-role="consent-language">
-        By checking the box below and selecting “Request My Mortgage Protection Quote,” I authorize Centaurus Enterprises LLC d/b/a BFG Insurance Solutions to contact me at the phone number and email address I provided about my request for mortgage protection insurance information and available insurance options by live-agent telephone call, SMS/text message, and email. Message and data rates may apply to texts. I understand that this consent is not a condition of purchasing any insurance product or service. I may revoke or limit this consent at any time, including by replying STOP to a text or asking not to be contacted during a call; additional revocation methods are described in the Privacy Notice.
+      <!-- DRAFT FOR COMPLIANCE REVIEW: fixed, readable presentation per controlling WS40 architecture. -->
+      <div class="consent-box" data-tf-element-role="consent-language">
+        By checking the box below and selecting <strong>&ldquo;Request My Mortgage Protection Quote,&rdquo;</strong>
+        I authorize <span data-tf-element-role="consent-advertiser-name"><strong>BFG Insurance Solutions</strong>, a DBA of Centaurus Enterprises LLC</span>
+        to contact me at the phone number and email address I provided about my request for mortgage protection insurance information and available insurance options by
+        <span data-tf-element-role="contact-method">live-agent telephone call, SMS/text message, and email</span>.
+        Message and data rates may apply to texts. <span data-tf-element-role="consent-grantor-waived-purchase-condition">I understand that this consent is not a condition of purchasing any insurance product or service.</span>
+        I may revoke or limit this consent at any time, including by replying STOP to a text or asking not to be contacted during a call; additional revocation methods are described in the Privacy Notice.
       </div>
 
-      <div class="legal-links"><a href="/privacy.html" target="_blank" rel="noopener">Privacy Notice</a> &nbsp;|&nbsp; <a href="/terms.html" target="_blank" rel="noopener">Terms of Use</a></div>
+      <p class="legal-links"><a href="/privacy.html" target="_blank" rel="noopener">Privacy Notice</a> &nbsp;|&nbsp; <a href="/terms.html" target="_blank" rel="noopener">Terms of Use</a></p>
 
       <label class="consent-label" id="consent-label">
         <input type="checkbox" id="consent-check" name="consent" data-tf-element-role="consent-opt-in" required/>
-        <span>I agree to the contact authorization above and understand that consent is not required to purchase insurance.</span>
+        <span>I agree to the contact authorization above, acknowledge the Privacy Notice, and agree to the Terms of Use.</span>
       </label>
 
       <button type="submit" class="submit-btn" id="submit-btn" data-tf-element-role="submit"><span data-tf-element-role="submit-text">Request My Mortgage Protection Quote</span></button>
-      <p class="form-note">BFG Insurance Solutions is the operating DBA of Centaurus Enterprises LLC.</p>
+      <p class="form-note">BFG Insurance Solutions &nbsp;|&nbsp; Centaurus Enterprises LLC d/b/a BFG Insurance Solutions</p>
     </form>
   </main>
 
-  <footer class="site-footer">Insurance products and availability vary by state and eligibility. Not affiliated with, endorsed by, or sponsored by any mortgage lender, loan servicer, or government agency.</footer>
+  <footer class="site-footer">
+    Mortgage protection insurance information is provided through BFG Insurance Solutions, a DBA of Centaurus Enterprises LLC. Product availability and eligibility vary by individual circumstances and service area. Not affiliated with, endorsed by, or sponsored by any mortgage lender, loan servicer, or government agency.
+  </footer>
 
   <script>
-    // Existing click-ID capture and same-tab persistence preserved.
+    // Click-ID capture — preserved from current production behavior.
     var MP_CLICK_ID_STORAGE_KEYS = {
-      gclid: 'bfg_mp_click_gclid', gbraid: 'bfg_mp_click_gbraid', wbraid: 'bfg_mp_click_wbraid',
-      savedAt: 'bfg_mp_click_saved_at', landingUrl: 'bfg_mp_click_landing_url'
+      gclid: 'bfg_mp_click_gclid',
+      gbraid: 'bfg_mp_click_gbraid',
+      wbraid: 'bfg_mp_click_wbraid',
+      savedAt: 'bfg_mp_click_saved_at',
+      landingUrl: 'bfg_mp_click_landing_url'
     };
     var MP_CLICK_ID_TTL_MS = 2 * 60 * 60 * 1000;
-    function mpSessionStorageGet(key) { try { return window.sessionStorage.getItem(key); } catch (e) { return null; } }
-    function mpSessionStorageSet(key, value) { try { window.sessionStorage.setItem(key, value); } catch (e) {} }
-    function mpSessionStorageRemove(key) { try { window.sessionStorage.removeItem(key); } catch (e) {} }
+
+    function mpSessionStorageGet(key) {
+      try { return window.sessionStorage.getItem(key); } catch (e) { return null; }
+    }
+    function mpSessionStorageSet(key, value) {
+      try { window.sessionStorage.setItem(key, value); } catch (e) {}
+    }
+    function mpSessionStorageRemove(key) {
+      try { window.sessionStorage.removeItem(key); } catch (e) {}
+    }
     function clearMpClickAttribution() {
       mpSessionStorageRemove(MP_CLICK_ID_STORAGE_KEYS.gclid);
       mpSessionStorageRemove(MP_CLICK_ID_STORAGE_KEYS.gbraid);
@@ -228,12 +372,13 @@
       mpSessionStorageRemove(MP_CLICK_ID_STORAGE_KEYS.landingUrl);
     }
     function populateMpClickAttribution() {
-      var clickIdNames = ['gclid','gbraid','wbraid'];
+      var clickIdNames = ['gclid', 'gbraid', 'wbraid'];
       var params = new URLSearchParams(window.location.search);
-      var hasFreshAttribution = clickIdNames.some(function(name){ return params.has(name); });
+      var hasFreshAttribution = clickIdNames.some(function(name) { return params.has(name); });
       var submittedUrl = window.location.href;
+
       if (hasFreshAttribution) {
-        clickIdNames.forEach(function(name){
+        clickIdNames.forEach(function(name) {
           var value = params.has(name) ? params.get(name) : '';
           document.getElementById(name).value = value;
           if (params.has(name)) mpSessionStorageSet(MP_CLICK_ID_STORAGE_KEYS[name], value);
@@ -251,14 +396,15 @@
           gbraid: mpSessionStorageGet(MP_CLICK_ID_STORAGE_KEYS.gbraid),
           wbraid: mpSessionStorageGet(MP_CLICK_ID_STORAGE_KEYS.wbraid)
         };
-        var hasStoredId = clickIdNames.some(function(name){ return storedIds[name] !== null; });
-        var storageIsValid = Number.isFinite(savedAt) && age >= 0 && age <= MP_CLICK_ID_TTL_MS && typeof landingUrl === 'string' && landingUrl.length > 0 && hasStoredId;
+        var hasStoredId = clickIdNames.some(function(name) { return storedIds[name] !== null; });
+        var storageIsValid = Number.isFinite(savedAt) && age >= 0 && age <= MP_CLICK_ID_TTL_MS &&
+          typeof landingUrl === 'string' && landingUrl.length > 0 && hasStoredId;
         if (storageIsValid) {
-          clickIdNames.forEach(function(name){ document.getElementById(name).value = storedIds[name] || ''; });
+          clickIdNames.forEach(function(name) { document.getElementById(name).value = storedIds[name] || ''; });
           submittedUrl = landingUrl;
         } else {
           clearMpClickAttribution();
-          clickIdNames.forEach(function(name){ document.getElementById(name).value = ''; });
+          clickIdNames.forEach(function(name) { document.getElementById(name).value = ''; });
         }
       }
       document.getElementById('submitted_url').value = submittedUrl;
@@ -266,110 +412,168 @@
     populateMpClickAttribution();
 
     document.getElementById('phone').addEventListener('input', function() {
-      var digits = this.value.replace(/\D/g,'').slice(0,10), formatted='';
-      if (digits.length === 0) formatted='';
-      else if (digits.length <= 3) formatted='(' + digits;
-      else if (digits.length <= 6) formatted='(' + digits.slice(0,3) + ') ' + digits.slice(3);
-      else formatted='(' + digits.slice(0,3) + ') ' + digits.slice(3,6) + '-' + digits.slice(6);
-      this.value=formatted;
+      var digits = this.value.replace(/\D/g, '').slice(0, 10);
+      var formatted = '';
+      if (digits.length === 0) formatted = '';
+      else if (digits.length <= 3) formatted = '(' + digits;
+      else if (digits.length <= 6) formatted = '(' + digits.slice(0,3) + ') ' + digits.slice(3);
+      else formatted = '(' + digits.slice(0,3) + ') ' + digits.slice(3,6) + '-' + digits.slice(6);
+      this.value = formatted;
     });
 
-    document.querySelectorAll('.radio-pill input').forEach(function(input){
-      input.addEventListener('change', function(){
-        document.querySelectorAll('input[name="' + this.name + '"]').forEach(function(inp){ inp.closest('.radio-pill').classList.remove('selected'); });
+    document.querySelectorAll('.radio-pill input').forEach(function(input) {
+      input.addEventListener('change', function() {
+        var name = this.name;
+        document.querySelectorAll('input[name="' + name + '"]').forEach(function(inp) {
+          inp.closest('.radio-pill').classList.remove('selected');
+        });
         this.closest('.radio-pill').classList.add('selected');
+        if (name === 'gender') document.getElementById('sex').value = this.value;
       });
     });
 
-    var CODE_WORD_BLOCKLIST = ['password','code','codeword','test','none','na'];
+    var CODE_WORD_BLOCKLIST = ['password', 'code', 'codeword', 'test', 'none', 'na'];
     function validateCodeWord(raw, firstName, lastName) {
-      var word=raw.trim();
-      if (!/^[A-Za-z]{3,20}$/.test(word)) return 'Code word must be 3–20 letters, no numbers or spaces.';
-      var lower=word.toLowerCase();
-      if (lower===firstName.trim().toLowerCase() || lower===lastName.trim().toLowerCase()) return 'Please choose a code word other than your own name.';
-      if (CODE_WORD_BLOCKLIST.indexOf(lower)!==-1) return 'That word is too common — please pick something more memorable.';
+      var word = raw.trim();
+      if (!/^[A-Za-z]{3,20}$/.test(word)) return 'Code word must be 3-20 letters, no numbers or spaces.';
+      var lower = word.toLowerCase();
+      if (lower === firstName.trim().toLowerCase() || lower === lastName.trim().toLowerCase()) return 'Please choose a code word other than your own name.';
+      if (CODE_WORD_BLOCKLIST.indexOf(lower) !== -1) return 'That word is too common — please pick something more memorable.';
       return null;
     }
 
     function waitForTrustedFormCert(maxWaitMs) {
-      return new Promise(function(resolve){
-        var start=Date.now();
-        (function poll(){
-          var field=document.getElementsByName('xxTrustedFormCertUrl')[0];
-          var val=field ? field.value : '';
-          if (val) resolve({value:val,diagnostic:'resolved'});
-          else if (Date.now()-start>=maxWaitMs) resolve({value:'',diagnostic:'timed_out_after_'+maxWaitMs+'ms_script_'+(window.mpTrustedFormScriptStatus||'unknown')});
-          else setTimeout(poll,150);
+      return new Promise(function(resolve) {
+        var start = Date.now();
+        (function poll() {
+          var field = document.getElementsByName('xxTrustedFormCertUrl')[0];
+          var val = field ? field.value : '';
+          if (val) resolve({ value: val, diagnostic: 'resolved' });
+          else if (Date.now() - start >= maxWaitMs) {
+            var scriptStatus = window.mpTrustedFormScriptStatus || 'unknown';
+            resolve({ value: '', diagnostic: 'timed_out_after_' + maxWaitMs + 'ms_script_' + scriptStatus });
+          } else setTimeout(poll, 150);
         })();
       });
     }
 
-    document.getElementById('mp-form').addEventListener('submit', async function(e){
+    document.getElementById('mp-form').addEventListener('submit', async function(e) {
       e.preventDefault();
-      var errEl=document.getElementById('form-error');
+      var errEl = document.getElementById('form-error');
       errEl.classList.remove('visible');
-      document.querySelectorAll('.error').forEach(function(el){el.classList.remove('error');});
-      var ok=true;
-      function req(id){ var el=document.getElementById(id); if(!el.value.trim()){el.classList.add('error');ok=false;} }
-      req('first_name'); req('last_name'); req('phone'); req('email'); req('zip'); req('age'); req('mortgage_balance'); req('code_word');
-      if(!/^\(\d{3}\) \d{3}-\d{4}$/.test(document.getElementById('phone').value.trim())){document.getElementById('phone').classList.add('error');ok=false;}
-      if(!/^\d{5}$/.test(document.getElementById('zip').value.trim())){document.getElementById('zip').classList.add('error');ok=false;}
-      var ageRaw=document.getElementById('age').value.trim(), ageVal=parseInt(ageRaw,10);
-      if(!/^\d{1,3}$/.test(ageRaw)||!Number.isInteger(ageVal)||ageVal<18||ageVal>100){document.getElementById('age').classList.add('error');ok=false;}
-      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('email').value.trim())){document.getElementById('email').classList.add('error');ok=false;}
-      var genderInput=document.querySelector('input[name="gender"]:checked');
-      var genderValue=genderInput ? genderInput.value : document.getElementById('sex').value;
-      if(!genderValue){document.getElementById('gender-row').querySelectorAll('.radio-pill').forEach(function(p){p.classList.add('error');});ok=false;}
-      if(genderInput){document.getElementById('sex').value=genderInput.value;}
-      var tobaccoInput=document.querySelector('input[name="tobacco_use"]:checked');
-      if(!tobaccoInput){document.getElementById('tobacco-row').querySelectorAll('.radio-pill').forEach(function(p){p.classList.add('error');});ok=false;}
-      var codeWordEl=document.getElementById('code_word');
-      var codeWordError=codeWordEl.value.trim()?validateCodeWord(codeWordEl.value,document.getElementById('first_name').value,document.getElementById('last_name').value):null;
-      if(codeWordError){codeWordEl.classList.add('error');ok=false;}
-      var consentCheck=document.getElementById('consent-check'), consentLabel=document.getElementById('consent-label');
-      consentLabel.classList.remove('error');
-      if(!consentCheck.checked){consentLabel.classList.add('error');ok=false;}
-      if(!ok){errEl.textContent=codeWordError||'Please fill in all required fields and check the consent box.';errEl.classList.add('visible');errEl.scrollIntoView({behavior:'smooth',block:'center'});return;}
+      document.querySelectorAll('.error').forEach(function(el) { el.classList.remove('error'); });
 
-      var btn=document.getElementById('submit-btn'); btn.disabled=true; btn.textContent='Submitting…';
-      var certResult=await waitForTrustedFormCert(6000);
-      var payload={
-        first_name:document.getElementById('first_name').value.trim(),
-        last_name:document.getElementById('last_name').value.trim(),
-        phone:'+1'+document.getElementById('phone').value.replace(/\D/g,''),
-        email:document.getElementById('email').value.trim(),
-        zip:document.getElementById('zip').value.trim(),
-        age:ageVal,
-        sex:genderValue,
-        mortgage_balance:document.getElementById('mortgage_balance').value,
-        tobacco_use:tobaccoInput.value,
-        code_word:codeWordEl.value.trim(),
-        gclid:document.getElementById('gclid').value,
-        gbraid:document.getElementById('gbraid').value,
-        wbraid:document.getElementById('wbraid').value,
-        submitted_url:document.getElementById('submitted_url').value,
-        consent_text:document.getElementById('consent-text').innerText,
-        trustedform_cert_url:certResult.value,
-        trustedform_diagnostic:certResult.diagnostic
+      var ok = true;
+      function req(id) {
+        var el = document.getElementById(id);
+        if (!el.value.trim()) { el.classList.add('error'); ok = false; }
+      }
+
+      req('first_name'); req('last_name'); req('phone'); req('email');
+      req('zip'); req('age'); req('sex'); req('mortgage_balance'); req('code_word');
+
+      if (!/^\(\d{3}\) \d{3}-\d{4}$/.test(document.getElementById('phone').value.trim())) {
+        document.getElementById('phone').classList.add('error'); ok = false;
+      }
+      if (!/^\d{5}$/.test(document.getElementById('zip').value.trim())) {
+        document.getElementById('zip').classList.add('error'); ok = false;
+      }
+      var ageRaw = document.getElementById('age').value.trim();
+      var ageVal = parseInt(ageRaw, 10);
+      if (!/^\d{1,3}$/.test(ageRaw) || !Number.isInteger(ageVal) || ageVal < 18 || ageVal > 100) {
+        document.getElementById('age').classList.add('error'); ok = false;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('email').value.trim())) {
+        document.getElementById('email').classList.add('error'); ok = false;
+      }
+      if (!document.getElementById('sex').value) {
+        document.getElementById('gender-row').querySelectorAll('.radio-pill').forEach(function(p){ p.classList.add('error'); });
+        ok = false;
+      }
+      var tobaccoInput = document.querySelector('input[name="tobacco_use"]:checked');
+      if (!tobaccoInput) {
+        document.getElementById('tobacco-row').querySelectorAll('.radio-pill').forEach(function(p){ p.classList.add('error'); });
+        ok = false;
+      }
+
+      var codeWordEl = document.getElementById('code_word');
+      var codeWordError = null;
+      if (codeWordEl.value.trim()) {
+        codeWordError = validateCodeWord(codeWordEl.value, document.getElementById('first_name').value, document.getElementById('last_name').value);
+        if (codeWordError) { codeWordEl.classList.add('error'); ok = false; }
+      }
+
+      var consentLabel = document.getElementById('consent-label');
+      var consentCheck = document.getElementById('consent-check');
+      consentLabel.classList.remove('error');
+      if (!consentCheck.checked) { consentLabel.classList.add('error'); ok = false; }
+
+      if (!ok) {
+        errEl.textContent = codeWordError || 'Please fill in all required fields and check the consent box.';
+        errEl.classList.add('visible');
+        errEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      var btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
+      var certResult = await waitForTrustedFormCert(6000);
+
+      var payload = {
+        first_name: document.getElementById('first_name').value.trim(),
+        last_name: document.getElementById('last_name').value.trim(),
+        phone: '+1' + document.getElementById('phone').value.replace(/\D/g, ''),
+        email: document.getElementById('email').value.trim(),
+        zip: document.getElementById('zip').value.trim(),
+        age: ageVal,
+        sex: document.getElementById('sex').value,
+        mortgage_balance: document.getElementById('mortgage_balance').value,
+        tobacco_use: tobaccoInput.value,
+        code_word: codeWordEl.value.trim(),
+        gclid: document.getElementById('gclid').value,
+        gbraid: document.getElementById('gbraid').value,
+        wbraid: document.getElementById('wbraid').value,
+        submitted_url: document.getElementById('submitted_url').value,
+        consent_text: document.querySelector('.consent-box').innerText,
+        trustedform_cert_url: certResult.value,
+        trustedform_diagnostic: certResult.diagnostic
       };
 
-      fetch('/submit-mortgage-protection',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
-        .then(function(res){return res.json().then(function(body){return {ok:res.ok,body:body};});})
-        .then(function(result){
-          if(result.body.status==='ok'){
-            clearMpClickAttribution();
-            window.location.href='/thank-you?ct='+encodeURIComponent(result.body.conversion_token||'');
-          } else if(result.body.status==='declined'){
-            clearMpClickAttribution();
-            document.getElementById('mp-form').style.display='none';
-            var declineEl=document.getElementById('decline-message'); declineEl.textContent=result.body.message||'Thanks for your interest. We are not able to help with this request right now.'; declineEl.classList.add('visible');
-          } else {
-            btn.disabled=false; btn.textContent='Request My Mortgage Protection Quote';
-            errEl.textContent=result.body.message||'Something went wrong. Please check your information and try again.'; errEl.classList.add('visible');
-            if(result.body.field){var badEl=document.getElementById(result.body.field);if(badEl)badEl.classList.add('error');}
+      fetch('/submit-mortgage-protection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(function(res) { return res.json().then(function(body) { return { ok: res.ok, body: body }; }); })
+      .then(function(result) {
+        if (result.body.status === 'ok') {
+          clearMpClickAttribution();
+          window.location.href = '/thank-you?ct=' + encodeURIComponent(result.body.conversion_token || '');
+        } else if (result.body.status === 'declined') {
+          clearMpClickAttribution();
+          document.getElementById('mp-form').style.display = 'none';
+          var declineEl = document.getElementById('decline-message');
+          declineEl.textContent = result.body.message || 'BFG Insurance Solutions is not currently accepting online mortgage protection requests in your area.';
+          declineEl.classList.add('visible');
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'Request My Mortgage Protection Quote';
+          errEl.textContent = result.body.message || 'Something went wrong. Please check your information and try again.';
+          errEl.classList.add('visible');
+          errEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          if (result.body.field) {
+            var badEl = document.getElementById(result.body.field);
+            if (badEl) badEl.classList.add('error');
           }
-        })
-        .catch(function(){btn.disabled=false;btn.textContent='Request My Mortgage Protection Quote';errEl.textContent='We could not reach the server. Please check your connection and try again.';errEl.classList.add('visible');});
+        }
+      })
+      .catch(function() {
+        btn.disabled = false;
+        btn.textContent = 'Request My Mortgage Protection Quote';
+        errEl.textContent = 'We couldn\'t reach the server. Please check your connection and try again.';
+        errEl.classList.add('visible');
+      });
     });
   </script>
 </body>
