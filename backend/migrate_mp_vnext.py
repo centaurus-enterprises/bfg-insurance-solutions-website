@@ -7,6 +7,8 @@ this migration as a public HTTP route.
 from db import get_connection
 
 ALTER_COLUMNS = [
+    # Widen only: legacy VARCHAR(10) cannot hold approved non-overlapping vNext enums.
+    "ALTER TABLE leads ALTER COLUMN mortgage_balance TYPE VARCHAR(40)",
     "ALTER TABLE leads ADD COLUMN IF NOT EXISTS lead_uuid UUID",
     "ALTER TABLE leads ADD COLUMN IF NOT EXISTS submission_id UUID",
     "ALTER TABLE leads ADD COLUMN IF NOT EXISTS visit_id UUID",
