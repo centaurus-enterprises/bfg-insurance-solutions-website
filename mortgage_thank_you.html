@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="robots" content="noindex, nofollow"/>
-  <title>Thank You</title>
+  <title>Thank You | BFG Insurance Solutions</title>
 
-  <!-- Google tag (gtag.js) -->
+  <!-- Google tag (gtag.js) — existing production measurement preserved -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18193879267"></script>
   <script>
   window.dataLayer = window.dataLayer || [];
@@ -15,28 +15,7 @@
   gtag('config', 'AW-18193879267');
   </script>
 
-  <!-- Event snippet for MP Lead - Site Form Submit -->
-  <!-- The ct token by itself is NOT proof of a real submission -- it's
-       redeemed server-side via /claim-conversion. An arbitrary, missing,
-       or expired token is rejected there and the event never fires. A
-       valid, unexpired token (even a repeat of one already claimed)
-       returns the SAME transaction_id every time, specifically so this
-       page can retry: if the browser loses the response, closes, or the
-       gtag call itself fails right after this, a later load of this exact
-       URL (refresh, Back/Forward) can safely retry with the same
-       transaction_id. Google Ads deduplicates conversions by (conversion
-       action, transaction_id), so re-sending it is a no-op on their side,
-       not a double count.
-
-       localStorage is written only from gtag's event_callback (or after
-       event_timeout elapses as a fallback), i.e. only once the event
-       command has actually been processed -- not immediately after the
-       fetch resolves. That's deliberate: if we set it right after the
-       fetch instead, a tab closed between that write and the beacon
-       actually going out would permanently suppress the conversion
-       client-side even though Ads never received it, with no way to
-       retry. Leaving localStorage unset until the callback fires means a
-       dropped hit just gets retried on the next load instead. -->
+  <!-- Existing conversion authorization / deduplication mechanism preserved. -->
   <script>
   (function() {
     var params = new URLSearchParams(window.location.search);
@@ -86,28 +65,64 @@
       text-align: center;
       padding: 2rem;
     }
-    .wrap { max-width: 480px; }
+    .wrap {
+      max-width: 520px;
+      width: 100%;
+      background: #fff;
+      border: 1px solid #EDE3D6;
+      border-radius: 14px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 14px 35px rgba(44, 26, 14, 0.07);
+    }
+    .brand {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #7B3F1E;
+      margin-bottom: 1.1rem;
+    }
     h1 {
       font-family: 'Raleway', sans-serif;
       font-size: 1.9rem;
       font-weight: 700;
       color: #2C1A0E;
       line-height: 1.25;
-      margin-bottom: 1rem;
+      margin-bottom: 0.8rem;
     }
-    p { font-size: 1rem; line-height: 1.7; color: #4a3a2a; margin-bottom: 1rem; }
     .divider { width: 48px; height: 3px; background: #7B3F1E; border-radius: 2px; margin: 0 auto 1.5rem; }
-    .footer-note { font-size: 0.8rem; color: #3A2A1A; margin-top: 2rem; line-height: 1.6; }
+    p { font-size: 1rem; line-height: 1.7; color: #4a3a2a; margin-bottom: 1rem; }
+    .producer {
+      margin: 1.75rem auto 0;
+      padding-top: 1.4rem;
+      border-top: 1px solid #EDE3D6;
+    }
+    .producer-name {
+      font-family: 'Raleway', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #2C1A0E;
+      margin-bottom: 0.2rem;
+    }
+    .producer-business { font-weight: 600; color: #7B3F1E; margin-bottom: 0; }
+    .footer-note { font-size: 0.78rem; color: #7A6A5A; margin-top: 1.6rem; line-height: 1.6; }
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <main class="wrap">
+    <div class="brand">BFG Insurance Solutions</div>
+    <h1>Thank you. Your request has been received.</h1>
     <div class="divider"></div>
-    <h1>Thanks — your request is in.</h1>
-    <p>A licensed agent will call you shortly at the number you provided to verify your information and go over your options. When they call, they'll confirm your code word first.</p>
-    <p class="footer-note">
-      This is a solicitation for insurance offered by John M. Brown, CA Lic. #4374779, and Joshua Brown, CA Lic. #4509549. Licensed in California and additional states; not all products are available in all states. Rates and availability vary based on age, health, coverage amount, and state of residence. Not affiliated with, endorsed by, or sponsored by any mortgage lender, loan servicer, or government agency.
-    </p>
-  </div>
+    <p>A BFG Insurance Solutions agent will review the information you submitted and contact you regarding your mortgage protection request.</p>
+    <p>Keep your Code Word in mind. Your BFG agent will say it first so you can verify that the contact is genuinely from BFG.</p>
+
+    <section class="producer" aria-label="Producer information">
+      <p class="producer-name">John M. Brown</p>
+      <p class="producer-business">BFG Insurance Solutions</p>
+    </section>
+
+    <p class="footer-note">BFG Insurance Solutions is the operating DBA of Centaurus Enterprises LLC. Insurance availability and product options vary by state and individual circumstances. Not affiliated with, endorsed by, or sponsored by any mortgage lender, loan servicer, or government agency.</p>
+  </main>
 </body>
 </html>
