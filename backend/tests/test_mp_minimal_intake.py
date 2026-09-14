@@ -169,8 +169,12 @@ def test_thank_you_visible_copy_and_existing_conversion_mechanism():
     html = read_thank_you()
     assert "John M. Brown" in html
     assert "BFG Insurance Solutions" in html
-    assert "Thank you — we received your request." in html
-    assert "Your mortgage protection request has been received by BFG Insurance Solutions." in html
+    assert "Thank you. We received your request for a free quote!" in html
+    assert "Within the next 24 hours" in html
+    assert "licensed agent" in html
+    assert "619-432-2727" in html
+    assert "Code Word" in html
+    assert "call or text John directly at that number" in html
     assert "Submitting this request does not guarantee eligibility, approval, price, policy issuance, or coverage." in html
     assert "will call you shortly" not in html
     assert "Joshua Brown" not in html
