@@ -18,21 +18,21 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --espresso: #2C1A0E;
-      --cognac: #7B3F1E;
-      --saddle: #A0522D;
-      --parchment: #F5EFE6;
-      --parchment-dark: #EDE3D6;
-      --parchment-mid: #D9CCBA;
-      --white: #FFFFFF;
-      --text: #3A2A1A;
-      --text-light: #7A6A5A;
-      --error: #C0392B;
+      --navy: #1E3B63;
+      --navy-deep: #142A47;
+      --gold: #C49A49;
+      --gold-soft: #F3EAD7;
+      --off-white: #F7F6F1;
+      --surface: #FFFFFF;
+      --border: #D6DCE4;
+      --text: #243243;
+      --text-light: #5E6B79;
+      --error: #B42318;
       --radius: 10px;
     }
     body {
       font-family: 'DM Sans', sans-serif;
-      background: var(--parchment);
+      background: var(--off-white);
       color: var(--text);
       min-height: 100vh;
       display: flex;
@@ -41,24 +41,25 @@
     }
     .form-header {
       width: 100%;
-      background: var(--espresso);
-      padding: 1rem 1.5rem;
+      background: var(--surface);
+      padding: 1rem 1.5rem .85rem;
       text-align: center;
+      border-bottom: 3px solid var(--gold);
+      box-shadow: 0 2px 12px rgba(20,42,71,.06);
     }
-    .brand {
-      font-family: 'Raleway', sans-serif;
-      color: var(--white);
-      font-weight: 800;
-      font-size: 1rem;
-      letter-spacing: .025em;
+    .brand-logo {
+      display: block;
+      width: min(100%, 520px);
+      height: auto;
+      margin: 0 auto;
     }
     .eyebrow {
       display: block;
-      margin-top: .18rem;
-      color: var(--parchment-mid);
-      font-size: .68rem;
-      font-weight: 600;
-      letter-spacing: .1em;
+      margin-top: .4rem;
+      color: var(--navy);
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .12em;
       text-transform: uppercase;
     }
     main.form-card { width: 100%; max-width: 680px; padding: 2rem 1.25rem 2.5rem; }
@@ -66,14 +67,14 @@
       font-family: 'Raleway', sans-serif;
       font-size: 1.65rem;
       font-weight: 700;
-      color: var(--espresso);
+      color: var(--navy-deep);
       line-height: 1.2;
       margin-bottom: 1.35rem;
       text-align: center;
     }
     .form-error {
       display: none;
-      background: #FBEAE8;
+      background: #FDECEA;
       border: 1px solid var(--error);
       color: var(--error);
       font-size: .86rem;
@@ -84,8 +85,8 @@
     .form-error.visible { display: block; }
     .decline-message {
       display: none;
-      background: var(--white);
-      border: 1px solid var(--parchment-mid);
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 1.5rem;
       font-size: .95rem;
@@ -95,9 +96,9 @@
     .section-label {
       font-size: .77rem;
       font-weight: 700;
-      color: var(--saddle);
+      color: var(--navy);
       text-transform: uppercase;
-      letter-spacing: .05em;
+      letter-spacing: .06em;
       margin: 1.25rem 0 .65rem;
     }
     .field-row {
@@ -118,13 +119,17 @@
       font-family: inherit;
       font-size: .95rem;
       padding: .68rem .75rem;
-      border: 1px solid var(--parchment-mid);
+      border: 1px solid var(--border);
       border-radius: 8px;
-      background: var(--white);
+      background: var(--surface);
       color: var(--text);
       width: 100%;
     }
-    input.error, select.error { border-color: var(--error); background: #FDF4F3; }
+    input[type="text"]:focus, input[type="tel"]:focus, input[type="email"]:focus, select:focus {
+      outline: 3px solid rgba(196,154,73,.2);
+      border-color: var(--gold);
+    }
+    input.error, select.error { border-color: var(--error); background: #FFF7F6; }
     .radio-row { display: flex; gap: .6rem; }
     .radio-pill {
       flex: 1;
@@ -134,31 +139,33 @@
       gap: .4rem;
       min-height: 44px;
       padding: .65rem .75rem;
-      border: 1px solid var(--parchment-mid);
+      border: 1px solid var(--border);
       border-radius: 8px;
-      background: var(--white);
+      background: var(--surface);
       cursor: pointer;
       font-size: .9rem;
       font-weight: 600;
       color: var(--text);
     }
-    .radio-pill input { accent-color: var(--cognac); }
-    .radio-pill.selected { border-color: var(--cognac); background: #FBF0E6; }
+    .radio-pill input { accent-color: var(--navy); }
+    .radio-pill.selected { border-color: var(--gold); background: #FCF8EF; box-shadow: inset 0 0 0 1px var(--gold); }
     .radio-pill.error { border-color: var(--error); }
     .help { font-size: .76rem; color: var(--text-light); line-height: 1.45; }
-    .divider { border: 0; border-top: 1px solid var(--parchment-mid); margin: 1.55rem 0; }
+    .divider { border: 0; border-top: 1px solid var(--gold); margin: 1.55rem 0; }
     .consent-box {
-      background: rgba(255,255,255,.55);
-      border: 1px solid var(--parchment-mid);
+      background: #FBFCFD;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
       border-radius: 8px;
       padding: 1rem;
       font-size: .78rem;
       line-height: 1.62;
-      color: #4a3a2a;
+      color: var(--text);
       margin: .4rem 0 .65rem;
     }
     .legal-links { font-size: .78rem; margin-bottom: .85rem; }
-    .legal-links a, .form-note a { color: var(--cognac); }
+    .legal-links a, .form-note a { color: var(--navy); }
+    .legal-links a:focus-visible, .form-note a:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
     .consent-label {
       display: flex;
       align-items: flex-start;
@@ -168,29 +175,33 @@
     }
     .consent-label input {
       width: 18px; height: 18px; min-width: 18px;
-      margin-top: 2px; cursor: pointer; accent-color: var(--cognac);
+      margin-top: 2px; cursor: pointer; accent-color: var(--navy);
     }
     .consent-label span { font-size: .8rem; color: var(--text); line-height: 1.5; }
     .consent-label.error input { outline: 2px solid var(--error); }
     .submit-btn {
       width: 100%;
-      background: var(--cognac);
-      color: var(--white);
+      background: var(--navy);
+      color: var(--surface);
       font-weight: 700;
       font-size: 1rem;
       padding: .9rem;
-      border: 0;
+      border: 1px solid var(--navy);
       border-radius: 8px;
       cursor: pointer;
     }
+    .submit-btn:hover { background: var(--navy-deep); }
+    .submit-btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
     .submit-btn:disabled { opacity: .6; cursor: default; }
     .form-note { font-size: .74rem; color: var(--text-light); text-align: center; margin-top: .85rem; }
     .site-footer {
       width: 100%; max-width: 680px; padding: 0 1.25rem 2.25rem;
       text-align: center; font-size: .76rem; color: var(--text-light); line-height: 1.6;
     }
-    .noscript-banner { width: 100%; background: var(--error); color: var(--white); text-align: center; padding: .75rem 1rem; font-size: .85rem; }
+    .noscript-banner { width: 100%; background: var(--error); color: var(--surface); text-align: center; padding: .75rem 1rem; font-size: .85rem; }
     @media (max-width: 560px) {
+      .form-header { padding: .85rem 1rem .75rem; }
+      .brand-logo { width: min(100%, 420px); }
       main.form-card { padding-top: 1.4rem; }
       .form-headline { font-size: 1.42rem; text-align: left; }
       .field-row { grid-template-columns: 1fr; gap: .72rem; }
@@ -202,7 +213,7 @@
   <noscript><div class="noscript-banner">This form requires JavaScript to submit. Please enable JavaScript and reload the page.</div></noscript>
 
   <header class="form-header">
-    <div class="brand">BFG Insurance Solutions</div>
+    <img class="brand-logo" src="/assets/branding/bfg-logo-landscape-1200x300.png" alt="BFG Insurance Solutions"/>
     <span class="eyebrow">Mortgage Protection</span>
   </header>
 

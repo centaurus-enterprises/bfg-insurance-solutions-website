@@ -76,17 +76,19 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --espresso: #2C1A0E;
-      --cognac: #7B3F1E;
-      --parchment: #F5EFE6;
-      --parchment-dark: #EDE3D6;
-      --text: #3A2A1A;
-      --text-light: #6F6256;
-      --white: #FFFFFF;
+      --navy: #1E3B63;
+      --navy-deep: #142A47;
+      --gold: #C49A49;
+      --gold-soft: #F3EAD7;
+      --off-white: #F7F6F1;
+      --surface: #FFFFFF;
+      --border: #D6DCE4;
+      --text: #243243;
+      --text-light: #5E6B79;
     }
     body {
       font-family: 'DM Sans', sans-serif;
-      background: var(--parchment);
+      background: var(--off-white);
       color: var(--text);
       min-height: 100vh;
       display: flex;
@@ -97,23 +99,21 @@
     .wrap {
       width: 100%;
       max-width: 640px;
-      background: var(--white);
-      border: 1px solid #D9CCBA;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--gold);
       border-radius: 14px;
       padding: 2.5rem;
-      box-shadow: 0 10px 30px rgba(44,26,14,.08);
+      box-shadow: 0 10px 30px rgba(20,42,71,.08);
     }
-    .brand {
-      font-family: 'Raleway', sans-serif;
-      font-size: .78rem;
-      font-weight: 900;
-      letter-spacing: .11em;
-      text-transform: uppercase;
-      color: var(--cognac);
-      margin-bottom: 1.6rem;
+    .brand-logo {
+      display: block;
+      width: min(100%, 460px);
+      height: auto;
+      margin: 0 auto 1.75rem;
     }
     .identity {
-      border-left: 4px solid var(--cognac);
+      border-left: 4px solid var(--gold);
       padding-left: 1rem;
       margin-bottom: 1.75rem;
     }
@@ -121,46 +121,48 @@
       font-family: 'Raleway', sans-serif;
       font-size: 1.15rem;
       font-weight: 700;
-      color: var(--espresso);
+      color: var(--navy-deep);
       margin-bottom: .15rem;
     }
-    .identity .business { font-weight: 600; color: var(--text); }
+    .identity .business { font-weight: 600; color: var(--navy); }
     h1 {
       font-family: 'Raleway', sans-serif;
       font-size: clamp(1.7rem, 4vw, 2.2rem);
       font-weight: 700;
-      color: var(--espresso);
+      color: var(--navy-deep);
       line-height: 1.2;
       margin-bottom: 1rem;
     }
-    p { font-size: 1rem; line-height: 1.72; color: #4a3a2a; margin-bottom: 1rem; }
+    p { font-size: 1rem; line-height: 1.72; color: var(--text); margin-bottom: 1rem; }
     .qualification {
       margin-top: 1.4rem;
       padding: 1rem 1.1rem;
-      background: var(--parchment-dark);
+      background: var(--gold-soft);
+      border: 1px solid rgba(196,154,73,.5);
       border-radius: 9px;
       font-size: .92rem;
       font-weight: 600;
       line-height: 1.55;
-      color: var(--espresso);
+      color: var(--navy-deep);
     }
     .footer-note {
       font-size: 0.78rem;
       color: var(--text-light);
       margin-top: 2rem;
       line-height: 1.6;
-      border-top: 1px solid #E4D9CC;
+      border-top: 1px solid var(--gold);
       padding-top: 1.25rem;
     }
     @media (max-width: 560px) {
       body { padding: 1rem; align-items: flex-start; }
       .wrap { padding: 1.5rem; border-radius: 10px; }
+      .brand-logo { width: min(100%, 400px); margin-bottom: 1.4rem; }
     }
   </style>
 </head>
 <body>
   <main class="wrap">
-    <div class="brand">BFG Insurance Solutions</div>
+    <img class="brand-logo" src="/assets/branding/bfg-logo-landscape-1200x300.png" alt="BFG Insurance Solutions"/>
 
     <div class="identity" aria-label="Producer identity">
       <div class="name">John M. Brown</div>
