@@ -146,7 +146,7 @@
     /* ── STATS ROW ── */
     .stats-row {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
+      grid-template-columns: repeat(7, 1fr);
       gap: 0.75rem;
       margin-bottom: 1.5rem;
     }
@@ -833,6 +833,10 @@
         <div class="stat-label">No Sale</div>
         <div class="stat-value" id="count-no_sale">0</div>
       </div>
+      <div class="stat-card" aria-label="Evidence holds requiring review">
+        <div class="stat-label">Evidence Holds</div>
+        <div class="stat-value" style="color:#ef4444">{{ evidence_hold_count }}</div>
+      </div>
     </div>
 
     <!-- TOOLBAR -->
@@ -874,6 +878,7 @@
             <th>State</th>
             <th>Contact Pref</th>
             <th>Status</th>
+            <th>Intake Control</th>
             <th style="width:40px"></th>
           </tr>
         </thead>
@@ -894,13 +899,22 @@
             <td><span class="pref-tag">{{ '📞 Call' if lead[6] == 'call_me' else ('📅 Book' if lead[6] == 'book_appointment' else '—') }}</span></td>
             <td><span class="status-badge badge-{{ lead[7] }}">{{ lead[7] | replace('_', ' ') | title }}</span></td>
             <td>
+              {% if lead[8] == 'EVIDENCE_HOLD' %}
+              <span class="status-badge badge-no_sale">Evidence Hold · Do Not Contact</span>
+              {% elif lead[8] == 'INTAKE_ACCEPTED' %}
+              <span class="status-badge badge-follow_up">Accepted · {{ lead[9] | replace('_', ' ') | title }}</span>
+              {% else %}
+              <span class="status-badge">Legacy / Unclassified</span>
+              {% endif %}
+            </td>
+            <td>
               <button class="btn-icon" style="padding:0.3rem 0.5rem" onclick="toggleExpand({{ lead[0] }}, this)" title="Expand">
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
             </td>
           </tr>
           <tr class="expand-row" id="expand-{{ lead[0] }}">
-            <td class="expand-cell" colspan="8">
+            <td class="expand-cell" colspan="9">
               <div class="expand-inner" id="expand-content-{{ lead[0] }}">
                 <div style="color:var(--text-muted);font-size:0.85rem">Loading...</div>
               </div>
@@ -987,6 +1001,12 @@
     {key:"contact_preference",label:"Contact Pref"}, {key:"best_time",label:"Best Time"},
     {key:"code_word",label:"Code Word"},
     {key:"trustedform_retained",label:"TrustedForm Retained"}, {key:"trustedform_cert_url",label:"TrustedForm Cert URL"},
+    {key:"lead_processing_status",label:"Intake Control"},
+    {key:"evidence_hold_reason",label:"Evidence Hold Reason"},
+    {key:"evidence_retry_count",label:"Evidence Retry Count"},
+    {key:"evidence_next_retry_at",label:"Next Evidence Retry"},
+    {key:"contact_status",label:"Contact Control"},
+    {key:"state_derivation_status",label:"State Derivation"},
     {key:"assigned_agent",label:"Agent"},
     {key:"status",label:"Status"}, {key:"notes",label:"Notes"},
   ];

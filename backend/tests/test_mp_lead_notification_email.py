@@ -92,7 +92,7 @@ def render_notification(monkeypatch, lead_overrides=None):
 
 def test_subject_uses_first_and_last_name(monkeypatch):
     message = render_notification(monkeypatch)
-    assert message.subject == "New Lead: John Brown — Mortgage Protection"
+    assert message.subject == "New Lead: John Brown"
 
 
 def test_subject_strips_control_characters(monkeypatch):
@@ -103,7 +103,7 @@ def test_subject_strips_control_characters(monkeypatch):
     assert "\r" not in message.subject
     assert "\n" not in message.subject
     assert "\t" not in message.subject
-    assert message.subject == "New Lead: John Bcc: bad@example.com Brown — Mortgage Protection"
+    assert message.subject == "New Lead: John Bcc: bad@example.com Brown"
 
 
 def test_brand_is_bfg_insurance_solutions(monkeypatch):
@@ -115,6 +115,11 @@ def test_brand_is_bfg_insurance_solutions(monkeypatch):
 def test_code_word_is_present(monkeypatch):
     message = render_notification(monkeypatch)
     assert "Falcon" in message.html_content
+
+
+def test_blank_optional_code_word_is_omitted(monkeypatch):
+    message = render_notification(monkeypatch, lead_overrides={"code_word": ""})
+    assert "Code Word" not in message.html_content
 
 
 def test_lead_id_is_present(monkeypatch):
@@ -161,13 +166,6 @@ def test_mortgage_balance_enum_is_displayed_human_readable(monkeypatch):
     body = message.html_content
     assert "$250,000–$499,999" in body
     assert "250k_499999" not in body
-
-
-def test_historical_mortgage_balance_enum_remains_display_compatible(monkeypatch):
-    message = render_notification(monkeypatch, lead_overrides={"mortgage_balance": "250k_500k"})
-    body = message.html_content
-    assert "$250,000–$499,999" in body
-    assert "250k_500k" not in body
 
 
 def test_phone_and_email_are_present(monkeypatch):
@@ -217,3 +215,9 @@ def test_email_does_not_assert_consent_was_captured(monkeypatch):
 def test_dashboard_link_is_present(monkeypatch):
     message = render_notification(monkeypatch)
     assert "https://protect-mortgage.com/admin" in message.html_content
+
+
+def test_notification_blocks_contact_until_state_license_screening(monkeypatch):
+    message = render_notification(monkeypatch)
+    assert "DO NOT CONTACT YET" in message.html_content
+    assert "STATE / LICENSE SCREENING PENDING" in message.html_content

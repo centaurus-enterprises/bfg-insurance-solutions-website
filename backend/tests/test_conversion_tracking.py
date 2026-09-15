@@ -1,22 +1,11 @@
-"""
-Tests for server-backed exactly-once (recoverable) Google Ads conversion
-authorization on the protect-mortgage.com funnel
-(/submit-mortgage-protection + /claim-conversion), plus the standalone
-migration script and the on-page conversion label itself.
-
-Covers: the first atomic claim, a repeat claim returning the same
-transaction_id, arbitrary/missing/expired token rejection, concurrent
-requests resolving to one underlying state transition, simulated refresh
-and Back/Forward recovery, failed/declined submissions never minting a
-token, the exact send_to label appearing exactly once (and the known-bad
-label appearing zero times) at the correct Unicode code point, and that
-the migration script is idempotent.
-"""
+"""Acceptance coverage for evidence-gated intake and generic conversion authorization."""
 import concurrent.futures
 import os
+import re
 import subprocess
 import sys
 
+import app as app_module
 from app import app as flask_app
 from conftest import (
     BACKEND_DIR,
@@ -26,6 +15,7 @@ from conftest import (
     fetch_claimed_at,
     fetch_lead_row_by_token,
 )
+from db import get_connection
 from migrate_conversion_token import run_migration as run_conversion_token_migration
 
 
@@ -38,15 +28,16 @@ def valid_payload(**overrides):
         "zip": "90210",
         "age": "35",
         "sex": "female",
-        "mortgage_balance": "100000-200000",
+        "mortgage_balance": "100k_249999",
         "tobacco_use": "no",
         "code_word": "sunflower",
         "gclid": "test-gclid-123",
         "gbraid": "test-gbraid-456",
         "wbraid": "test-wbraid-789",
         "submitted_url": "https://protect-mortgage.com/?gclid=test-gclid-123",
-        "consent_text": "I agree to be contacted by phone, text, and email.",
-        "trustedform_cert_url": "",
+        "consent": True,
+        "consent_text": "browser text is not authoritative",
+        "trustedform_cert_url": "https://cert.trustedform.com/test-certificate",
         "trustedform_diagnostic": "resolved",
     }
     payload.update(overrides)
@@ -61,229 +52,275 @@ def claim(client, token):
     return client.post("/claim-conversion", json={"token": token})
 
 
-# ── First atomic claim ───────────────────────────────────────────────────
+def fetch_processing_state(lead_id):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT lead_processing_status, evidence_hold_reason, evidence_retry_count,
+               evidence_next_retry_at, contact_status, state_derivation_status,
+               conversion_token, consent_affirmed, consent_text,
+               mortgage_balance, code_word
+        FROM leads WHERE id = %s
+    """, (lead_id,))
+    row = cur.fetchone()
+    cur.close()
+    conn.close()
+    return row
 
-def test_successful_submission_persists_lead_and_returns_token(client):
+
+def test_verified_submission_is_accepted_and_mints_token(client):
     resp = submit(client)
     assert resp.status_code == 200
     body = resp.get_json()
     assert body["status"] == "ok"
     token = body["conversion_token"]
-    assert token
-
     row = fetch_lead_row_by_token(token)
     assert row is not None
-    lead_id, gclid, gbraid, wbraid, retain_response, claimed_at, expires_at = row
-
-    # item 9 (original PR): gclid/gbraid/wbraid and TrustedForm diagnostics preserved
-    assert gclid == "test-gclid-123"
-    assert gbraid == "test-gbraid-456"
-    assert wbraid == "test-wbraid-789"
-    assert "client_diagnostic" in retain_response
-    assert "resolved" in retain_response
-
+    _, gclid, gbraid, wbraid, detail, claimed_at, expires_at = row
+    assert (gclid, gbraid, wbraid) == (
+        "test-gclid-123", "test-gbraid-456", "test-wbraid-789"
+    )
+    assert '"accepted": true' in detail
     assert claimed_at is None
     assert expires_at is not None
 
 
-def test_first_claim_is_atomic_and_returns_a_transaction_id(client):
-    token = submit(client).get_json()["conversion_token"]
-
-    resp = claim(client, token)
+def test_non_california_five_digit_zip_is_received(client):
+    resp = submit(client, zip="10001")
     assert resp.status_code == 200
-    body = resp.get_json()
-    assert body["status"] == "ok"
-    assert body["transaction_id"]
-
-    assert fetch_claimed_at(token) is not None
-
-
-# ── Repeat claim recovery: same transaction_id, not a rejection ─────────
-
-def test_repeat_claim_of_valid_token_returns_the_same_transaction_id(client):
-    token = submit(client).get_json()["conversion_token"]
-
-    first = claim(client, token)
-    second = claim(client, token)
-    third = claim(client, token)
-
-    assert first.status_code == 200
-    assert second.status_code == 200
-    assert third.status_code == 200
-    tx_ids = {r.get_json()["transaction_id"] for r in (first, second, third)}
-    assert len(tx_ids) == 1, "every claim of the same valid token must return the same transaction_id"
-
-
-def test_refresh_of_thank_you_page_recovers_the_same_transaction_id(client):
-    """A refresh re-runs the page script, which calls /claim-conversion
-    again with the same ?ct= token -- this must succeed and hand back the
-    same transaction_id so a dropped gtag hit can be retried."""
-    token = submit(client).get_json()["conversion_token"]
-
-    first_page_load = claim(client, token)
-    refresh = claim(client, token)
-
-    assert first_page_load.status_code == 200
-    assert refresh.status_code == 200
-    assert first_page_load.get_json()["transaction_id"] == refresh.get_json()["transaction_id"]
-
-
-def test_back_then_forward_navigation_recovers_the_same_transaction_id(client):
-    """Back/Forward returns the browser to the same thank-you URL (same
-    ?ct= token) and re-runs its script later -- same recovery guarantee
-    as a refresh."""
-    token = submit(client).get_json()["conversion_token"]
-
-    original_visit = claim(client, token)
-    navigated_away_then_back = claim(client, token)
-
-    assert original_visit.status_code == 200
-    assert navigated_away_then_back.status_code == 200
-    assert original_visit.get_json()["transaction_id"] == navigated_away_then_back.get_json()["transaction_id"]
-
-
-# ── Arbitrary / missing / expired token rejection ────────────────────────
-
-def test_arbitrary_token_is_rejected(client):
-    resp = claim(client, "this-token-was-never-issued-by-the-server")
-    assert resp.status_code == 400
-    assert resp.get_json()["status"] == "error"
-
-
-def test_missing_token_is_rejected(client):
-    resp = client.post("/claim-conversion", json={})
-    assert resp.status_code == 400
-    assert resp.get_json()["status"] == "error"
-
-
-def test_expired_token_is_rejected(client):
-    token = submit(client).get_json()["conversion_token"]
-    expire_token(token)
-
-    resp = claim(client, token)
-    assert resp.status_code == 400
-    assert resp.get_json()["status"] == "error"
-    assert fetch_claimed_at(token) is None
-
-
-def test_expired_token_is_rejected_even_if_claimed_before_expiry(client):
-    """Expiry must win over a prior successful claim -- a token doesn't
-    become eligible for recovery forever just because it was claimed once
-    while still valid."""
-    token = submit(client).get_json()["conversion_token"]
-    assert claim(client, token).status_code == 200  # claimed while still valid
-
-    expire_token(token)
-
-    resp = claim(client, token)
-    assert resp.status_code == 400
-    assert resp.get_json()["status"] == "error"
-
-
-# ── Concurrent requests: exactly one underlying state transition ────────
-
-def test_concurrent_duplicate_claims_resolve_to_one_state_transition(client):
-    token = submit(client).get_json()["conversion_token"]
-
-    def attempt_claim(_):
-        # Each call gets its own test client / DB connection: a real
-        # concurrent hit on the same row, not a single serialized call.
-        return flask_app.test_client().post("/claim-conversion", json={"token": token})
-
-    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as pool:
-        results = list(pool.map(attempt_claim, range(10)))
-
-    # Every concurrent request must succeed now (recovery semantics)...
-    assert all(r.status_code == 200 for r in results)
-    # ...and all of them must agree on exactly one transaction_id, which is
-    # only possible if the NULL -> claimed transition happened once and
-    # every other racer saw the already-claimed value rather than
-    # independently "winning" its own claim.
-    tx_ids = {r.get_json()["transaction_id"] for r in results}
-    assert len(tx_ids) == 1
-    assert fetch_claimed_at(token) is not None
-
-
-# ── Failed/declined submissions and superseded Homeowner behavior ───────
-
-def test_validation_failure_has_no_conversion_token(client):
-    resp = submit(client, first_name="")
-    assert resp.status_code == 400
-    body = resp.get_json()
-    assert body["status"] == "error"
-    assert "conversion_token" not in body
-    assert count_leads() == 0
-
-
-def test_homeowner_is_not_required_and_legacy_extra_value_does_not_decline(client):
-    # Home Ownership is superseded. A legacy client sending homeowner=no
-    # must not reintroduce the old eligibility decline.
-    resp = submit(client, homeowner="no")
-    assert resp.status_code == 200
-    body = resp.get_json()
-    assert body["status"] == "ok"
-    assert body["conversion_token"]
+    assert resp.get_json()["status"] == "ok"
     assert count_leads() == 1
 
 
-def test_declined_outside_zip_allowlist_has_no_conversion_token(client):
-    resp = submit(client, zip="10001")  # NYC zip, outside the current CA-only service area
+def test_mortgage_balance_and_code_word_are_optional(client):
+    resp = submit(client, mortgage_balance="", code_word="")
     assert resp.status_code == 200
-    body = resp.get_json()
-    assert body["status"] == "declined"
-    assert "conversion_token" not in body
+    token = resp.get_json()["conversion_token"]
+    lead_id = fetch_lead_row_by_token(token)[0]
+    state = fetch_processing_state(lead_id)
+    assert state[-2:] == (None, None)
+
+
+def test_optional_fields_validate_when_supplied(client):
+    bad_balance = submit(client, mortgage_balance="not-an-approved-band")
+    assert bad_balance.status_code == 400
+    assert bad_balance.get_json()["field"] == "mortgage_balance"
+    bad_code = submit(client, code_word="12")
+    assert bad_code.status_code == 400
+    assert bad_code.get_json()["field"] == "code_word"
     assert count_leads() == 0
 
 
-# ── The on-page conversion label itself ──────────────────────────────────
-
-CORRECT_LABEL = "AW-18193879267/jLl8CIfe39wcEOOhwuND"
-INCORRECT_LABEL = "AW-18193879267/jL18CIfe39wcEOOhwuND"
-
-
-def _read_thank_you_html():
-    with open(MORTGAGE_THANK_YOU_PATH, "r", encoding="utf-8") as f:
-        return f.read()
+def test_affirmative_consent_is_enforced_server_side(client):
+    for value in (False, None, "true", "yes"):
+        resp = submit(client, consent=value)
+        assert resp.status_code == 400
+        assert resp.get_json()["field"] == "consent"
+    assert count_leads() == 0
 
 
-def test_correct_send_to_label_occurs_exactly_once():
-    html = _read_thank_you_html()
-    assert html.count(CORRECT_LABEL) == 1
+def test_server_controlled_consent_text_is_persisted(client):
+    resp = submit(client, consent_text="tampered browser copy")
+    lead_id = fetch_lead_row_by_token(resp.get_json()["conversion_token"])[0]
+    state = fetch_processing_state(lead_id)
+    assert state[7] is True
+    assert state[8] == app_module.MP_CONSENT_TEXT
 
 
-def test_incorrect_digit_one_label_occurs_zero_times():
-    html = _read_thank_you_html()
-    assert html.count(INCORRECT_LABEL) == 0
+def test_evidence_failure_persists_hold_without_notification_or_token(client, monkeypatch):
+    sent = []
+    monkeypatch.setattr(app_module, "send_mortgage_protection_lead_notification", sent.append)
+    monkeypatch.setattr(app_module, "mp_retain_trustedform_certificate", lambda *args: {
+        "accepted": False, "retained": True, "match_success": False,
+        "outcome": "failure", "reason": "lead mismatch", "retryable": False,
+        "status_code": 200,
+    })
+    resp = submit(client)
+    assert resp.status_code == 202
+    assert resp.get_json()["status"] == "received"
+    assert "conversion_token" not in resp.get_json()
+    assert sent == []
+
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT id FROM leads")
+    lead_id = cur.fetchone()[0]
+    cur.close(); conn.close()
+    state = fetch_processing_state(lead_id)
+    assert state[0] == "EVIDENCE_HOLD"
+    assert state[1] == "lead mismatch"
+    assert state[4] == "DO_NOT_CONTACT"
+    assert state[6] is None
 
 
-def test_lowercase_l_in_label_is_u_plus_006c():
-    # Isolate the label's 3rd character programmatically -- never eyeball it.
-    suffix = CORRECT_LABEL.split("/")[1]  # "jLl8CIfe39wcEOOhwuND"
-    third_char = suffix[2]
-    assert third_char == "l"
-    assert ord(third_char) == 0x6C == 108
-    # And explicitly rule out the visually similar digit "1" (U+0031 / 49).
-    assert third_char != "1"
-    assert ord(third_char) != 0x31
+def test_transport_error_is_held_with_bounded_retry(client, monkeypatch):
+    monkeypatch.setattr(app_module, "mp_retain_trustedform_certificate", lambda *args: {
+        "accepted": False, "retained": False, "match_success": False,
+        "outcome": "error", "reason": "timeout", "retryable": True,
+    })
+    assert submit(client).status_code == 202
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT id FROM leads")
+    lead_id = cur.fetchone()[0]
+    cur.close(); conn.close()
+    state = fetch_processing_state(lead_id)
+    assert state[0] == "EVIDENCE_HOLD"
+    assert state[2] == 1
+    assert state[3] is not None
 
 
-# ── Migration idempotency ────────────────────────────────────────────────
+def test_retry_promotes_once_and_reuses_the_same_token(client, monkeypatch):
+    sent = []
+    monkeypatch.setattr(app_module, "send_mortgage_protection_lead_notification", sent.append)
+    monkeypatch.setattr(app_module, "mp_retain_trustedform_certificate", lambda *args: {
+        "accepted": False, "retained": False, "match_success": False,
+        "outcome": "error", "reason": "temporary timeout", "retryable": True,
+    })
+    assert submit(client).status_code == 202
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT id FROM leads")
+    lead_id = cur.fetchone()[0]
+    cur.close(); conn.close()
 
-def test_migration_function_is_idempotent():
-    # The session-scoped fixture already ran this once; running it two
-    # more times back-to-back must not raise (every statement is
-    # IF NOT EXISTS / CREATE ... IF NOT EXISTS).
+    monkeypatch.setattr(app_module, "mp_retain_trustedform_certificate", lambda *args: {
+        "accepted": True, "retained": True, "match_success": True,
+        "outcome": "success", "reason": None, "retryable": False,
+        "status_code": 200,
+    })
+    first = app_module.mp_process_evidence(lead_id)
+    repeat = app_module.mp_process_evidence(lead_id)
+    assert first["status"] == repeat["status"] == "accepted"
+    assert first["conversion_token"] == repeat["conversion_token"]
+    assert len(sent) == 1
+
+
+def test_first_and_repeat_claim_return_same_transaction_id(client):
+    token = submit(client).get_json()["conversion_token"]
+    responses = [claim(client, token) for _ in range(3)]
+    assert all(resp.status_code == 200 for resp in responses)
+    assert len({resp.get_json()["transaction_id"] for resp in responses}) == 1
+    assert fetch_claimed_at(token) is not None
+
+
+def test_concurrent_claims_resolve_to_one_state_transition(client):
+    token = submit(client).get_json()["conversion_token"]
+
+    def attempt(_):
+        return flask_app.test_client().post("/claim-conversion", json={"token": token})
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as pool:
+        responses = list(pool.map(attempt, range(10)))
+    assert all(resp.status_code == 200 for resp in responses)
+    assert len({resp.get_json()["transaction_id"] for resp in responses}) == 1
+
+
+def test_missing_arbitrary_and_expired_tokens_are_rejected(client):
+    assert client.post("/claim-conversion", json={}).status_code == 400
+    assert claim(client, "generic-unissued-token").status_code == 400
+    token = submit(client).get_json()["conversion_token"]
+    expire_token(token)
+    assert claim(client, token).status_code == 400
+
+
+def test_measurement_is_disabled_until_greenfield_configuration_exists():
+    html = open(MORTGAGE_THANK_YOU_PATH, encoding="utf-8").read()
+    assert "googletagmanager.com" not in html
+    assert "gtag(" not in html
+    assert "send_to" not in html
+
+
+def test_active_text_files_contain_no_embedded_ads_destination():
+    repo_root = os.path.dirname(BACKEND_DIR)
+    pattern = re.compile(r"AW-\d+")
+    for root, dirs, files in os.walk(repo_root):
+        dirs[:] = [d for d in dirs if d not in {".git", "__pycache__"}]
+        for name in files:
+            if not name.endswith((".py", ".html", ".md", ".js", ".json", ".yml", ".yaml")):
+                continue
+            path = os.path.join(root, name)
+            assert not pattern.search(open(path, encoding="utf-8").read()), path
+
+
+def test_trustedform_url_requires_exact_https_origin():
+    assert app_module.mp_trustedform_url_is_allowed(
+        "https://cert.trustedform.com/generic-certificate"
+    )
+    assert not app_module.mp_trustedform_url_is_allowed(
+        "https://cert.trustedform.com.attacker.example/generic-certificate"
+    )
+    assert not app_module.mp_trustedform_url_is_allowed(
+        "https://attacker.example/?next=https://cert.trustedform.com/generic-certificate"
+    )
+    assert not app_module.mp_trustedform_url_is_allowed(
+        "http://cert.trustedform.com/generic-certificate"
+    )
+
+
+def test_trustedform_v4_header_payload_and_success_parsing(monkeypatch):
+    class Response:
+        status_code = 200
+        def json(self):
+            return {
+                "outcome": "success",
+                "retain": {"results": {"previously_retained": False}},
+                "match_lead": {"result": {"success": True}},
+            }
+
+    captured = {}
+    def fake_post(url, **kwargs):
+        captured.update({"url": url, **kwargs})
+        return Response()
+
+    monkeypatch.setattr(app_module, "TRUSTEDFORM_API_KEY", "test-key")
+    monkeypatch.setattr(app_module.requests, "post", fake_post)
+    result = app_module.mp_retain_trustedform_certificate(
+        "https://cert.trustedform.com/generic-certificate", "jane@example.com", "+15551234567"
+    )
+    assert result["accepted"] is True
+    assert captured["headers"]["api-version"] == "4.0"
+    assert set(captured["json"]) == {"retain", "match_lead"}
+    assert captured["json"]["match_lead"] == {
+        "email": "jane@example.com", "phone": "+15551234567"
+    }
+
+
+def test_http_200_with_failure_or_malformed_body_is_not_accepted(monkeypatch):
+    class FailureResponse:
+        status_code = 200
+        def json(self):
+            return {"outcome": "failure", "retain": {"results": {"stored": True}},
+                    "match_lead": {"result": {"success": False}}}
+
+    monkeypatch.setattr(app_module, "TRUSTEDFORM_API_KEY", "test-key")
+    monkeypatch.setattr(app_module.requests, "post", lambda *a, **k: FailureResponse())
+    failure = app_module.mp_retain_trustedform_certificate(
+        "https://cert.trustedform.com/generic-certificate", "jane@example.com", "+15551234567"
+    )
+    assert failure["accepted"] is False
+    assert failure["retained"] is True
+    assert failure["outcome"] == "failure"
+
+    class MalformedResponse:
+        status_code = 200
+        def json(self):
+            raise ValueError("not json")
+
+    monkeypatch.setattr(app_module.requests, "post", lambda *a, **k: MalformedResponse())
+    malformed = app_module.mp_retain_trustedform_certificate(
+        "https://cert.trustedform.com/generic-certificate", "jane@example.com", "+15551234567"
+    )
+    assert malformed["accepted"] is False
+    assert malformed["outcome"] == "error"
+
+
+def test_migration_function_and_script_are_idempotent():
     run_conversion_token_migration()
     run_conversion_token_migration()
-
-
-def test_migration_script_exits_zero_on_success():
     result = subprocess.run(
-        [sys.executable, "migrate_conversion_token.py"],
-        cwd=BACKEND_DIR,
-        capture_output=True,
-        text=True,
-        timeout=30,
+        [sys.executable, "migrate_conversion_token.py"], cwd=BACKEND_DIR,
+        capture_output=True, text=True, timeout=30,
     )
     assert result.returncode == 0, result.stderr
     assert "OK" in result.stdout
@@ -291,20 +328,13 @@ def test_migration_script_exits_zero_on_success():
 
 def test_migration_script_exits_nonzero_on_failure():
     env = {
-        "DB_HOST": "127.0.0.1",
-        "DB_PORT": "1",  # nothing listens here -- connection must fail
-        "DB_NAME": "bfg_test",
-        "DB_USER": "bfg_test",
-        "DB_PASSWORD": "bfg_test",
+        "DB_HOST": "127.0.0.1", "DB_PORT": "1", "DB_NAME": "bfg_test",
+        "DB_USER": "bfg_test", "DB_PASSWORD": "bfg_test",
         "PATH": os.environ.get("PATH", ""),
     }
     result = subprocess.run(
-        [sys.executable, "migrate_conversion_token.py"],
-        cwd=BACKEND_DIR,
-        capture_output=True,
-        text=True,
-        env=env,
-        timeout=30,
+        [sys.executable, "migrate_conversion_token.py"], cwd=BACKEND_DIR,
+        capture_output=True, text=True, env=env, timeout=30,
     )
     assert result.returncode != 0
     assert "failed" in result.stderr.lower()

@@ -102,6 +102,8 @@ def test_code_word_copy_and_trustedform_sensitive_masking():
     code_tag = re.search(r'<input[^>]+id="code_word"[^>]*>', html, re.DOTALL)
     assert code_tag
     assert 'data-tf-sensitive="true"' in code_tag.group(0)
+    assert "required" not in code_tag.group(0)
+    assert "(optional)" in html
 
 
 def test_consent_is_fixed_visible_bfg_text_not_scroll_box():
@@ -116,10 +118,10 @@ def test_consent_is_fixed_visible_bfg_text_not_scroll_box():
         assert removed not in html.lower()
 
 
-def test_existing_google_and_trustedform_integration_are_preserved_on_form():
+def test_measurement_is_disabled_and_trustedform_is_preserved_on_form():
     html = read_form()
-    assert "https://www.googletagmanager.com/gtag/js?id=AW-18193879267" in html
-    assert "gtag('config', 'AW-18193879267');" in html
+    assert "googletagmanager.com" not in html
+    assert "gtag(" not in html
     assert "api.trustedform.com/trustedform.js?field=xxTrustedFormCertUrl&use_tagged_consent=true" in html
     assert "xxTrustedFormCertUrl" in html
     assert "MP_CLICK_ID_STORAGE_KEYS" in html
@@ -145,8 +147,9 @@ def test_submission_without_homeowner_persists_gender_and_leaves_legacy_column_n
         "code_word": "Sunflower",
         "gclid": "minimal-test-gclid",
         "submitted_url": "https://protect-mortgage.com/",
+        "consent": True,
         "consent_text": "BFG consent test",
-        "trustedform_cert_url": "",
+        "trustedform_cert_url": "https://cert.trustedform.com/generic-certificate",
         "trustedform_diagnostic": "resolved",
     }
     resp = client.post("/submit-mortgage-protection", json=payload)
@@ -170,15 +173,14 @@ def test_thank_you_visible_copy_and_existing_conversion_mechanism():
     assert "John M. Brown" in html
     assert "BFG Insurance Solutions" in html
     assert "Thank you. We received your request for a free quote!" in html
-    assert "Within the next 24 hours" in html
-    assert "licensed agent" in html
+    assert "Before any contact" in html
+    assert "state and license controls" in html
     assert "619-432-2727" in html
     assert "Code Word" in html
-    assert "call or text John directly at that number" in html
+    assert "call or text John directly at 619-432-2727" in html
     assert "Submitting this request does not guarantee eligibility, approval, price, policy issuance, or coverage." in html
     assert "will call you shortly" not in html
     assert "Joshua Brown" not in html
-    # Current conversion path is deliberately preserved in this minimal batch.
-    assert "fetch('/claim-conversion'" in html
-    assert "'send_to': 'AW-18193879267/jLl8CIfe39wcEOOhwuND'" in html
-    assert "'transaction_id': result.body.transaction_id" in html
+    assert "fetch('/claim-conversion'" not in html
+    assert "send_to" not in html
+    assert "gtag(" not in html

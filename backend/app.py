@@ -5,10 +5,12 @@ from zoneinfo import ZoneInfo
 from db import get_connection
 import hashlib
 import html
+import json
 import os
 import re
 import secrets
 import requests
+from urllib.parse import urlsplit
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -23,21 +25,21 @@ app.secret_key = os.getenv("SECRET_KEY", secrets.token_hex(32))
 # (protect-mortgage.com — see CLAUDE.md / .claude/rules)
 # ─────────────────────────────────────────────
 
-# ZIP allowlist — California only per CLAUDE.md §3. Add ranges here to add
-# states; this is the config change, not a code change, and still requires
-# written confirmation from John before enabling another state.
-MP_ALLOWED_ZIP_RANGES = [(90001, 96162)]
-
 MP_CODE_WORD_BLOCKLIST = {"password", "code", "codeword", "test", "none", "na"}
 MP_CODE_WORD_PROFANITY_BLOCKLIST = {"fuck", "shit", "bitch", "asshole", "cunt", "nigger", "faggot"}
-
-
-def mp_zip_allowed(zip_code):
-    try:
-        z = int(zip_code)
-    except (TypeError, ValueError):
-        return False
-    return any(lo <= z <= hi for lo, hi in MP_ALLOWED_ZIP_RANGES)
+MP_MORTGAGE_BALANCE_VALUES = {
+    "under_100k", "100k_249999", "250k_499999", "500k_749999", "750k_plus"
+}
+MP_CONSENT_VERSION = "1.1"
+MP_CONSENT_TEXT = (
+    "I authorize BFG Insurance Solutions, a DBA of Centaurus Enterprises LLC, "
+    "to contact me at the phone number and email address I provided about my "
+    "request for mortgage protection insurance information and available insurance "
+    "options by live-agent telephone call, SMS/text message, and email. Message and "
+    "data rates may apply to texts. I understand that this consent is not a condition "
+    "of purchasing any insurance product or service."
+)
+MP_EVIDENCE_RETRY_DELAYS_MINUTES = (5, 15, 60, 360, 1440)
 
 
 def mp_validate_code_word(raw, first_name, last_name):
@@ -58,18 +60,41 @@ def mp_validate_code_word(raw, first_name, last_name):
 TRUSTEDFORM_API_KEY = os.getenv("TRUSTEDFORM_API_KEY")
 
 
+def mp_trustedform_url_is_allowed(cert_url):
+    """Allow only the exact HTTPS TrustedForm certificate origin."""
+    try:
+        parsed = urlsplit(cert_url or "")
+    except (TypeError, ValueError):
+        return False
+    return (
+        parsed.scheme == "https"
+        and parsed.hostname == "cert.trustedform.com"
+        and parsed.port is None
+        and not parsed.username
+        and not parsed.password
+        and bool(parsed.path.strip("/"))
+    )
+
+
 def mp_retain_trustedform_certificate(cert_url, email, phone):
-    """POSTs to the TrustedForm certificate URL to retain/claim it via the
-    ActiveProspect Retain API. Never raises -- a TrustedForm failure must
-    never block a lead from saving. Returns (retained: bool, detail: dict)
-    where detail always includes a 'reason' key on failure and the raw
-    status_code/body on any HTTP response received."""
+    """Run TrustedForm v4 retain + mandatory lead match.
+
+    Returns a structured result and never raises. HTTP 200 is not sufficient:
+    acceptance requires overall success, a retain result, and a successful
+    lead match. Failure and error remain distinct for review/retry handling.
+    """
     if not TRUSTEDFORM_API_KEY:
-        return False, {"reason": "TRUSTEDFORM_API_KEY not configured"}
+        return {"accepted": False, "retained": False, "match_success": False,
+                "outcome": "error", "reason": "TRUSTEDFORM_API_KEY not configured",
+                "retryable": False}
     if not cert_url:
-        return False, {"reason": "no certificate URL provided"}
-    if not cert_url.startswith("https://cert.trustedform.com/"):
-        return False, {"reason": "certificate URL is not a trustedform.com cert URL"}
+        return {"accepted": False, "retained": False, "match_success": False,
+                "outcome": "error", "reason": "no certificate URL provided",
+                "retryable": False}
+    if not mp_trustedform_url_is_allowed(cert_url):
+        return {"accepted": False, "retained": False, "match_success": False,
+                "outcome": "error", "reason": "certificate URL origin is not allowed",
+                "retryable": False}
 
     try:
         resp = requests.post(
@@ -86,9 +111,44 @@ def mp_retain_trustedform_certificate(cert_url, email, phone):
             },
             timeout=10,
         )
-        return resp.status_code == 200, {"status_code": resp.status_code, "body": resp.text[:2000]}
+        try:
+            body = resp.json()
+        except ValueError:
+            body = None
+
+        if not isinstance(body, dict):
+            return {"accepted": False, "retained": False, "match_success": False,
+                    "outcome": "error", "reason": "malformed TrustedForm response",
+                    "retryable": resp.status_code >= 500, "status_code": resp.status_code}
+
+        outcome = body.get("outcome")
+        retain_results = (body.get("retain") or {}).get("results")
+        match_result = (body.get("match_lead") or {}).get("result")
+        retained = isinstance(retain_results, dict) and bool(retain_results)
+        match_success = isinstance(match_result, dict) and match_result.get("success") is True
+        accepted = resp.status_code == 200 and outcome == "success" and retained and match_success
+        reason = body.get("reason")
+        if not accepted and not reason:
+            if outcome == "failure":
+                reason = "TrustedForm evidence did not match"
+            elif outcome == "success" and not retained:
+                reason = "TrustedForm retention proof missing"
+            elif outcome == "success" and not match_success:
+                reason = "TrustedForm lead match unsuccessful"
+            else:
+                reason = "TrustedForm request failed"
+        return {
+            "accepted": accepted,
+            "retained": retained,
+            "match_success": match_success,
+            "outcome": outcome or "error",
+            "reason": reason,
+            "retryable": outcome == "error" or resp.status_code in (408, 425, 429) or resp.status_code >= 500,
+            "status_code": resp.status_code,
+        }
     except requests.RequestException as e:
-        return False, {"reason": str(e)}
+        return {"accepted": False, "retained": False, "match_success": False,
+                "outcome": "error", "reason": type(e).__name__, "retryable": True}
 
 
 # ─────────────────────────────────────────────
@@ -402,10 +462,6 @@ def send_mortgage_protection_lead_notification(lead: dict):
         "250k_499999": "$250,000–$499,999",
         "500k_749999": "$500,000–$749,999",
         "750k_plus": "$750,000 or more",
-        # Historical values remain readable for existing stored leads.
-        "100k_250k": "$100,000–$249,999",
-        "250k_500k": "$250,000–$499,999",
-        "500k_750k": "$500,000–$749,999",
     }
     raw_mortgage_balance = lead.get("mortgage_balance") or "—"
     mortgage_balance = html.escape(
@@ -416,7 +472,16 @@ def send_mortgage_protection_lead_notification(lead: dict):
     subject_first = re.sub(r"[\x00-\x1f\x7f]+", " ", str(lead.get("first_name", ""))).strip()
     subject_last = re.sub(r"[\x00-\x1f\x7f]+", " ", str(lead.get("last_name", ""))).strip()
     subject_name = " ".join(part for part in (subject_first, subject_last) if part)
-    subject = f"New Lead: {subject_name} — Mortgage Protection"
+    subject = f"New Lead: {subject_name}"
+
+    code_word_block = ""
+    if code_word:
+        code_word_block = f"""
+        <div style="background:#fff4e6;border:1px solid #f0c896;border-radius:6px;padding:0.75rem 1rem;margin-bottom:1.5rem">
+          <p style="font-size:0.7rem;color:#9a5a1a;margin:0 0 0.15rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase">Code Word</p>
+          <p style="font-size:1.35rem;color:#7a3d00;margin:0;font-weight:800">{code_word}</p>
+        </div>
+        """
 
     html_body = f"""
     <div style="font-family:'DM Sans',Arial,sans-serif;max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #e8d5c0;border-radius:8px;overflow:hidden">
@@ -428,11 +493,11 @@ def send_mortgage_protection_lead_notification(lead: dict):
       </div>
       <div style="padding:1.5rem">
         <h2 style="font-size:1.1rem;color:#4B2E2B;margin:0 0 1.25rem">{first} {last}</h2>
-
-        <div style="background:#fff4e6;border:1px solid #f0c896;border-radius:6px;padding:0.75rem 1rem;margin-bottom:1.5rem">
-          <p style="font-size:0.7rem;color:#9a5a1a;margin:0 0 0.15rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase">Code Word</p>
-          <p style="font-size:1.35rem;color:#7a3d00;margin:0;font-weight:800">{code_word}</p>
+        <div style="background:#fdecea;border:1px solid #b42318;border-radius:6px;padding:0.75rem 1rem;margin-bottom:1.5rem;color:#7a271a;font-weight:800">
+          DO NOT CONTACT YET — STATE / LICENSE SCREENING PENDING
         </div>
+
+        {code_word_block}
 
         <p style="font-size:0.7rem;color:#9a7a6a;margin:0 0 0.4rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase">Contact</p>
         <table style="width:100%;border-collapse:collapse;font-size:0.875rem;margin-bottom:1.25rem">
@@ -667,7 +732,8 @@ def dashboard():
         cur  = conn.cursor()
         cur.execute("""
             SELECT id, submitted_at, product_type, first_name, last_name,
-                   state, contact_preference, status
+                   state, contact_preference, status,
+                   lead_processing_status, contact_status
             FROM leads
             ORDER BY submitted_at DESC
         """)
@@ -677,7 +743,11 @@ def dashboard():
     except Exception as e:
         leads = []
 
-    return render_template("dashboard.html", agent=agent, leads=leads)
+    evidence_hold_count = sum(1 for lead in leads if len(lead) > 8 and lead[8] == "EVIDENCE_HOLD")
+    return render_template(
+        "dashboard.html", agent=agent, leads=leads,
+        evidence_hold_count=evidence_hold_count,
+    )
 
 
 # ─────────────────────────────────────────────
@@ -898,6 +968,9 @@ def export_leads():
         "major_conditions", "minor_conditions", "medications",
         "contact_preference", "best_time", "hobby",
         "code_word", "trustedform_cert_url", "trustedform_retained", "trustedform_retained_at",
+        "lead_processing_status", "evidence_hold_reason", "evidence_retry_count",
+        "evidence_last_attempt_at", "evidence_next_retry_at", "contact_status",
+        "state_derivation_status", "consent_affirmed",
         "assigned_agent", "status", "notes"
     ]
     safe_columns = [c for c in columns if c in all_columns]
@@ -1413,6 +1486,7 @@ def run_migration_init():
                 wbraid VARCHAR(255),
                 consent_version VARCHAR(10),
                 consent_text TEXT,
+                consent_affirmed BOOLEAN DEFAULT FALSE,
                 trustedform_cert_url VARCHAR(500),
                 submitted_url TEXT,
                 ip_address VARCHAR(64),
@@ -1422,6 +1496,13 @@ def run_migration_init():
                 trustedform_retained BOOLEAN,
                 trustedform_retained_at TIMESTAMPTZ,
                 trustedform_retain_response TEXT,
+                lead_processing_status VARCHAR(30),
+                evidence_hold_reason VARCHAR(255),
+                evidence_retry_count INTEGER DEFAULT 0,
+                evidence_last_attempt_at TIMESTAMPTZ,
+                evidence_next_retry_at TIMESTAMPTZ,
+                contact_status VARCHAR(50),
+                state_derivation_status VARCHAR(50),
                 conversion_token VARCHAR(64),
                 conversion_token_expires_at TIMESTAMPTZ,
                 conversion_claimed_at TIMESTAMPTZ
@@ -1534,6 +1615,113 @@ def submit():
 # Client-side validation is UX only — everything below is re-validated here.
 # ─────────────────────────────────────────────
 
+def mp_next_evidence_retry_at(retry_count, now):
+    if retry_count > len(MP_EVIDENCE_RETRY_DELAYS_MINUTES):
+        return None
+    return now + timedelta(minutes=MP_EVIDENCE_RETRY_DELAYS_MINUTES[retry_count - 1])
+
+
+def mp_process_evidence(lead_id):
+    """Idempotently evaluate a held lead and promote it only on verified evidence."""
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT id, first_name, last_name, mobile_phone, email, zip, age, gender,
+               tobacco, mortgage_balance, code_word, submitted_at,
+               trustedform_cert_url, lead_processing_status, conversion_token,
+               evidence_retry_count
+        FROM leads WHERE id = %s
+    """, (lead_id,))
+    lead = cur.fetchone()
+    cur.close()
+    conn.close()
+    if not lead:
+        return {"status": "error", "message": "Lead not found."}
+
+    (lead_id, first_name, last_name, mobile_phone, email, zip_code, age, gender,
+     tobacco, mortgage_balance, code_word, submitted_at, cert_url,
+     processing_status, existing_token, retry_count) = lead
+    if processing_status == "INTAKE_ACCEPTED":
+        return {"status": "accepted", "conversion_token": existing_token}
+
+    detail = mp_retain_trustedform_certificate(cert_url, email, mobile_phone)
+    now = datetime.now(timezone.utc)
+    safe_detail = json.dumps(detail, sort_keys=True)[:2000]
+
+    if detail.get("accepted"):
+        candidate_token = existing_token or secrets.token_urlsafe(24)
+        expires_at = now + timedelta(hours=24)
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("""
+            UPDATE leads SET
+                trustedform_retained = TRUE,
+                trustedform_retained_at = %(now)s,
+                trustedform_retain_response = %(detail)s,
+                lead_processing_status = 'INTAKE_ACCEPTED',
+                evidence_hold_reason = NULL,
+                evidence_last_attempt_at = %(now)s,
+                evidence_next_retry_at = NULL,
+                contact_status = 'STATE_LICENSE_SCREENING_PENDING',
+                state_derivation_status = 'PENDING_AUTHORITATIVE_DERIVATION',
+                lead_source_bucket = 'approved',
+                conversion_token = COALESCE(conversion_token, %(token)s),
+                conversion_token_expires_at = COALESCE(conversion_token_expires_at, %(expires_at)s)
+            WHERE id = %(lead_id)s
+              AND lead_processing_status = 'EVIDENCE_HOLD'
+            RETURNING conversion_token
+        """, {"now": now, "detail": safe_detail, "token": candidate_token,
+              "expires_at": expires_at, "lead_id": lead_id})
+        promoted = cur.fetchone()
+        conn.commit()
+        cur.close()
+        conn.close()
+        if not promoted:
+            return mp_process_evidence(lead_id)
+
+        submitted_at_utc = submitted_at
+        if submitted_at_utc.tzinfo is None:
+            submitted_at_utc = submitted_at_utc.replace(tzinfo=timezone.utc)
+        phone_digits = re.sub(r"\D", "", mobile_phone or "")[-10:]
+        phone_display = "({}) {}-{}".format(phone_digits[:3], phone_digits[3:6], phone_digits[6:])
+        send_mortgage_protection_lead_notification({
+            "lead_id": lead_id, "first_name": first_name, "last_name": last_name,
+            "code_word": code_word or "", "phone_display": phone_display,
+            "email": email, "zip": zip_code, "age": age, "sex": gender,
+            "tobacco_use": "yes" if tobacco else "no",
+            "mortgage_balance": mortgage_balance,
+            "submitted_at_utc": submitted_at_utc,
+        })
+        return {"status": "accepted", "conversion_token": promoted[0]}
+
+    retry_count = (retry_count or 0) + 1
+    next_retry = mp_next_evidence_retry_at(retry_count, now) if detail.get("retryable") else None
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        UPDATE leads SET
+            trustedform_retained = %(retained)s,
+            trustedform_retained_at = CASE WHEN %(retained)s THEN %(now)s ELSE NULL END,
+            trustedform_retain_response = %(detail)s,
+            lead_processing_status = 'EVIDENCE_HOLD',
+            evidence_hold_reason = %(reason)s,
+            evidence_retry_count = %(retry_count)s,
+            evidence_last_attempt_at = %(now)s,
+            evidence_next_retry_at = %(next_retry)s,
+            contact_status = 'DO_NOT_CONTACT',
+            lead_source_bucket = 'outside',
+            conversion_token = NULL,
+            conversion_token_expires_at = NULL
+        WHERE id = %(lead_id)s
+    """, {"retained": bool(detail.get("retained")), "now": now, "detail": safe_detail,
+          "reason": str(detail.get("reason") or "TrustedForm evidence unresolved")[:255],
+          "retry_count": retry_count, "next_retry": next_retry, "lead_id": lead_id})
+    conn.commit()
+    cur.close()
+    conn.close()
+    return {"status": "hold", "retryable": bool(next_retry)}
+
+
 @app.route("/submit-mortgage-protection", methods=["POST"])
 def submit_mortgage_protection():
     data = request.get_json(silent=True)
@@ -1542,7 +1730,7 @@ def submit_mortgage_protection():
 
     required_fields = [
         "first_name", "last_name", "phone", "email", "zip",
-        "age", "sex", "mortgage_balance", "tobacco_use", "code_word",
+        "age", "sex", "tobacco_use",
     ]
     for field in required_fields:
         if not str(data.get(field, "")).strip():
@@ -1575,27 +1763,24 @@ def submit_mortgage_protection():
     if data.get("tobacco_use") not in ("yes", "no"):
         return jsonify({"status": "error", "field": "tobacco_use", "message": "Please answer this question."}), 400
 
-    code_word_error = mp_validate_code_word(
-        data.get("code_word", ""), data.get("first_name", ""), data.get("last_name", "")
-    )
-    if code_word_error:
-        return jsonify({"status": "error", "field": "code_word", "message": code_word_error}), 400
+    mortgage_balance = str(data.get("mortgage_balance") or "").strip()
+    if mortgage_balance and mortgage_balance not in MP_MORTGAGE_BALANCE_VALUES:
+        return jsonify({"status": "error", "field": "mortgage_balance",
+                        "message": "Select a valid mortgage-balance range."}), 400
 
-    # Preserve the currently authorized service-area behavior. Home Ownership
-    # is no longer collected or used as an eligibility condition.
-    if not mp_zip_allowed(zip_code):
-        return jsonify({
-            "status": "declined",
-            "message": "Thanks for your interest — this program is not yet available in your area."
-        })
+    code_word = str(data.get("code_word") or "").strip()
+    if code_word:
+        code_word_error = mp_validate_code_word(
+            code_word, data.get("first_name", ""), data.get("last_name", "")
+        )
+        if code_word_error:
+            return jsonify({"status": "error", "field": "code_word", "message": code_word_error}), 400
+
+    if data.get("consent") is not True:
+        return jsonify({"status": "error", "field": "consent",
+                        "message": "Affirmative consent is required."}), 400
 
     now = datetime.now(timezone.utc)
-
-    # Minted only on this success path -- a declined or failed submission
-    # never receives a conversion token. Existing conversion plumbing remains
-    # otherwise unchanged.
-    conversion_token = secrets.token_urlsafe(24)
-    conversion_token_expires_at = now + timedelta(hours=24)
 
     try:
         conn = get_connection()
@@ -1606,19 +1791,21 @@ def submit_mortgage_protection():
                 zip, age, gender, tobacco, mortgage_balance,
                 code_word, code_word_set_at, code_word_confirmed,
                 gclid, gbraid, wbraid,
-                consent_version, consent_text, trustedform_cert_url,
+                consent_version, consent_text, consent_affirmed, trustedform_cert_url,
                 submitted_url, ip_address, user_agent,
                 lead_source, lead_source_bucket,
-                conversion_token, conversion_token_expires_at
+                lead_processing_status, evidence_hold_reason, evidence_retry_count,
+                contact_status, state_derivation_status
             ) VALUES (
                 %(product_type)s, %(first_name)s, %(last_name)s, %(mobile_phone)s, %(email)s,
                 %(zip)s, %(age)s, %(gender)s, %(tobacco)s, %(mortgage_balance)s,
                 %(code_word)s, %(code_word_set_at)s, %(code_word_confirmed)s,
                 %(gclid)s, %(gbraid)s, %(wbraid)s,
-                %(consent_version)s, %(consent_text)s, %(trustedform_cert_url)s,
+                %(consent_version)s, %(consent_text)s, %(consent_affirmed)s, %(trustedform_cert_url)s,
                 %(submitted_url)s, %(ip_address)s, %(user_agent)s,
                 %(lead_source)s, %(lead_source_bucket)s,
-                %(conversion_token)s, %(conversion_token_expires_at)s
+                %(lead_processing_status)s, %(evidence_hold_reason)s, %(evidence_retry_count)s,
+                %(contact_status)s, %(state_derivation_status)s
             )
             RETURNING id
         """, {
@@ -1631,23 +1818,27 @@ def submit_mortgage_protection():
             "age":                  age,
             "gender":               data.get("sex"),
             "tobacco":              data.get("tobacco_use") == "yes",
-            "mortgage_balance":     data.get("mortgage_balance"),
-            "code_word":            data.get("code_word", "").strip(),
-            "code_word_set_at":     now,
-            "code_word_confirmed":  "pending",
+            "mortgage_balance":     mortgage_balance or None,
+            "code_word":            code_word or None,
+            "code_word_set_at":     now if code_word else None,
+            "code_word_confirmed":  "pending" if code_word else None,
             "gclid":                data.get("gclid") or None,
             "gbraid":               data.get("gbraid") or None,
             "wbraid":               data.get("wbraid") or None,
-            "consent_version":      "1.0",
-            "consent_text":         data.get("consent_text", ""),
+            "consent_version":      MP_CONSENT_VERSION,
+            "consent_text":         MP_CONSENT_TEXT,
+            "consent_affirmed":     True,
             "trustedform_cert_url": data.get("trustedform_cert_url") or None,
             "submitted_url":        data.get("submitted_url", ""),
             "ip_address":           request.headers.get("X-Forwarded-For", request.remote_addr or ""),
             "user_agent":           request.headers.get("User-Agent", ""),
             "lead_source":          "protect-mortgage.com",
-            "lead_source_bucket":   "approved",
-            "conversion_token":            conversion_token,
-            "conversion_token_expires_at": conversion_token_expires_at,
+            "lead_source_bucket":   "outside",
+            "lead_processing_status": "EVIDENCE_HOLD",
+            "evidence_hold_reason": "TRUSTEDFORM_PENDING",
+            "evidence_retry_count": 0,
+            "contact_status":       "DO_NOT_CONTACT",
+            "state_derivation_status": "PENDING_AUTHORITATIVE_DERIVATION",
         })
 
         lead_id = cur.fetchone()[0]
@@ -1655,55 +1846,27 @@ def submit_mortgage_protection():
         cur.close()
         conn.close()
 
-        phone_display = "({}) {}-{}".format(
-            phone_digits[-10:-7], phone_digits[-7:-4], phone_digits[-4:]
-        )
-        send_mortgage_protection_lead_notification({
-            "lead_id":          lead_id,
-            "first_name":       data.get("first_name", "").strip(),
-            "last_name":        data.get("last_name", "").strip(),
-            "code_word":        data.get("code_word", "").strip(),
-            "phone_display":    phone_display,
-            "email":            data.get("email", "").strip(),
-            "zip":              zip_code,
-            "age":              age,
-            "sex":              data.get("sex"),
-            "tobacco_use":      data.get("tobacco_use"),
-            "mortgage_balance": data.get("mortgage_balance"),
-            "submitted_at_utc": now,
-        })
-
-        # Retain/verify the TrustedForm certificate. The lead is already
-        # saved at this point -- a failure here must never surface as an
-        # error to the consumer or affect the response.
-        try:
-            mobile_phone = "+1" + phone_digits if len(phone_digits) == 10 else "+" + phone_digits
-            retained, detail = mp_retain_trustedform_certificate(
-                data.get("trustedform_cert_url") or None,
-                data.get("email", "").strip(),
-                mobile_phone,
-            )
-            if isinstance(detail, dict):
-                detail = {**detail, "client_diagnostic": data.get("trustedform_diagnostic") or None}
-            retain_conn = get_connection()
-            retain_cur  = retain_conn.cursor()
-            retain_cur.execute("""
-                UPDATE leads SET
-                    trustedform_retained = %s,
-                    trustedform_retained_at = %s,
-                    trustedform_retain_response = %s
-                WHERE id = %s
-            """, (retained, datetime.now(timezone.utc), str(detail)[:2000], lead_id))
-            retain_conn.commit()
-            retain_cur.close()
-            retain_conn.close()
-        except Exception:
-            pass
-
-        return jsonify({"status": "ok", "conversion_token": conversion_token})
+        evidence_result = mp_process_evidence(lead_id)
+        if evidence_result.get("status") == "accepted":
+            return jsonify({"status": "ok", "conversion_token": evidence_result["conversion_token"]})
+        return jsonify({
+            "status": "received",
+            "message": "Your request was received and is pending evidence review."
+        }), 202
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/lead/<int:lead_id>/retry-evidence", methods=["POST"])
+@admin_required
+def retry_mortgage_protection_evidence(lead_id):
+    result = mp_process_evidence(lead_id)
+    if result.get("status") == "error":
+        return jsonify(result), 404
+    if result.get("status") == "hold":
+        return jsonify({"status": "hold", "message": "Evidence remains unresolved."}), 202
+    return jsonify({"status": "ok", "conversion_token": result.get("conversion_token")})
 
 
 @app.route("/claim-conversion", methods=["POST"])
@@ -1711,13 +1874,12 @@ def claim_conversion():
     """Redeems a mortgage-protection conversion token for a stable
     transaction_id, safely retryable.
 
-    The thank-you page calls this before firing the Google Ads conversion
-    event. A token is only ever valid if it was minted by a successful
-    /submit-mortgage-protection call (declines and errors never mint one)
-    and hasn't expired -- arbitrary and expired tokens are always rejected,
-    even if the token was claimed before it expired.
+    This endpoint is inactive preparation for the future WS50 measurement
+    adapter; the current thank-you page does not call it or fire advertising
+    tags. A token is valid only when evidence-gated intake acceptance minted
+    it and it has not expired.
 
-    A *valid, unexpired* token is intentionally NOT single-use: the first
+    A valid, unexpired token is intentionally not single-use: the first
     claim and every subsequent claim of the same token both return the
     same transaction_id. This is what makes client-side retry safe -- if
     the browser loses the response, closes, or the gtag call fails right
@@ -1751,6 +1913,7 @@ def claim_conversion():
             SET conversion_claimed_at = COALESCE(conversion_claimed_at, %(now)s)
             WHERE conversion_token = %(token)s
               AND conversion_token_expires_at > %(now)s
+              AND lead_processing_status = 'INTAKE_ACCEPTED'
             RETURNING id
         """, {"now": now, "token": token})
         row = cur.fetchone()

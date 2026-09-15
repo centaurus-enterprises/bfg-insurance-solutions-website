@@ -70,7 +70,7 @@ const elements = {
   gclid: element(), gbraid: element(), wbraid: element(), submitted_url: element(),
   phone: element('(555) 123-4567'), first_name: element(config.invalidForm ? '' : 'Jane'),
   last_name: element('Doe'), email: element('jane@example.com'), zip: element('90210'),
-  age: element('35'), sex: element('female'), mortgage_balance: element('100000-200000'),
+  age: element('35'), sex: element('female'), mortgage_balance: element('100k_249999'),
   code_word: element('sunflower'), 'form-error': element(), 'decline-message': element(),
   'homeowner-row': element(), 'tobacco-row': element(), 'consent-label': element(),
   'consent-check': element(), 'submit-btn': element(), 'mp-form': element()
@@ -106,8 +106,8 @@ const fetch = function() {
   if (config.submitOutcome === 'network') return Promise.reject(new Error('network'));
   const body = config.submitOutcome === 'ok'
     ? { status: 'ok', conversion_token: 'server-token' }
-    : config.submitOutcome === 'declined'
-      ? { status: 'declined', message: 'Declined' }
+    : config.submitOutcome === 'received'
+      ? { status: 'received', message: 'Pending evidence review' }
       : { status: 'error', message: 'Retry' };
   return Promise.resolve({ ok: body.status !== 'error', json: () => Promise.resolve(body) });
 };
@@ -267,15 +267,15 @@ def test_successful_response_clears_stored_attribution_before_redirect():
     assert result["locationHref"] == "/thank-you?ct=server-token"
 
 
-def test_declined_response_clears_stored_attribution():
+def test_evidence_hold_response_clears_stored_attribution_and_routes_to_review():
     result = _run_browser_harness(
-        href="https://protect-mortgage.com/?gclid=declined",
-        search="?gclid=declined",
-        submitOutcome="declined",
+        href="https://protect-mortgage.com/?gclid=review",
+        search="?gclid=review",
+        submitOutcome="received",
     )
 
     assert result["storage"] == {}
-    assert result["locationHref"] == "https://protect-mortgage.com/?gclid=declined"
+    assert result["locationHref"] == "/thank-you?status=review"
 
 
 def test_validation_failure_does_not_clear_stored_attribution():

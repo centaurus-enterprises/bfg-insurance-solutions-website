@@ -5,14 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mortgage Protection Quote Request | BFG Insurance Solutions</title>
 
-  <!-- Existing Google tag preserved unchanged. -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18193879267"></script>
-  <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'AW-18193879267');
-  </script>
+  <!-- Measurement is intentionally disabled until WS50 defines and verifies
+       the new BFG-owned conversion architecture. -->
 
   <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
@@ -293,9 +287,9 @@
           <input type="text" id="zip" name="zip" placeholder="90210" inputmode="numeric" maxlength="5" autocomplete="postal-code" required/>
         </div>
         <div class="field-group">
-          <label class="field-label" for="mortgage_balance">Approximate Mortgage Balance <span style="color:var(--error)">*</span></label>
-          <select id="mortgage_balance" name="mortgage_balance" required>
-            <option value="" disabled selected>Select one</option>
+          <label class="field-label" for="mortgage_balance">Approximate Mortgage Balance <span class="help">(optional)</span></label>
+          <select id="mortgage_balance" name="mortgage_balance">
+            <option value="" selected>Prefer not to say</option>
             <option value="under_100k">Under $100,000</option>
             <option value="100k_249999">$100,000&ndash;$249,999</option>
             <option value="250k_499999">$250,000&ndash;$499,999</option>
@@ -321,10 +315,10 @@
 
       <div class="field-row">
         <div class="field-group full">
-          <label class="field-label" for="code_word">Code Word <span style="color:var(--error)">*</span></label>
+          <label class="field-label" for="code_word">Code Word <span class="help">(optional)</span></label>
           <input type="text" id="code_word" name="code_word" placeholder="e.g. Sunshine"
                  autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="20"
-                 data-tf-sensitive="true" required/>
+                 data-tf-sensitive="true"/>
           <p class="help">Choose a word your BFG Insurance Solutions agent will say first when contacting you so you can verify the call is genuinely from BFG. Use 3&ndash;20 letters.</p>
         </div>
       </div>
@@ -481,7 +475,7 @@
       }
 
       req('first_name'); req('last_name'); req('phone'); req('email');
-      req('zip'); req('age'); req('sex'); req('mortgage_balance'); req('code_word');
+      req('zip'); req('age'); req('sex');
 
       if (!/^\(\d{3}\) \d{3}-\d{4}$/.test(document.getElementById('phone').value.trim())) {
         document.getElementById('phone').classList.add('error'); ok = false;
@@ -546,6 +540,7 @@
         gbraid: document.getElementById('gbraid').value,
         wbraid: document.getElementById('wbraid').value,
         submitted_url: document.getElementById('submitted_url').value,
+        consent: consentCheck.checked,
         consent_text: document.querySelector('.consent-box').innerText,
         trustedform_cert_url: certResult.value,
         trustedform_diagnostic: certResult.diagnostic
@@ -561,12 +556,9 @@
         if (result.body.status === 'ok') {
           clearMpClickAttribution();
           window.location.href = '/thank-you?ct=' + encodeURIComponent(result.body.conversion_token || '');
-        } else if (result.body.status === 'declined') {
+        } else if (result.body.status === 'received') {
           clearMpClickAttribution();
-          document.getElementById('mp-form').style.display = 'none';
-          var declineEl = document.getElementById('decline-message');
-          declineEl.textContent = result.body.message || 'BFG Insurance Solutions is not currently accepting online mortgage protection requests in your area.';
-          declineEl.classList.add('visible');
+          window.location.href = '/thank-you?status=review';
         } else {
           btn.disabled = false;
           btn.textContent = 'Request My Mortgage Protection Quote';

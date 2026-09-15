@@ -23,11 +23,9 @@ os.environ.setdefault("DB_PASSWORD", "bfg_test")
 # local shell) redirect tests at a live database.
 os.environ.pop("DATABASE_URL", None)
 
-# These are intentionally left unset: with no SendGrid/TrustedForm
-# credentials configured, both send_lead_notification() and
-# mp_retain_trustedform_certificate() take their documented no-network-call
-# early-return paths, so tests exercise real code without needing live
-# third-party credentials or mocks.
+# Never use live SendGrid/TrustedForm credentials in tests. The client fixture
+# supplies a deterministic generic TrustedForm success result; focused parser
+# tests mock the HTTP response directly.
 os.environ.pop("SENDGRID_API_KEY", None)
 os.environ.pop("MAIL_SENDER", None)
 os.environ.pop("TRUSTEDFORM_API_KEY", None)
@@ -38,6 +36,7 @@ REPO_ROOT = os.path.dirname(BACKEND_DIR)
 sys.path.insert(0, BACKEND_DIR)
 
 import pytest  # noqa: E402
+import app as app_module  # noqa: E402
 from app import app as flask_app  # noqa: E402
 from db import get_connection  # noqa: E402
 from migrate_conversion_token import run_migration as run_conversion_token_migration  # noqa: E402
@@ -73,7 +72,20 @@ def _clean_leads():
 
 
 @pytest.fixture
-def client():
+def client(monkeypatch):
+    monkeypatch.setattr(
+        app_module,
+        "mp_retain_trustedform_certificate",
+        lambda cert_url, email, phone: {
+            "accepted": True,
+            "retained": True,
+            "match_success": True,
+            "outcome": "success",
+            "reason": None,
+            "retryable": False,
+            "status_code": 200,
+        },
+    )
     flask_app.testing = True
     return flask_app.test_client()
 
