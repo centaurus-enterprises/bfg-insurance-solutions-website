@@ -10,6 +10,8 @@ from db import get_connection
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 FORM_PATH = os.path.join(REPO_ROOT, "protect_mortgage.html")
 THANK_YOU_PATH = os.path.join(REPO_ROOT, "mortgage_thank_you.html")
+PRIVACY_PATH = os.path.join(REPO_ROOT, "privacy.html")
+TERMS_PATH = os.path.join(REPO_ROOT, "terms.html")
 
 
 def read_form():
@@ -20,6 +22,14 @@ def read_form():
 def read_thank_you():
     with open(THANK_YOU_PATH, "r", encoding="utf-8") as f:
         return f.read()
+
+
+def read_legal_pages():
+    with open(PRIVACY_PATH, "r", encoding="utf-8") as privacy_file:
+        privacy = privacy_file.read()
+    with open(TERMS_PATH, "r", encoding="utf-8") as terms_file:
+        terms = terms_file.read()
+    return privacy, terms
 
 
 def test_exact_headline_cta_and_primary_branding():
@@ -176,3 +186,30 @@ def test_thank_you_visible_copy_and_existing_conversion_mechanism():
     assert "fetch('/claim-conversion'" not in html
     assert "send_to" not in html
     assert "gtag(" not in html
+
+
+def test_privacy_and_terms_use_entity_first_bfg_disclosure():
+    privacy, terms = read_legal_pages()
+    for html in (privacy, terms):
+        assert "BFG Insurance Solutions" in html
+        assert "Centaurus Enterprises LLC" in html
+        assert "California Organization Producer License #6020392" in html
+        assert "john.brown@bfginsurancesolutions.com" in html
+
+
+def test_privacy_and_terms_contain_no_personal_era_identity_or_contact_details():
+    privacy, terms = read_legal_pages()
+    combined = privacy + terms
+    for removed in (
+        "John M. Brown",
+        "Joshua Brown",
+        "Joshua S. Brown",
+        "NPN ",
+        "CA Lic. #4374779",
+        "CA Lic. #4509549",
+        "537 Linda Ln",
+        "john.brown@centaurusenterprises.com",
+        "(619) 905-7488",
+        "619-432-2727",
+    ):
+        assert removed not in combined
