@@ -441,21 +441,11 @@
   </div>
 
   <script>
-    // ── CALENDLY URLS ──────────────────────────────────────────
-    var JOSH_PHONE = 'https://calendly.com/josh-thebrownfinancialgroup/agent-phone-call-josh';
-    var JOSH_ZOOM  = 'https://calendly.com/josh-thebrownfinancialgroup/agent-zoom-meeting-josh';
-    var JOHN_PHONE = 'https://calendly.com/john-thebrownfinancialgroup/agent-phone-call-john';
-    var JOHN_ZOOM  = 'https://calendly.com/PLACEHOLDER_JOHN_ZOOM'; // update when ready
-
-    // ── STATE ROUTING ──────────────────────────────────────────
-    var clientState = decodeURIComponent(new URLSearchParams(window.location.search).get('state') || '');
-    var isCA        = clientState.toLowerCase() === 'california';
-
-    var phoneUrl = isCA ? JOSH_PHONE : JOHN_PHONE;
-    var zoomUrl  = isCA ? JOSH_ZOOM  : JOHN_ZOOM;
-
-    document.getElementById('link-phone').href = phoneUrl;
-    document.getElementById('link-zoom').href  = zoomUrl;
+    // Historical agent-specific scheduling links and ZIP/state routing are
+    // intentionally disabled. Current BFG scheduling remains unconfigured.
+    var BFG_CONTACT_URL = 'mailto:john.brown@bfginsurancesolutions.com';
+    document.getElementById('link-phone').href = BFG_CONTACT_URL;
+    document.getElementById('link-zoom').href  = BFG_CONTACT_URL;
 
     // ── STATE TRANSITIONS ─────────────────────────────────────
     function showChoice() {

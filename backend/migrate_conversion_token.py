@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 """
-Idempotent deploy-time migration: adds the conversion-token columns needed
-for server-backed exactly-once Google Ads conversion authorization on the
-mortgage-protection funnel (conversion_token, conversion_token_expires_at,
-conversion_claimed_at, and the partial unique index on conversion_token).
+Idempotent deploy-time migration for Mortgage Protection intake state,
+evidence holds, and server-backed conversion authorization.
 
 This intentionally replaces an earlier draft of this change that exposed
 the same ALTER TABLE statements as a public HTTP route
@@ -35,11 +33,24 @@ import sys
 from db import get_connection
 
 STATEMENTS = [
+    "ALTER TABLE leads ADD COLUMN IF NOT EXISTS consent_affirmed BOOLEAN DEFAULT FALSE",
+    "ALTER TABLE leads ADD COLUMN IF NOT EXISTS submission_session_id VARCHAR(64)",
+    "ALTER TABLE leads ADD COLUMN IF NOT EXISTS privacy_notice_version VARCHAR(50)",
+    "ALTER TABLE leads ADD COLUMN IF NOT EXISTS terms_version VARCHAR(50)",
+    "ALTER TABLE leads ADD COLUMN IF NOT EXISTS lead_processing_status VARCHAR(30)",
+    "ALTER TABLE leads ADD COLUMN IF NOT EXISTS evidence_hold_reason VARCHAR(255)",
+    "ALTER TABLE leads ADD COLUMN IF NOT EXISTS evidence_retry_count INTEGER DEFAULT 0",
+    "ALTER TABLE leads ADD COLUMN IF NOT EXISTS evidence_last_attempt_at TIMESTAMPTZ",
+    "ALTER TABLE leads ADD COLUMN IF NOT EXISTS evidence_next_retry_at TIMESTAMPTZ",
+    "ALTER TABLE leads ADD COLUMN IF NOT EXISTS contact_status VARCHAR(50)",
+    "ALTER TABLE leads ADD COLUMN IF NOT EXISTS state_derivation_status VARCHAR(50)",
     "ALTER TABLE leads ADD COLUMN IF NOT EXISTS conversion_token VARCHAR(64)",
     "ALTER TABLE leads ADD COLUMN IF NOT EXISTS conversion_token_expires_at TIMESTAMPTZ",
     "ALTER TABLE leads ADD COLUMN IF NOT EXISTS conversion_claimed_at TIMESTAMPTZ",
     "CREATE UNIQUE INDEX IF NOT EXISTS idx_leads_conversion_token "
     "ON leads (conversion_token) WHERE conversion_token IS NOT NULL",
+    "CREATE UNIQUE INDEX IF NOT EXISTS idx_leads_submission_session_id "
+    "ON leads (submission_session_id) WHERE submission_session_id IS NOT NULL",
 ]
 
 
@@ -62,8 +73,8 @@ def main():
     except Exception as e:
         print(f"conversion-token migration failed: {e}", file=sys.stderr)
         return 1
-    print("OK: conversion_token, conversion_token_expires_at, "
-          "conversion_claimed_at columns and index present")
+    print("OK: intake-state, evidence-hold, contact-state, and conversion "
+          "authorization columns/index present")
     return 0
 
 

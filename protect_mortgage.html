@@ -3,274 +3,221 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mortgage Protection Quote Request</title>
+  <title>Mortgage Protection Quote Request | BFG Insurance Solutions</title>
 
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18193879267"></script>
-  <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'AW-18193879267');
-  </script>
+  <!-- Measurement is intentionally disabled until WS50 defines and verifies
+       the new BFG-owned conversion architecture. -->
 
   <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --espresso: #2C1A0E;
-      --cognac: #7B3F1E;
-      --saddle: #A0522D;
-      --parchment: #F5EFE6;
-      --parchment-dark: #EDE3D6;
-      --parchment-mid: #D9CCBA;
-      --white: #FFFFFF;
-      --text: #3A2A1A;
-      --text-light: #7A6A5A;
-      --error: #C0392B;
-      --success: #27AE60;
+      --navy: #1E3B63;
+      --navy-deep: #142A47;
+      --gold: #C49A49;
+      --gold-soft: #F3EAD7;
+      --off-white: #F7F6F1;
+      --surface: #FFFFFF;
+      --border: #D6DCE4;
+      --text: #243243;
+      --text-light: #5E6B79;
+      --error: #B42318;
       --radius: 10px;
     }
-
     body {
       font-family: 'DM Sans', sans-serif;
-      background: var(--parchment);
+      background: var(--off-white);
       color: var(--text);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
-
     .form-header {
       width: 100%;
-      background: var(--espresso);
-      padding: 0.9rem 1.5rem;
+      background: var(--surface);
+      padding: 1rem 1.5rem .85rem;
       text-align: center;
+      border-bottom: 3px solid var(--gold);
+      box-shadow: 0 2px 12px rgba(20,42,71,.06);
     }
-
-    .form-header .eyebrow {
-      color: var(--parchment);
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
+    .brand-logo {
+      display: block;
+      width: min(100%, 520px);
+      height: auto;
+      margin: 0 auto;
+    }
+    .eyebrow {
+      display: block;
+      margin-top: .4rem;
+      color: var(--navy);
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .12em;
       text-transform: uppercase;
     }
-
-    main.form-card {
-      width: 100%;
-      max-width: 560px;
-      padding: 1.75rem 1.25rem 3rem;
-    }
-
+    main.form-card { width: 100%; max-width: 680px; padding: 2rem 1.25rem 2.5rem; }
     .form-headline {
       font-family: 'Raleway', sans-serif;
-      font-size: 1.5rem;
+      font-size: 1.65rem;
       font-weight: 700;
-      color: var(--espresso);
-      line-height: 1.25;
-      margin-bottom: 0.4rem;
+      color: var(--navy-deep);
+      line-height: 1.2;
+      margin-bottom: 1.35rem;
+      text-align: center;
     }
-
-    .form-sub {
-      font-size: 0.92rem;
-      color: var(--text-light);
-      margin-bottom: 1.5rem;
-    }
-
     .form-error {
       display: none;
-      background: #FBEAE8;
+      background: #FDECEA;
       border: 1px solid var(--error);
       color: var(--error);
-      font-size: 0.85rem;
-      padding: 0.7rem 0.9rem;
+      font-size: .86rem;
+      padding: .75rem .9rem;
       border-radius: var(--radius);
       margin-bottom: 1rem;
     }
     .form-error.visible { display: block; }
-
     .decline-message {
       display: none;
-      background: var(--white);
-      border: 1px solid var(--parchment-mid);
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 1.5rem;
-      font-size: 0.95rem;
+      font-size: .95rem;
       line-height: 1.6;
     }
     .decline-message.visible { display: block; }
-
     .section-label {
-      font-size: 0.8rem;
+      font-size: .77rem;
       font-weight: 700;
-      color: var(--saddle);
+      color: var(--navy);
       text-transform: uppercase;
-      letter-spacing: 0.04em;
-      margin: 1.4rem 0 0.6rem;
+      letter-spacing: .06em;
+      margin: 1.25rem 0 .65rem;
     }
-
     .field-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-      margin-bottom: 0.75rem;
+      gap: .8rem;
+      margin-bottom: .8rem;
     }
-
-    .field-group { display: flex; flex-direction: column; gap: 0.3rem; }
+    .field-group { display: flex; flex-direction: column; gap: .34rem; min-width: 0; }
     .field-group.full { grid-column: 1 / -1; }
-
-    label {
-      font-size: 0.8rem;
+    .field-label, label.field-label, legend.field-label {
+      font-size: .8rem;
       font-weight: 600;
       color: var(--text);
     }
-
-    input[type="text"], input[type="tel"], input[type="email"],
-    input[type="date"], select {
+    fieldset { border: 0; min-width: 0; }
+    input[type="text"], input[type="tel"], input[type="email"], select {
       font-family: inherit;
-      font-size: 0.95rem;
-      padding: 0.65rem 0.75rem;
-      border: 1px solid var(--parchment-mid);
+      font-size: .95rem;
+      padding: .68rem .75rem;
+      border: 1px solid var(--border);
       border-radius: 8px;
-      background: var(--white);
+      background: var(--surface);
       color: var(--text);
       width: 100%;
     }
-
-    input.error, select.error { border-color: var(--error); background: #FDF4F3; }
-
-    .radio-row { display: flex; gap: 0.75rem; }
-
+    input[type="text"]:focus, input[type="tel"]:focus, input[type="email"]:focus, select:focus {
+      outline: 3px solid rgba(196,154,73,.2);
+      border-color: var(--gold);
+    }
+    input.error, select.error { border-color: var(--error); background: #FFF7F6; }
+    .radio-row { display: flex; gap: .6rem; }
     .radio-pill {
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.4rem;
-      padding: 0.65rem 0.75rem;
-      border: 1px solid var(--parchment-mid);
+      gap: .4rem;
+      min-height: 44px;
+      padding: .65rem .75rem;
+      border: 1px solid var(--border);
       border-radius: 8px;
-      background: var(--white);
+      background: var(--surface);
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: .9rem;
       font-weight: 600;
       color: var(--text);
     }
-    .radio-pill input { accent-color: var(--cognac); }
-    .radio-pill.selected { border-color: var(--cognac); background: #FBF0E6; }
+    .radio-pill input { accent-color: var(--navy); }
+    .radio-pill.selected { border-color: var(--gold); background: #FCF8EF; box-shadow: inset 0 0 0 1px var(--gold); }
     .radio-pill.error { border-color: var(--error); }
-
-    .code-word-help {
-      font-size: 0.78rem;
-      color: var(--text-light);
-      line-height: 1.5;
-      margin-top: 0.15rem;
-    }
-
-    .divider { border: none; border-top: 1px solid var(--parchment-mid); margin: 1.5rem 0; }
-
+    .help { font-size: .76rem; color: var(--text-light); line-height: 1.45; }
+    .divider { border: 0; border-top: 1px solid var(--gold); margin: 1.55rem 0; }
     .consent-box {
-      background: var(--parchment-dark);
-      border: 1px solid var(--parchment-mid);
+      background: #FBFCFD;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
       border-radius: 8px;
-      padding: 0.85rem;
-      font-size: 0.72rem;
-      line-height: 1.65;
-      color: #4a3a2a;
-      max-height: 220px;
-      overflow-y: auto;
-      margin-bottom: 0.9rem;
+      padding: 1rem;
+      font-size: .78rem;
+      line-height: 1.62;
+      color: var(--text);
+      margin: .4rem 0 .65rem;
     }
-
+    .legal-links { font-size: .78rem; margin-bottom: .85rem; }
+    .legal-links a, .form-note a { color: var(--navy); }
+    .legal-links a:focus-visible, .form-note a:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
     .consent-label {
       display: flex;
       align-items: flex-start;
-      gap: 0.65rem;
+      gap: .65rem;
       cursor: pointer;
-      margin-bottom: 1.1rem;
+      margin-bottom: 1rem;
     }
     .consent-label input {
       width: 18px; height: 18px; min-width: 18px;
-      margin-top: 2px; cursor: pointer; accent-color: var(--cognac);
+      margin-top: 2px; cursor: pointer; accent-color: var(--navy);
     }
-    .consent-label span { font-size: 0.78rem; color: var(--text); line-height: 1.5; }
+    .consent-label span { font-size: .8rem; color: var(--text); line-height: 1.5; }
     .consent-label.error input { outline: 2px solid var(--error); }
-
     .submit-btn {
       width: 100%;
-      background: var(--cognac);
-      color: var(--white);
+      background: var(--navy);
+      color: var(--surface);
       font-weight: 700;
       font-size: 1rem;
-      padding: 0.85rem;
-      border: none;
+      padding: .9rem;
+      border: 1px solid var(--navy);
       border-radius: 8px;
       cursor: pointer;
-      transition: transform 0.1s;
     }
-    .submit-btn:active { transform: scale(0.99); }
-    .submit-btn:disabled { opacity: 0.6; cursor: default; }
-
-    .form-note {
-      font-size: 0.75rem;
-      color: var(--text-light);
-      text-align: center;
-      margin-top: 0.85rem;
-    }
-
+    .submit-btn:hover { background: var(--navy-deep); }
+    .submit-btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+    .submit-btn:disabled { opacity: .6; cursor: default; }
+    .form-note { font-size: .74rem; color: var(--text-light); text-align: center; margin-top: .85rem; }
     .site-footer {
-      width: 100%;
-      max-width: 560px;
-      padding: 0 1.25rem 2.5rem;
-      text-align: center;
-      font-size: 0.8rem;
-      color: var(--text);
-      line-height: 1.6;
+      width: 100%; max-width: 680px; padding: 0 1.25rem 2.25rem;
+      text-align: center; font-size: .76rem; color: var(--text-light); line-height: 1.6;
     }
-
-    .noscript-banner {
-      width: 100%;
-      background: var(--error);
-      color: var(--white);
-      text-align: center;
-      padding: 0.75rem 1rem;
-      font-size: 0.85rem;
-    }
-
-    @media (max-width: 400px) {
-      .field-row { grid-template-columns: 1fr; }
+    .noscript-banner { width: 100%; background: var(--error); color: var(--surface); text-align: center; padding: .75rem 1rem; font-size: .85rem; }
+    @media (max-width: 560px) {
+      .form-header { padding: .85rem 1rem .75rem; }
+      .brand-logo { width: min(100%, 420px); }
+      main.form-card { padding-top: 1.4rem; }
+      .form-headline { font-size: 1.42rem; text-align: left; }
+      .field-row { grid-template-columns: 1fr; gap: .72rem; }
+      .field-group.full { grid-column: auto; }
     }
   </style>
 </head>
 <body>
-
-  <noscript>
-    <div class="noscript-banner">
-      This form requires JavaScript to submit. Please call us directly, or enable JavaScript and reload the page.
-    </div>
-  </noscript>
+  <noscript><div class="noscript-banner">This form requires JavaScript to submit. Please enable JavaScript and reload the page.</div></noscript>
 
   <header class="form-header">
-    <span class="eyebrow">Mortgage Protection Coverage</span>
+    <img class="brand-logo" src="/assets/branding/bfg-logo-landscape-1200x300.png" alt="BFG Insurance Solutions"/>
+    <span class="eyebrow">Mortgage Protection</span>
   </header>
 
   <main class="form-card">
     <h1 class="form-headline">Request Your Mortgage Protection Quote</h1>
-    <p class="form-sub">Takes under 2 minutes &mdash; no obligation.</p>
-
     <div class="form-error" id="form-error">Please fill in all required fields.</div>
-
     <div class="decline-message" id="decline-message"></div>
 
     <form id="mp-form" novalidate data-tf-element-role="offer">
-
-      <!-- TrustedForm: account-registered snippet from the ActiveProspect dashboard.
-           Attaches an xxTrustedFormCertUrl hidden field to the nearest
-           enclosing <form> automatically. onload/onerror record whether the
-           script itself ever loaded, so a missing cert at submit time can be
-           told apart from "the script was blocked" vs "it just ran slow." -->
+      <!-- Existing TrustedForm Certify integration preserved. -->
       <script type="text/javascript">
         window.mpTrustedFormScriptStatus = 'loading';
         (function() {
@@ -285,162 +232,126 @@
           var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(tf, s);
         })();
       </script>
-      <noscript>
-        <img src='https://api.trustedform.com/ns.gif' />
-      </noscript>
+      <noscript><img src='https://api.trustedform.com/ns.gif' alt=""/></noscript>
 
-      <!-- Click-ID capture — populated on load from the query string, never from cookies -->
+      <!-- Existing click-ID fields and persistence behavior preserved. -->
       <input type="hidden" id="gclid" name="gclid"/>
       <input type="hidden" id="gbraid" name="gbraid"/>
       <input type="hidden" id="wbraid" name="wbraid"/>
       <input type="hidden" id="submitted_url" name="submitted_url"/>
+      <input type="hidden" id="submission_session_id" name="submission_session_id"/>
+      <!-- Compatibility field: visible control is Gender; backend continues to receive sex. -->
+      <input type="hidden" id="sex" name="sex"/>
 
       <div class="section-label">Your Information</div>
 
       <div class="field-row">
         <div class="field-group">
-          <label for="first_name">First Name <span style="color:var(--error)">*</span></label>
-          <input type="text" id="first_name" name="first_name" placeholder="Jane" autocomplete="given-name" required/>
+          <label class="field-label" for="first_name">First Name <span style="color:var(--error)">*</span></label>
+          <input type="text" id="first_name" name="first_name" placeholder="Jane" autocomplete="given-name" maxlength="80" required/>
         </div>
         <div class="field-group">
-          <label for="last_name">Last Name <span style="color:var(--error)">*</span></label>
-          <input type="text" id="last_name" name="last_name" placeholder="Smith" autocomplete="family-name" required/>
+          <label class="field-label" for="last_name">Last Name <span style="color:var(--error)">*</span></label>
+          <input type="text" id="last_name" name="last_name" placeholder="Smith" autocomplete="family-name" maxlength="80" required/>
         </div>
       </div>
 
       <div class="field-row">
+        <fieldset class="field-group">
+          <legend class="field-label">Gender <span style="color:var(--error)">*</span></legend>
+          <div class="radio-row" id="gender-row">
+            <label class="radio-pill"><input type="radio" name="gender" value="male"/> Male</label>
+            <label class="radio-pill"><input type="radio" name="gender" value="female"/> Female</label>
+          </div>
+        </fieldset>
         <div class="field-group">
-          <label for="phone">Phone <span style="color:var(--error)">*</span></label>
-          <input type="tel" id="phone" name="phone" placeholder="(555) 555-0000" autocomplete="tel" inputmode="numeric" data-tf-element-role="consent-grantor-phone" required/>
-        </div>
-        <div class="field-group">
-          <label for="age">Age <span style="color:var(--error)">*</span></label>
+          <label class="field-label" for="age">Age <span style="color:var(--error)">*</span></label>
           <input type="text" id="age" name="age" placeholder="35" inputmode="numeric" maxlength="3" required/>
-        </div>
-      </div>
-
-      <div class="field-row">
-        <div class="field-group full">
-          <label for="sex">Sex <span style="color:var(--error)">*</span></label>
-          <select id="sex" name="sex" required>
-            <option value="" disabled selected>Select one</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="field-row">
-        <div class="field-group full">
-          <label for="email">Email <span style="color:var(--error)">*</span></label>
-          <input type="email" id="email" name="email" placeholder="jane@example.com" autocomplete="email" data-tf-element-role="consent-grantor-email" required/>
+          <span class="help">Enter your age in whole years.</span>
         </div>
       </div>
 
       <div class="field-row">
         <div class="field-group">
-          <label for="zip">ZIP Code <span style="color:var(--error)">*</span></label>
+          <label class="field-label" for="phone">Phone <span style="color:var(--error)">*</span></label>
+          <input type="tel" id="phone" name="phone" placeholder="(555) 555-0000" autocomplete="tel" inputmode="tel" data-tf-element-role="consent-grantor-phone" required/>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="email">Email <span style="color:var(--error)">*</span></label>
+          <input type="email" id="email" name="email" placeholder="jane@example.com" autocomplete="email" maxlength="254" data-tf-element-role="consent-grantor-email" required/>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label" for="zip">ZIP Code <span style="color:var(--error)">*</span></label>
           <input type="text" id="zip" name="zip" placeholder="90210" inputmode="numeric" maxlength="5" autocomplete="postal-code" required/>
         </div>
         <div class="field-group">
-          <label for="mortgage_balance">Mortgage Balance <span style="color:var(--error)">*</span></label>
-          <select id="mortgage_balance" name="mortgage_balance" required>
-            <option value="" disabled selected>Select one</option>
+          <label class="field-label" for="mortgage_balance">Approximate Mortgage Balance <span class="help">(optional)</span></label>
+          <select id="mortgage_balance" name="mortgage_balance">
+            <option value="" selected>Prefer not to say</option>
             <option value="under_100k">Under $100,000</option>
-            <option value="100k_250k">$100,000 &ndash; $250,000</option>
-            <option value="250k_500k">$250,000 &ndash; $500,000</option>
-            <option value="500k_750k">$500,000 &ndash; $750,000</option>
-            <option value="750k_plus">$750,000+</option>
+            <option value="100k_249999">$100,000&ndash;$249,999</option>
+            <option value="250k_499999">$250,000&ndash;$499,999</option>
+            <option value="500k_749999">$500,000&ndash;$749,999</option>
+            <option value="750k_plus">$750,000 or more</option>
           </select>
         </div>
       </div>
 
       <div class="field-row">
-        <div class="field-group full">
-          <label>Do you currently own your home? <span style="color:var(--error)">*</span></label>
-          <div class="radio-row" id="homeowner-row">
-            <label class="radio-pill"><input type="radio" name="homeowner" value="yes"/> Yes</label>
-            <label class="radio-pill"><input type="radio" name="homeowner" value="no"/> No</label>
-          </div>
-        </div>
-      </div>
-
-      <div class="field-row">
-        <div class="field-group full">
-          <label>Do you use tobacco products? <span style="color:var(--error)">*</span></label>
+        <fieldset class="field-group full">
+          <legend class="field-label">Tobacco Use <span style="color:var(--error)">*</span></legend>
+          <span class="help">Do you currently use tobacco products?</span>
           <div class="radio-row" id="tobacco-row">
             <label class="radio-pill"><input type="radio" name="tobacco_use" value="yes"/> Yes</label>
             <label class="radio-pill"><input type="radio" name="tobacco_use" value="no"/> No</label>
           </div>
-        </div>
+        </fieldset>
       </div>
 
       <hr class="divider"/>
-
-      <div class="section-label">Last Step</div>
+      <div class="section-label">Final Step</div>
 
       <div class="field-row">
         <div class="field-group full">
-          <label for="code_word">Choose a Code Word <span style="color:var(--error)">*</span></label>
+          <label class="field-label" for="code_word">Code Word <span class="help">(optional)</span></label>
           <input type="text" id="code_word" name="code_word" placeholder="e.g. Sunshine"
-                 autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="20" required/>
-          <p class="code-word-help">Pick a &ldquo;code&rdquo; word we&rsquo;ll use when we call&hellip; We&rsquo;ll never ask you for it.</p>
+                 autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="20"
+                 data-tf-sensitive="true"/>
+          <p class="help">Choose a word your BFG Insurance Solutions agent will say first when contacting you so you can verify the call is genuinely from BFG. Use 3&ndash;20 letters.</p>
         </div>
       </div>
 
-      <div class="consent-box">
-        <strong style="display:block;font-size:0.78rem;margin-bottom:0.6rem;color:var(--espresso);">
-          MORTGAGE PROTECTION &amp; LIFE INSURANCE &mdash; REQUEST &amp; CONTACT AUTHORIZATION<br/>
-          <span style="font-weight:400;">Joshua Brown, NPN 22098686, CA Lic. #4509549 &nbsp;|&nbsp; John M. Brown, NPN 21148038, CA Lic. #4374779 &nbsp;|&nbsp; 537 Linda Ln, Chula Vista, CA 91910</span>
-        </strong>
-
-        <strong>1. INFORMATION REQUEST.</strong> By submitting this form, I confirm that I am voluntarily requesting information about mortgage protection life insurance and related term life insurance products and services from licensed insurance producers Joshua Brown (NPN 22098686, CA Lic. #4509549) and John M. Brown (NPN 21148038, CA Lic. #4374779), with a principal business address of 537 Linda Ln, Chula Vista, CA 91910.<br/><br/>
-
-        <strong>2. CONTACT AUTHORIZATION.</strong> I authorize John M. Brown, CA Lic. #4374779, and Joshua Brown, CA Lic. #4509549, and their authorized representatives, employees, contractors, and service providers acting strictly on their behalf and solely for the purpose of responding to my insurance information request, subject to confidentiality obligations and in accordance with the Privacy Notice at protect-mortgage.com/privacy, to contact me at the telephone number(s) and email address I have provided.<br/><br/>
-
-        <strong>3. PRODUCT SCOPE.</strong> This authorization is limited to mortgage protection life insurance and term life insurance directly related to my inquiry. Contact regarding any additional insurance products or services not directly related to my original inquiry will require my separate, specific authorization.<br/><br/>
-
-        <strong>4. TCPA CONSENT.</strong> I expressly consent to receive <span data-tf-element-role="contact-method">calls and text messages</span> at the phone number I provide, including <span data-tf-element-role="consent-grantor-waived-regulated-technologies">calls or messages made using an automatic telephone dialing system (including technology that dials from a stored list of numbers or uses random or sequential number generation), automated dialing technology, artificial intelligence voice, artificial voice, or prerecorded voice message</span>, <span data-tf-element-role="consent-grantor-waived-dnc">even if my number is listed on a federal, state, or company-specific Do Not Call registry</span>.<br/><br/>
-
-        <strong>5. MESSAGE RATES &amp; OPT-OUT.</strong> I understand that message and data rates may apply. I may opt out of text messages at any time by replying STOP, QUIT, END, CANCEL, or UNSUBSCRIBE. I may reply HELP for assistance. Message frequency will vary based on my inquiry status, up to 10 messages per month (including conversational replies).<br/><br/>
-
-        <strong>6. ALTERNATE OPT-OUT / NO PURCHASE REQUIRED.</strong> I may also revoke my consent at any time by calling (619) 905-7488 or emailing john.brown@centaurusenterprises.com with &ldquo;UNSUBSCRIBE&rdquo; in the subject line. Revocation requests are honored within two (2) business days for text messages and immediately for calls. <span data-tf-element-role="consent-grantor-waived-purchase-condition">I understand that my consent is not required as a condition of purchasing any property, goods, or services.</span><br/><br/>
-
-        <strong>7. EMAIL COMMUNICATIONS (CAN-SPAM).</strong> All commercial email messages sent to the email address I provide will comply with the CAN-SPAM Act (15 U.S.C. &sect; 7701). Each email will include: (a) a clear identification that it is an advertisement; (b) our valid physical postal address (537 Linda Ln, Chula Vista, CA 91910); and (c) a clear explanation of how to opt out of future emails. Opt-out requests will be honored within ten (10) business days.<br/><br/>
-
-        <strong>8. ONE-TO-ONE CONSENT NOTICE.</strong> My consent provided through this form authorizes contact exclusively by <span data-tf-element-role="consent-advertiser-name">John M. Brown and Joshua Brown</span>. My consent does not authorize contact by any other insurance agent, agency, company, or third party. If I reached this form through an online video, advertisement, or referral source, my consent is specific to John M. Brown and Joshua Brown only.<br/><br/>
-
-        <strong>9. PRIVACY NOTICE.</strong> The personal information I provide is collected and used in accordance with the Privacy Notice available at <a href="/privacy.html" target="_blank" style="color:var(--cognac);">protect-mortgage.com/privacy</a>. If I am a California resident, I have additional rights under the CCPA as described in the Privacy Notice. We do not sell personal information to third parties.<br/><br/>
-
-        <strong>10. AGE CERTIFICATION.</strong> I certify that I am 18 years of age or older. This form is not intended for individuals under 18 years of age. We do not knowingly collect personal information from minors.<br/><br/>
-
-        <strong>11. RECORD RETENTION.</strong> My electronic submission, including my checkbox selection, typed information, IP address, date and time stamp, web form source, and the consent language displayed to me at the time of submission, will be retained for a minimum of five (5) years from the date of submission as proof of my request, authorization, consent, and acknowledgment, in accordance with applicable federal and state law, including the Telephone Consumer Protection Act and applicable state insurance record-keeping requirements. Records will be maintained by John M. Brown and Joshua Brown and will be made available to regulators or in legal proceedings upon lawful request.
+      <!-- DRAFT FOR COMPLIANCE REVIEW: fixed, readable presentation per controlling WS40 architecture. -->
+      <div class="consent-box" data-tf-element-role="consent-language">
+        By checking the box below and selecting <strong>&ldquo;Request My Mortgage Protection Quote,&rdquo;</strong>
+        I authorize <span data-tf-element-role="consent-advertiser-name"><strong>BFG Insurance Solutions</strong>, a DBA of Centaurus Enterprises LLC</span>
+        to contact me at the phone number and email address I provided about my request for mortgage protection insurance information and available insurance options by
+        <span data-tf-element-role="contact-method">live-agent telephone call, SMS/text message, and email</span>.
+        Message and data rates may apply to texts. <span data-tf-element-role="consent-grantor-waived-purchase-condition">I understand that this consent is not a condition of purchasing any insurance product or service.</span>
+        I may revoke or limit this consent at any time, including by replying STOP to a text or asking not to be contacted during a call; additional revocation methods are described in the Privacy Notice.
       </div>
 
-      <p style="font-size:0.72rem;color:#4a3a2a;margin-bottom:0.6rem;line-height:1.5;">
-        <strong>ELECTRONIC SIGNATURE NOTICE:</strong> By checking the box below and clicking &ldquo;Get My Free Quote,&rdquo; you are providing your electronic signature, which has the same legal force and effect as a handwritten signature under the Electronic Signatures in Global and National Commerce Act (E-SIGN Act), 15 U.S.C. &sect; 7001, and applicable state electronic transaction laws. You agree that electronic records of this transaction satisfy any legal requirement that such records be maintained in writing.
-      </p>
+      <p class="legal-links"><a href="/privacy.html" target="_blank" rel="noopener">Privacy Notice</a> &nbsp;|&nbsp; <a href="/terms.html" target="_blank" rel="noopener">Terms of Use</a></p>
 
-      <label class="consent-label" id="consent-label" data-tf-element-role="consent-language">
+      <label class="consent-label" id="consent-label">
         <input type="checkbox" id="consent-check" name="consent" data-tf-element-role="consent-opt-in" required/>
-        <span>I have read and agree to the Request &amp; Contact Authorization above. I understand that my electronic checkbox selection constitutes my legal consent and electronic signature, and that consent is not required to purchase insurance.</span>
+        <span>I agree to the contact authorization above, acknowledge the Privacy Notice, and agree to the Terms of Use.</span>
       </label>
 
-      <button type="submit" class="submit-btn" id="submit-btn" data-tf-element-role="submit"><span data-tf-element-role="submit-text">Get My Free Quote</span> &rarr;</button>
-      <p class="form-note">Your information is private and never sold. &nbsp;|&nbsp; <a href="/privacy.html" target="_blank" style="color:var(--cognac);">Privacy Notice</a> &nbsp;|&nbsp; <a href="/terms.html" target="_blank" style="color:var(--cognac);">Terms of Use</a></p>
-
+      <button type="submit" class="submit-btn" id="submit-btn" data-tf-element-role="submit"><span data-tf-element-role="submit-text">Request My Mortgage Protection Quote</span></button>
+      <p class="form-note">BFG Insurance Solutions &nbsp;|&nbsp; Centaurus Enterprises LLC d/b/a BFG Insurance Solutions</p>
     </form>
   </main>
 
   <footer class="site-footer">
-    This is a solicitation for insurance offered by John M. Brown, CA Lic. #4374779, and Joshua Brown, CA Lic. #4509549. Licensed in California and additional states; not all products are available in all states. Rates and availability vary based on age, health, coverage amount, and state of residence. Not affiliated with, endorsed by, or sponsored by any mortgage lender, loan servicer, or government agency.
+    Mortgage protection insurance information is provided through BFG Insurance Solutions, a DBA of Centaurus Enterprises LLC. Product availability and eligibility vary by individual circumstances and service area. Not affiliated with, endorsed by, or sponsored by any mortgage lender, loan servicer, or government agency.
   </footer>
 
   <script>
-    // Click-ID capture — same-tab persistence only, never cookies or localStorage.
-    // A URL containing any click ID is a complete, fresh attribution set: IDs
-    // omitted from that URL are deliberately removed so separate ad clicks can
-    // never be combined.
+    // Click-ID capture — preserved from current production behavior.
     var MP_CLICK_ID_STORAGE_KEYS = {
       gclid: 'bfg_mp_click_gclid',
       gbraid: 'bfg_mp_click_gbraid',
@@ -449,31 +360,34 @@
       landingUrl: 'bfg_mp_click_landing_url'
     };
     var MP_CLICK_ID_TTL_MS = 2 * 60 * 60 * 1000;
+    var MP_SUBMISSION_SESSION_KEY = 'bfg_mp_submission_session_id';
 
     function mpSessionStorageGet(key) {
-      try {
-        return window.sessionStorage.getItem(key);
-      } catch (e) {
-        return null;
-      }
+      try { return window.sessionStorage.getItem(key); } catch (e) { return null; }
     }
-
     function mpSessionStorageSet(key, value) {
-      try {
-        window.sessionStorage.setItem(key, value);
-      } catch (e) {
-        // Current-URL attribution and the form continue to work without storage.
-      }
+      try { window.sessionStorage.setItem(key, value); } catch (e) {}
     }
-
     function mpSessionStorageRemove(key) {
-      try {
-        window.sessionStorage.removeItem(key);
-      } catch (e) {
-        // Storage may be blocked; cleanup failure must not break the form.
-      }
+      try { window.sessionStorage.removeItem(key); } catch (e) {}
     }
-
+    function createMpSubmissionSessionId() {
+      if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+        return window.crypto.randomUUID();
+      }
+      return 'mp_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 18);
+    }
+    function populateMpSubmissionSessionId() {
+      var value = mpSessionStorageGet(MP_SUBMISSION_SESSION_KEY);
+      if (!value || !/^[A-Za-z0-9_-]{16,64}$/.test(value)) {
+        value = createMpSubmissionSessionId();
+        mpSessionStorageSet(MP_SUBMISSION_SESSION_KEY, value);
+      }
+      document.getElementById('submission_session_id').value = value;
+    }
+    function clearMpSubmissionSessionId() {
+      mpSessionStorageRemove(MP_SUBMISSION_SESSION_KEY);
+    }
     function clearMpClickAttribution() {
       mpSessionStorageRemove(MP_CLICK_ID_STORAGE_KEYS.gclid);
       mpSessionStorageRemove(MP_CLICK_ID_STORAGE_KEYS.gbraid);
@@ -481,24 +395,18 @@
       mpSessionStorageRemove(MP_CLICK_ID_STORAGE_KEYS.savedAt);
       mpSessionStorageRemove(MP_CLICK_ID_STORAGE_KEYS.landingUrl);
     }
-
     function populateMpClickAttribution() {
       var clickIdNames = ['gclid', 'gbraid', 'wbraid'];
       var params = new URLSearchParams(window.location.search);
-      var hasFreshAttribution = clickIdNames.some(function(name) {
-        return params.has(name);
-      });
+      var hasFreshAttribution = clickIdNames.some(function(name) { return params.has(name); });
       var submittedUrl = window.location.href;
 
       if (hasFreshAttribution) {
         clickIdNames.forEach(function(name) {
           var value = params.has(name) ? params.get(name) : '';
           document.getElementById(name).value = value;
-          if (params.has(name)) {
-            mpSessionStorageSet(MP_CLICK_ID_STORAGE_KEYS[name], value);
-          } else {
-            mpSessionStorageRemove(MP_CLICK_ID_STORAGE_KEYS[name]);
-          }
+          if (params.has(name)) mpSessionStorageSet(MP_CLICK_ID_STORAGE_KEYS[name], value);
+          else mpSessionStorageRemove(MP_CLICK_ID_STORAGE_KEYS[name]);
         });
         mpSessionStorageSet(MP_CLICK_ID_STORAGE_KEYS.savedAt, String(Date.now()));
         mpSessionStorageSet(MP_CLICK_ID_STORAGE_KEYS.landingUrl, submittedUrl);
@@ -512,48 +420,32 @@
           gbraid: mpSessionStorageGet(MP_CLICK_ID_STORAGE_KEYS.gbraid),
           wbraid: mpSessionStorageGet(MP_CLICK_ID_STORAGE_KEYS.wbraid)
         };
-        var hasStoredId = clickIdNames.some(function(name) {
-          return storedIds[name] !== null;
-        });
-        var storageIsValid = Number.isFinite(savedAt) && age >= 0 &&
-          age <= MP_CLICK_ID_TTL_MS && typeof landingUrl === 'string' &&
-          landingUrl.length > 0 && hasStoredId;
-
+        var hasStoredId = clickIdNames.some(function(name) { return storedIds[name] !== null; });
+        var storageIsValid = Number.isFinite(savedAt) && age >= 0 && age <= MP_CLICK_ID_TTL_MS &&
+          typeof landingUrl === 'string' && landingUrl.length > 0 && hasStoredId;
         if (storageIsValid) {
-          clickIdNames.forEach(function(name) {
-            document.getElementById(name).value = storedIds[name] || '';
-          });
+          clickIdNames.forEach(function(name) { document.getElementById(name).value = storedIds[name] || ''; });
           submittedUrl = landingUrl;
         } else {
           clearMpClickAttribution();
-          clickIdNames.forEach(function(name) {
-            document.getElementById(name).value = '';
-          });
+          clickIdNames.forEach(function(name) { document.getElementById(name).value = ''; });
         }
       }
-
       document.getElementById('submitted_url').value = submittedUrl;
     }
-
     populateMpClickAttribution();
+    populateMpSubmissionSessionId();
 
-    // Phone auto-format: (555) 555-0000 — US only, max 14 chars displayed
     document.getElementById('phone').addEventListener('input', function() {
       var digits = this.value.replace(/\D/g, '').slice(0, 10);
       var formatted = '';
-      if (digits.length === 0) {
-        formatted = '';
-      } else if (digits.length <= 3) {
-        formatted = '(' + digits;
-      } else if (digits.length <= 6) {
-        formatted = '(' + digits.slice(0,3) + ') ' + digits.slice(3);
-      } else {
-        formatted = '(' + digits.slice(0,3) + ') ' + digits.slice(3,6) + '-' + digits.slice(6);
-      }
+      if (digits.length === 0) formatted = '';
+      else if (digits.length <= 3) formatted = '(' + digits;
+      else if (digits.length <= 6) formatted = '(' + digits.slice(0,3) + ') ' + digits.slice(3);
+      else formatted = '(' + digits.slice(0,3) + ') ' + digits.slice(3,6) + '-' + digits.slice(6);
       this.value = formatted;
     });
 
-    // Radio pill highlight
     document.querySelectorAll('.radio-pill input').forEach(function(input) {
       input.addEventListener('change', function() {
         var name = this.name;
@@ -561,53 +453,37 @@
           inp.closest('.radio-pill').classList.remove('selected');
         });
         this.closest('.radio-pill').classList.add('selected');
+        if (name === 'gender') document.getElementById('sex').value = this.value;
       });
     });
 
     var CODE_WORD_BLOCKLIST = ['password', 'code', 'codeword', 'test', 'none', 'na'];
-
     function validateCodeWord(raw, firstName, lastName) {
       var word = raw.trim();
-      if (!/^[A-Za-z]{3,20}$/.test(word)) {
-        return 'Code word must be 3-20 letters, no numbers or spaces.';
-      }
+      if (!/^[A-Za-z]{3,20}$/.test(word)) return 'Code word must be 3-20 letters, no numbers or spaces.';
       var lower = word.toLowerCase();
-      if (lower === firstName.trim().toLowerCase() || lower === lastName.trim().toLowerCase()) {
-        return 'Please choose a code word other than your own name.';
-      }
-      if (CODE_WORD_BLOCKLIST.indexOf(lower) !== -1) {
-        return 'That word is too common — please pick something more memorable.';
-      }
+      if (lower === firstName.trim().toLowerCase() || lower === lastName.trim().toLowerCase()) return 'Please choose a code word other than your own name.';
+      if (CODE_WORD_BLOCKLIST.indexOf(lower) !== -1) return 'That word is too common — please pick something more memorable.';
       return null;
     }
 
-    // TrustedForm's script populates xxTrustedFormCertUrl asynchronously
-    // after page load. If the form is filled out and submitted quickly
-    // (autofill, fast testers), the field can still be empty at the
-    // moment of submit -- wait for it before giving up. Resolves with a
-    // diagnostic string alongside the value so a failure can be traced back
-    // to "script never loaded" vs "loaded but never certified in time."
     function waitForTrustedFormCert(maxWaitMs) {
       return new Promise(function(resolve) {
         var start = Date.now();
         (function poll() {
           var field = document.getElementsByName('xxTrustedFormCertUrl')[0];
           var val = field ? field.value : '';
-          if (val) {
-            resolve({ value: val, diagnostic: 'resolved' });
-          } else if (Date.now() - start >= maxWaitMs) {
+          if (val) resolve({ value: val, diagnostic: 'resolved' });
+          else if (Date.now() - start >= maxWaitMs) {
             var scriptStatus = window.mpTrustedFormScriptStatus || 'unknown';
             resolve({ value: '', diagnostic: 'timed_out_after_' + maxWaitMs + 'ms_script_' + scriptStatus });
-          } else {
-            setTimeout(poll, 150);
-          }
+          } else setTimeout(poll, 150);
         })();
       });
     }
 
     document.getElementById('mp-form').addEventListener('submit', async function(e) {
       e.preventDefault();
-
       var errEl = document.getElementById('form-error');
       errEl.classList.remove('visible');
       document.querySelectorAll('.error').forEach(function(el) { el.classList.remove('error'); });
@@ -619,7 +495,7 @@
       }
 
       req('first_name'); req('last_name'); req('phone'); req('email');
-      req('zip'); req('age'); req('sex'); req('mortgage_balance'); req('code_word');
+      req('zip'); req('age'); req('sex');
 
       if (!/^\(\d{3}\) \d{3}-\d{4}$/.test(document.getElementById('phone').value.trim())) {
         document.getElementById('phone').classList.add('error'); ok = false;
@@ -635,10 +511,8 @@
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('email').value.trim())) {
         document.getElementById('email').classList.add('error'); ok = false;
       }
-
-      var homeownerInput = document.querySelector('input[name="homeowner"]:checked');
-      if (!homeownerInput) {
-        document.getElementById('homeowner-row').querySelectorAll('.radio-pill').forEach(function(p){ p.classList.add('error'); });
+      if (!document.getElementById('sex').value) {
+        document.getElementById('gender-row').querySelectorAll('.radio-pill').forEach(function(p){ p.classList.add('error'); });
         ok = false;
       }
       var tobaccoInput = document.querySelector('input[name="tobacco_use"]:checked');
@@ -650,16 +524,12 @@
       var codeWordEl = document.getElementById('code_word');
       var codeWordError = null;
       if (codeWordEl.value.trim()) {
-        codeWordError = validateCodeWord(
-          codeWordEl.value,
-          document.getElementById('first_name').value,
-          document.getElementById('last_name').value
-        );
+        codeWordError = validateCodeWord(codeWordEl.value, document.getElementById('first_name').value, document.getElementById('last_name').value);
         if (codeWordError) { codeWordEl.classList.add('error'); ok = false; }
       }
 
       var consentLabel = document.getElementById('consent-label');
-      var consentCheck  = document.getElementById('consent-check');
+      var consentCheck = document.getElementById('consent-check');
       consentLabel.classList.remove('error');
       if (!consentCheck.checked) { consentLabel.classList.add('error'); ok = false; }
 
@@ -673,26 +543,26 @@
       var btn = document.getElementById('submit-btn');
       btn.disabled = true;
       btn.textContent = 'Submitting…';
-
       var certResult = await waitForTrustedFormCert(6000);
 
       var payload = {
-        first_name:       document.getElementById('first_name').value.trim(),
-        last_name:        document.getElementById('last_name').value.trim(),
-        phone:             '+1' + document.getElementById('phone').value.replace(/\D/g, ''),
-        email:             document.getElementById('email').value.trim(),
-        zip:               document.getElementById('zip').value.trim(),
-        age:               ageVal,
-        sex:               document.getElementById('sex').value,
-        mortgage_balance:  document.getElementById('mortgage_balance').value,
-        homeowner:         homeownerInput.value,
-        tobacco_use:       tobaccoInput.value,
-        code_word:         codeWordEl.value.trim(),
-        gclid:             document.getElementById('gclid').value,
-        gbraid:            document.getElementById('gbraid').value,
-        wbraid:            document.getElementById('wbraid').value,
-        submitted_url:     document.getElementById('submitted_url').value,
-        consent_text:      document.querySelector('.consent-box').innerText,
+        first_name: document.getElementById('first_name').value.trim(),
+        last_name: document.getElementById('last_name').value.trim(),
+        phone: '+1' + document.getElementById('phone').value.replace(/\D/g, ''),
+        email: document.getElementById('email').value.trim(),
+        zip: document.getElementById('zip').value.trim(),
+        age: ageVal,
+        sex: document.getElementById('sex').value,
+        mortgage_balance: document.getElementById('mortgage_balance').value,
+        tobacco_use: tobaccoInput.value,
+        code_word: codeWordEl.value.trim(),
+        gclid: document.getElementById('gclid').value,
+        gbraid: document.getElementById('gbraid').value,
+        wbraid: document.getElementById('wbraid').value,
+        submitted_url: document.getElementById('submitted_url').value,
+        submission_session_id: document.getElementById('submission_session_id').value,
+        consent: consentCheck.checked,
+        consent_text: document.querySelector('.consent-box').innerText,
         trustedform_cert_url: certResult.value,
         trustedform_diagnostic: certResult.diagnostic
       };
@@ -706,16 +576,15 @@
       .then(function(result) {
         if (result.body.status === 'ok') {
           clearMpClickAttribution();
+          clearMpSubmissionSessionId();
           window.location.href = '/thank-you?ct=' + encodeURIComponent(result.body.conversion_token || '');
-        } else if (result.body.status === 'declined') {
+        } else if (result.body.status === 'received') {
           clearMpClickAttribution();
-          document.getElementById('mp-form').style.display = 'none';
-          var declineEl = document.getElementById('decline-message');
-          declineEl.textContent = result.body.message || 'Thanks for your interest — based on your answers, we\'re not able to help with this request right now.';
-          declineEl.classList.add('visible');
+          clearMpSubmissionSessionId();
+          window.location.href = '/thank-you?status=review';
         } else {
           btn.disabled = false;
-          btn.textContent = 'Get My Free Quote →';
+          btn.textContent = 'Request My Mortgage Protection Quote';
           errEl.textContent = result.body.message || 'Something went wrong. Please check your information and try again.';
           errEl.classList.add('visible');
           errEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -727,7 +596,7 @@
       })
       .catch(function() {
         btn.disabled = false;
-        btn.textContent = 'Get My Free Quote →';
+        btn.textContent = 'Request My Mortgage Protection Quote';
         errEl.textContent = 'We couldn\'t reach the server. Please check your connection and try again.';
         errEl.classList.add('visible');
       });

@@ -1,204 +1,101 @@
-# CLAUDE.md — protect-mortgage.com / Centaurus Enterprises web properties
+# CLAUDE.md — current repository controls
 
-Build context for Claude Code sessions on this repo. Functionality and code
-only. Compliance rules appear here **as code invariants** — they are build
-requirements, not commentary. Violating one is a bug.
+This file contains implementation controls for the organization repository
+`centaurus-enterprises/bfg-insurance-solutions-website`. It is not a business,
+legal, compliance, campaign, or production-authorization document.
 
-Authoritative spec: **Build Spec v2.2 + v2.3 Addendum rev B + Conversion
-Tracking Addendum** (consolidated here as v2.4). Where this file and a spec
-document disagree, the spec document wins. Ask John for the current copy
-before starting substantial work.
+## Authority and provenance
 
-## 0. Before changing anything
+Apply this order: John's latest explicit decision; approved decision/specification;
+workstream charter; verified current evidence; current approved architecture;
+historical material; recommendations and AI interpretation.
 
-The stack is not described here on purpose — inventory it first:
+The repository's default branch is shared organization state. A collaborator's
+name, role, or commit authorship does not make `main` that person's branch and
+does not establish current authority. Verify branch ancestry, file content, and
+the controlling requirements independently.
 
-1. Read package.json, framework config, directory layout. Report findings
-   before proposing changes.
-2. Identify where form submission is handled today and whether a
-   server-side layer exists.
-3. Confirm the Render service name, branch, build/start commands.
-4. Grep the entire repo for retired brand names (§10) before doing anything
-   else — this blocks the domain move.
-5. State the plan, then build. Do not refactor beyond the task.
+## Greenfield rule
 
-## 1. What we're building
+The current BFG website, intake, Google Ads, YouTube, measurement, CRM, and
+lead-processing architecture is greenfield. Historical lessons may become
+safeguards and tests. Historical identifiers, settings, assets, structures,
+code paths, and configurations are preserve-only and must not become defaults.
 
-Two funnels, deliberately separate. Never commingle their data or branding.
+No historical marketing identifier may appear in an active repository file or
+active test, including as a negative fixture. Use generic sentinels and generic
+configuration-validation tests. Preserve historical evidence outside the active
+production repository.
 
-| Funnel | Domain | Backend | Audience |
-|---|---|---|---|
-| Consumer mortgage protection | protect-mortgage.com | Consumer CRM (endpoint **PENDING**) | YouTube/Google ads |
-| Agent recruiting | centaurusenterprises.com/careers | Recruiting CRM, separate | Agent prospects |
+## Work boundaries
 
-Consumer flow: ad click → protect-mortgage.com → 10-field intake →
-server-side POST to CRM → verification → dial. Consumer never leaves
-protect-mortgage.com; /thank-you is same host.
+- Inventory the stack and read current requirements before making changes.
+- Keep work on the existing authorized branch/PR unless current evidence proves
+  it unusable.
+- Do not merge, deploy, mutate production data/schema, change DNS or Render,
+  create or change Google Ads/YouTube/GTM/analytics assets, upload video,
+  activate a campaign, or spend without separate authorization.
+- Do not run staging until the complete WS30 correction candidate and the WS50
+  greenfield measurement definition both exist. WS60 owns one integrated
+  zero-spend acceptance pass.
 
-## 2. Hard architecture invariants
+## Mortgage Protection intake invariants
 
-- Browser never posts directly to the CRM. Form → server → CRM.
-- Client-side validation is UX only. Server-side is authoritative — a
-  failing submission is rejected with the field flagged, never silently
-  stored.
-- API keys server-side only, env vars, never in client code/bundle.
-- Timestamps from server clock, ISO 8601 with explicit UTC offset.
-- CRM hostname never exposed to a consumer — no redirect, no visible form
-  action, no link in consumer email.
-- Never emit thebfg.net anywhere consumer-visible, including From address.
-- Keep the two CRMs separate — consent records are a legal defense file.
+- Browser posts to the server, never directly to the CRM.
+- Client validation is UX only; server validation is authoritative.
+- First name, last name, phone, email, five-digit U.S. ZIP, age 18–100, gender,
+  tobacco answer, and affirmative consent are required.
+- ZIP intake is not California-only. State derivation and state/license/contact
+  eligibility are separate controlled steps; receipt is not contact release.
+- The consumer Thank You page must not display or infer a state name or license
+  number from ZIP. State/license evaluation remains an internal contact-release
+  control.
+- Approximate Mortgage Balance is optional. If supplied, validate the current
+  approved enum.
+- Code Word is optional. If supplied, validate and protect it. Never place it in
+  URLs, analytics, advertising payloads, routine logs, unnecessary third-party
+  surfaces, or readable session replay.
+- Consent text/version are server-controlled. Do not treat browser-supplied text
+  as authoritative evidence.
+- Persist a stable lead identity before external evidence processing.
+- Missing, failed, malformed, timed-out, or inconsistent TrustedForm evidence
+  remains `EVIDENCE_HOLD`.
+- `EVIDENCE_HOLD` prohibits ordinary notification, contact release, and
+  conversion authorization. Retry is idempotent, bounded, visible, and never
+  silently releases or deletes the record.
+- `INTAKE_ACCEPTED` requires affirmative consent, durable persistence,
+  TrustedForm overall success, retention proof, and successful lead match.
+- Contact remains `STATE_LICENSE_SCREENING_PENDING` until the authoritative
+  state/license control clears it.
 
-## 3. Intake form — 10 fields, all required
+## TrustedForm security and parsing
 
-first_name · last_name · phone (tel, 10-digit US) · email · zip (5) ·
-date_of_birth · mortgage_balance (select) · homeowner (radio) ·
-tobacco_use (radio, **now required**) · code_word (text) · hidden gclid,
-gbraid, wbraid.
+- Accept only the exact HTTPS origin `cert.trustedform.com` with no userinfo or
+  alternate port.
+- Send `api-version: 4.0` and separate `retain` and `match_lead` operations.
+- An HTTP 200 alone is not success. Parse overall outcome, retention result, lead
+  match result, and reason/error information.
+- Keep API credentials server-side in environment variables.
 
-### code_word — free text, last field, above the consent block
+## Measurement
 
-Not a security question — it authenticates **the agent to the caller**,
-not the reverse.
+Measurement remains disabled in active pages until WS50 defines and verifies the
+new BFG-owned architecture. Account ownership does not imply that any conversion
+action, tag, label, campaign, or attribution configuration exists or is approved.
+All uncreated values are `TBD`.
 
-- 3–20 chars, letters only (A–Za–z), no digits/spaces/punctuation, single
-  word.
-- Trim before validate/store; store **as entered**; compare
-  case-insensitively.
-- Reject: matches lead's own first/last name; password/code/codeword/
-  test/none/n-a; profanity (blocklist → polite retry, never a raw error).
-- Do NOT blocklist retired brand names in consumer input — that rule
-  applies to our copy, not theirs.
-- Markup: autocapitalize="none" autocorrect="off" spellcheck="false".
-- Stored plaintext, never hashed — agent reads it aloud on the call.
-- Helper text (verbatim): "Pick a 'code' word we'll use when we call...
-  We'll never ask you for it." Final sentence is load-bearing, do not cut.
-- Never call it a security question, password, or PIN in any copy.
+Generic click/submission identity and idempotent authorization concepts may be
+tested without embedding any account-specific destination. Conversion may be
+authorized only for an `INTAKE_ACCEPTED` record. The active repository must not
+contain a historical conversion destination.
 
-**Routing:** homeowner = No → soft decline, not a lead. ZIP outside
-allowlist → polite decline, not an error. Allowlist ships California-only;
-config change, not code change, to add states. Do not enable another
-state without written confirmation from John.
+## Acceptance and Kaizen
 
-**On success:** redirect to distinct /thank-you. Inline "thanks!" fires
-zero conversions — this is a bug, not a style choice. /thank-you not
-reachable except after a real submit: no nav link, no sitemap entry.
-
-## 4. Click-ID capture — highest priority, one-way door
-
-Read gclid/gbraid/wbraid from query string on load → hidden fields →
-persist server-side on the lead record at submit.
-
-- Must not depend on cookies (YouTube in-app browsers have isolated/
-  short-lived cookie storage).
-- Never strip unknown query params. Never put PII in a query string.
-- Leads captured before this works are permanently unattributable.
-
-## 5. Conversion tracking (supersedes prior §5 in full)
-
-Google tag AW-18193879267 immediately after `<head>` on **every** page,
-including /thank-you, Privacy Policy, Terms of Use, CCPA notice. One tag
-per page, never two.
-
-```html
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18193879267"></script>
-<script>
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'AW-18193879267');
-</script>
-```
-
-On /thank-you ONLY, inside `<head>`, immediately after the tag above:
-
-```html
-<!-- Event snippet for MP Lead - Site Form Submit -->
-<script>
-gtag('event', 'conversion', {'send_to': 'AW-18193879267/jLl8CIfe39wcEOOhwuND'});
-</script>
-```
-
-- Fires on page load, never wired to the submit button click — a click
-  fires before validation/storage and would count failed submissions.
-- Do not hand-transcribe the label; copy from Ads UI (Goals → Conversions
-  → Summary → MP Lead - Site Form Submit → See event snippet). Contains
-  lowercase L, uppercase i, digit 1.
-- Acceptance proof is the Ads UI status changing Inactive → Recording
-  conversions, not Tag Assistant firing. Allow up to 3h for status, 24h
-  for reporting.
-- Enhanced conversions deliberately OFF until the Privacy Policy discloses
-  hashed identifiers shared with ad platforms.
-
-## 6. Consent and copy — verbatim, do not reword
-
-- Consent checkbox unchecked by default, submit blocked until checked,
-  immediately above submit button, visible without scrolling.
-- Store exact consent text rendered + consent_version: "1.0".
-- TrustedForm (or Jornaya) must fire; certificate URL lands on the CRM
-  record. No certificate = not callable — system-enforced gate.
-- Unlike the Ads conversion action, TrustedForm/Jornaya does not lock to
-  a verified domain — the script hashes the current page/session and
-  issues a certificate wherever it's embedded. This can be built and
-  tested end-to-end (script fires → cert URL populates → lands on the
-  CRM record) on the current live domain, independent of the DNS
-  cutover. Don't block this on the domain move.
-- Footer disclosure exact text. Never render a numeric state count —
-  approved wording: "Licensed in California and additional states; not
-  all products are available in all states."
-- Attribution is footer-only, attributing to John M. Brown (CA Lic.
-  #4374779) and Joshua Brown (CA Lic. #4509549). BFG Insurance Solutions
-  is the only approved dba. No hero attribution block.
-- Never generate: guarantee language, lender/servicer/government
-  affiliation implication, fear/urgency hooks, a specific premium as
-  universal, named carriers, "our agency/agents," "we are licensed."
-- Above-the-fold is advertising — Google screenshots it into the ad unit.
-
-## 7. Operational stop rule (wrong/reassigned number)
-
-If the person answering does not recognize the code word: stop, no
-product mention, apologize, set code_word_confirmed = false, disposition
-as "possible wrong number" (distinct from reject queue), suppress from
-further dialing pending review.
-
-Script order on first contact (voice and SMS): name + license + code word
-→ California recorded-line disclosure → permission to proceed → only then
-anything substantive. No product language until code word is confirmed.
-
-## 8. Lead record fields
-
-Written server-side at intake: code_word, code_word_set_at (server clock,
-ISO 8601+offset), code_word_confirmed (enum), code_word_confirmed_at,
-lead_source (non-nullable), lead_source_bucket (approved|outside|
-self_generated, non-nullable), consent_version ("1.0"). Plus TrustedForm
-cert URL, submission timestamp, IP, full URL with query string, exact
-consent text, user agent — treat as **one artifact**, never split.
-
-Retention: consent records, certs, verification responses, code-word
-fields — 5 years minimum. Revocation events permanent, never purged.
-Purge must be haltable per-cohort.
-
-**PENDING — ask John, do not guess:**
-- Consumer CRM endpoint URL (was crm.thebfg.net; changing)
-- Data storage location, backups, encryption at rest, DB access list
-
-Build against a configurable endpoint until these land.
-
-## 9. Performance / device targets
-
-See `.claude/rules/performance.md` — LCP, mobile-fold, in-app-browser,
-and degradation requirements. Load it whenever editing frontend/form
-files.
-
-## 10. Never do these
-
-- Zero occurrences anywhere consumer-facing of: Brown Financial Group,
-  The Brown Financial Group, Brown Agency, TheBFG. Grep before shipping.
-- Auto-dialer, power dialer, predictive dialer of any kind — human-
-  initiated click-to-dial only.
-
-## 11. Infrastructure — hand off, don't do
-
-See `.claude/rules/infra.md` — no dashboard access, DNS/Render reference
-values, and the known blockers on the domain cutover. Load it whenever a
-task touches DNS, hosting, or deployment.
+- Map each current acceptance criterion to a named test.
+- Test optional fields, national ZIP intake, explicit consent, TrustedForm
+  origin/header/payload/outcome branches, evidence holds, retry bounds, no
+  notification/conversion while held, and generic measurement configuration.
+- Scan active files for prohibited historical artifacts without storing the
+  prohibited values in the repository.
+- Classify audit completeness accurately: known source contamination can be
+  confirmed while complete repository/runtime inventory remains unresolved.

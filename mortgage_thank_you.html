@@ -4,110 +4,119 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="robots" content="noindex, nofollow"/>
-  <title>Thank You</title>
+  <title>Thank You | BFG Insurance Solutions</title>
 
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18193879267"></script>
-  <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'AW-18193879267');
-  </script>
+  <!-- Measurement is intentionally disabled until WS50 defines and verifies
+       the new BFG-owned conversion architecture. -->
 
-  <!-- Event snippet for MP Lead - Site Form Submit -->
-  <!-- The ct token by itself is NOT proof of a real submission -- it's
-       redeemed server-side via /claim-conversion. An arbitrary, missing,
-       or expired token is rejected there and the event never fires. A
-       valid, unexpired token (even a repeat of one already claimed)
-       returns the SAME transaction_id every time, specifically so this
-       page can retry: if the browser loses the response, closes, or the
-       gtag call itself fails right after this, a later load of this exact
-       URL (refresh, Back/Forward) can safely retry with the same
-       transaction_id. Google Ads deduplicates conversions by (conversion
-       action, transaction_id), so re-sending it is a no-op on their side,
-       not a double count.
-
-       localStorage is written only from gtag's event_callback (or after
-       event_timeout elapses as a fallback), i.e. only once the event
-       command has actually been processed -- not immediately after the
-       fetch resolves. That's deliberate: if we set it right after the
-       fetch instead, a tab closed between that write and the beacon
-       actually going out would permanently suppress the conversion
-       client-side even though Ads never received it, with no way to
-       retry. Leaving localStorage unset until the callback fires means a
-       dropped hit just gets retried on the next load instead. -->
-  <script>
-  (function() {
-    var params = new URLSearchParams(window.location.search);
-    var token = params.get('ct');
-    if (!token) { return; }
-    var storageKey = 'mp_conversion_recorded_' + token;
-    if (window.localStorage.getItem(storageKey)) { return; }
-
-    fetch('/claim-conversion', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: token })
-    })
-      .then(function(res) { return res.json().then(function(body) { return { ok: res.ok, body: body }; }); })
-      .then(function(result) {
-        if (!result.ok || !result.body || result.body.status !== 'ok') { return; }
-
-        var recorded = false;
-        function markRecorded() {
-          if (recorded) { return; }
-          recorded = true;
-          window.localStorage.setItem(storageKey, '1');
-        }
-
-        gtag('event', 'conversion', {
-          'send_to': 'AW-18193879267/jLl8CIfe39wcEOOhwuND',
-          'transaction_id': result.body.transaction_id,
-          'event_callback': markRecorded,
-          'event_timeout': 2000
-        });
-      })
-      .catch(function() { /* network failure: no claim, no conversion -- fine to retry on next load */ });
-  })();
-  </script>
-
-  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700;900&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #1E3B63;
+      --navy-deep: #142A47;
+      --gold: #C49A49;
+      --gold-soft: #F3EAD7;
+      --off-white: #F7F6F1;
+      --surface: #FFFFFF;
+      --border: #D6DCE4;
+      --text: #243243;
+      --text-light: #5E6B79;
+    }
     body {
       font-family: 'DM Sans', sans-serif;
-      background: #F5EFE6;
-      color: #3A2A1A;
+      background: var(--off-white);
+      color: var(--text);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      text-align: center;
-      padding: 2rem;
+      padding: 2rem 1.25rem;
     }
-    .wrap { max-width: 480px; }
+    .wrap {
+      width: 100%;
+      max-width: 640px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--gold);
+      border-radius: 14px;
+      padding: 2.5rem;
+      box-shadow: 0 10px 30px rgba(20,42,71,.08);
+    }
+    .brand-logo {
+      display: block;
+      width: min(100%, 460px);
+      height: auto;
+      margin: 0 auto 1.75rem;
+    }
+    .identity {
+      border-left: 4px solid var(--gold);
+      padding-left: 1rem;
+      margin-bottom: 1.75rem;
+    }
+    .identity .name {
+      font-family: 'Raleway', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--navy-deep);
+      margin-bottom: .15rem;
+    }
+    .identity .business { font-weight: 600; color: var(--navy); }
     h1 {
       font-family: 'Raleway', sans-serif;
-      font-size: 1.9rem;
+      font-size: 1.08rem;
       font-weight: 700;
-      color: #2C1A0E;
+      color: var(--navy-deep);
       line-height: 1.25;
       margin-bottom: 1rem;
+      white-space: nowrap;
     }
-    p { font-size: 1rem; line-height: 1.7; color: #4a3a2a; margin-bottom: 1rem; }
-    .divider { width: 48px; height: 3px; background: #7B3F1E; border-radius: 2px; margin: 0 auto 1.5rem; }
-    .footer-note { font-size: 0.8rem; color: #3A2A1A; margin-top: 2rem; line-height: 1.6; }
+    p { font-size: 1rem; line-height: 1.72; color: var(--text); margin-bottom: 1rem; }
+    .qualification {
+      margin-top: 1.4rem;
+      padding: 1rem 1.1rem;
+      background: var(--gold-soft);
+      border: 1px solid rgba(196,154,73,.5);
+      border-radius: 9px;
+      font-size: .92rem;
+      font-weight: 600;
+      line-height: 1.55;
+      color: var(--navy-deep);
+    }
+    .footer-note {
+      font-size: 0.78rem;
+      color: var(--text-light);
+      margin-top: 2rem;
+      line-height: 1.6;
+      border-top: 1px solid var(--gold);
+      padding-top: 1.25rem;
+    }
+    @media (max-width: 560px) {
+      body { padding: 1rem; align-items: flex-start; }
+      .wrap { padding: 1.5rem; border-radius: 10px; }
+      .brand-logo { width: min(100%, 400px); margin-bottom: 1.4rem; }
+      h1 { font-size: 1.45rem; white-space: normal; }
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="divider"></div>
-    <h1>Thanks — your request is in.</h1>
-    <p>A licensed agent will call you shortly at the number you provided to verify your information and go over your options. When they call, they'll confirm your code word first.</p>
-    <p class="footer-note">
-      This is a solicitation for insurance offered by John M. Brown, CA Lic. #4374779, and Joshua Brown, CA Lic. #4509549. Licensed in California and additional states; not all products are available in all states. Rates and availability vary based on age, health, coverage amount, and state of residence. Not affiliated with, endorsed by, or sponsored by any mortgage lender, loan servicer, or government agency.
-    </p>
-  </div>
+  <main class="wrap">
+    <img class="brand-logo" src="/assets/branding/bfg-logo-landscape-1200x300.png" alt="BFG Insurance Solutions"/>
+
+    <div class="identity" aria-label="Producer identity">
+      <div class="name">John M. Brown</div>
+      <div class="business">BFG Insurance Solutions</div>
+      <!-- D-029: consumer identity block is limited to producer and entity names. -->
+    </div>
+
+    <h1>Thank you — we received your request.</h1>
+    <p>Your mortgage protection request has been received by BFG Insurance Solutions. John M. Brown will review the information you submitted. If your request is eligible to proceed under our current service area and contact controls, John may contact you using the contact methods you authorized.</p>
+
+    <p>If you provided a <strong>Code Word</strong>, John will state it first when contacting you.</p>
+
+    <p class="qualification">Submitting this request does not guarantee eligibility, approval, price, policy issuance, or coverage.</p>
+
+    <p class="footer-note">BFG Insurance Solutions is a DBA of Centaurus Enterprises LLC. Not affiliated with, endorsed by, or sponsored by any mortgage lender, loan servicer, or government agency.</p>
+  </main>
 </body>
 </html>
