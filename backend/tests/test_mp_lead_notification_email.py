@@ -69,12 +69,12 @@ def render_notification(monkeypatch, lead_overrides=None):
 
     lead = {
         "lead_id": 42,
-        "first_name": "John",
-        "last_name": "Brown",
+        "first_name": "Alex",
+        "last_name": "Morgan",
         "code_word": "Falcon",
-        "phone_display": "(619) 432-2727",
-        "email": "jb_51_99@yahoo.com",
-        "zip": "91910",
+        "phone_display": "(202) 555-0123",
+        "email": "alex@example.com",
+        "zip": "10001",
         "age": 53,
         "sex": "male",
         "tobacco_use": "no",
@@ -92,18 +92,18 @@ def render_notification(monkeypatch, lead_overrides=None):
 
 def test_subject_uses_first_and_last_name(monkeypatch):
     message = render_notification(monkeypatch)
-    assert message.subject == "New Lead: John Brown"
+    assert message.subject == "New Lead: Alex Morgan"
 
 
 def test_subject_strips_control_characters(monkeypatch):
     message = render_notification(monkeypatch, lead_overrides={
-        "first_name": "John\r\nBcc: bad@example.com",
-        "last_name": "Brown\t",
+        "first_name": "Alex\r\nBcc: bad@example.com",
+        "last_name": "Morgan\t",
     })
     assert "\r" not in message.subject
     assert "\n" not in message.subject
     assert "\t" not in message.subject
-    assert message.subject == "New Lead: John Bcc: bad@example.com Brown"
+    assert message.subject == "New Lead: Alex Bcc: bad@example.com Morgan"
 
 
 def test_brand_is_bfg_insurance_solutions(monkeypatch):
@@ -130,7 +130,7 @@ def test_lead_id_is_present(monkeypatch):
 
 def test_zip_is_present(monkeypatch):
     message = render_notification(monkeypatch)
-    assert "91910" in message.html_content
+    assert "10001" in message.html_content
 
 
 def test_age_is_present(monkeypatch):
@@ -171,8 +171,8 @@ def test_mortgage_balance_enum_is_displayed_human_readable(monkeypatch):
 def test_phone_and_email_are_present(monkeypatch):
     message = render_notification(monkeypatch)
     body = message.html_content
-    assert "(619) 432-2727" in body
-    assert "jb_51_99@yahoo.com" in body
+    assert "(202) 555-0123" in body
+    assert "alex@example.com" in body
 
 
 def test_legacy_and_default_fields_are_absent(monkeypatch):

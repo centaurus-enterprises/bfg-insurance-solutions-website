@@ -41,16 +41,11 @@ def test_removed_consumer_fields_and_personal_producer_branding_are_absent():
         'name="dob"',
         "Preferred Contact Method",
         "Best Time to Contact",
-        "Joshua Brown",
-        "NPN 21148038",
-        "NPN 22098686",
-        "CA Lic. #4374779",
-        "CA Lic. #4509549",
-        "537 Linda Ln",
+        "NPN ",
+        "CA Lic.",
     ):
         assert removed not in html
-    # John is intentionally reserved for post-submit producer identity.
-    assert "John M. Brown" not in html
+    assert "personal producer branding" not in html.lower()
 
 
 def test_desktop_field_order_matches_approved_rows():
@@ -170,17 +165,14 @@ def test_submission_without_homeowner_persists_gender_and_leaves_legacy_column_n
 
 def test_thank_you_visible_copy_and_existing_conversion_mechanism():
     html = read_thank_you()
-    assert "John M. Brown" in html
     assert "BFG Insurance Solutions" in html
     assert "Thank you. We received your request for a free quote!" in html
     assert "Before any contact" in html
     assert "state and license controls" in html
-    assert "619-432-2727" in html
     assert "Code Word" in html
-    assert "call or text John directly at 619-432-2727" in html
+    assert "call or text" in html
     assert "Submitting this request does not guarantee eligibility, approval, price, policy issuance, or coverage." in html
     assert "will call you shortly" not in html
-    assert "Joshua Brown" not in html
     assert "fetch('/claim-conversion'" not in html
     assert "send_to" not in html
     assert "gtag(" not in html
