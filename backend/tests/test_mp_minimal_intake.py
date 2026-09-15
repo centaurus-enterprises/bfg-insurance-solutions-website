@@ -10,8 +10,10 @@ from db import get_connection
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 FORM_PATH = os.path.join(REPO_ROOT, "protect_mortgage.html")
 THANK_YOU_PATH = os.path.join(REPO_ROOT, "mortgage_thank_you.html")
+LEGACY_THANK_YOU_PATH = os.path.join(REPO_ROOT, "thank_you.html")
 PRIVACY_PATH = os.path.join(REPO_ROOT, "privacy.html")
 TERMS_PATH = os.path.join(REPO_ROOT, "terms.html")
+QUALIFY_PATH = os.path.join(REPO_ROOT, "qualify.html")
 DASHBOARD_PATH = os.path.join(REPO_ROOT, "backend", "templates", "dashboard.html")
 
 
@@ -177,16 +179,31 @@ def test_submission_without_homeowner_persists_gender_and_leaves_legacy_column_n
 def test_thank_you_visible_copy_and_existing_conversion_mechanism():
     html = read_thank_you()
     assert "BFG Insurance Solutions" in html
-    assert "Thank you. We received your request for a free quote!" in html
-    assert "Before any contact" in html
-    assert "state and license controls" in html
+    assert "Thank you — we received your request." in html
+    assert "current service area and contact controls" in html
     assert "Code Word" in html
-    assert "call or text" in html
     assert "Submitting this request does not guarantee eligibility, approval, price, policy issuance, or coverage." in html
     assert "will call you shortly" not in html
+    assert "Licensed Insurance Producer" not in html
+    assert "License #" not in html
+    assert "DERIVED STATE" not in html
+    assert "URLSearchParams" not in html
     assert "fetch('/claim-conversion'" not in html
     assert "send_to" not in html
     assert "gtag(" not in html
+
+
+def test_active_thank_you_pages_do_not_route_or_display_by_zip_derived_state():
+    with open(LEGACY_THANK_YOU_PATH, "r", encoding="utf-8") as page:
+        legacy_html = page.read()
+    with open(QUALIFY_PATH, "r", encoding="utf-8") as page:
+        qualification_html = page.read()
+    combined = read_thank_you() + legacy_html
+    assert "get('state')" not in combined
+    assert "thank_you.html?state=" not in qualification_html
+    assert "calendly.com/" not in combined.lower()
+    assert "Licensed Insurance Producer" not in read_thank_you()
+    assert "License #" not in read_thank_you()
 
 
 def test_privacy_and_terms_use_entity_first_bfg_disclosure():
@@ -202,18 +219,27 @@ def test_privacy_and_terms_contain_no_personal_era_identity_or_contact_details()
     privacy, terms = read_legal_pages()
     combined = privacy + terms
     for removed in (
-        "John M. Brown",
-        "Joshua Brown",
-        "Joshua S. Brown",
         "NPN ",
-        "CA Lic. #4374779",
-        "CA Lic. #4509549",
-        "537 Linda Ln",
-        "john.brown@centaurusenterprises.com",
-        "(619) 905-7488",
-        "619-432-2727",
+        "CA Lic.",
     ):
         assert removed not in combined
+    assert not re.search(r'mailto:(?!john\.brown@bfginsurancesolutions\.com)', combined)
+
+
+def test_active_qualification_disclosure_is_entity_first():
+    with open(QUALIFY_PATH, "r", encoding="utf-8") as page:
+        html = page.read()
+    assert "BFG Insurance Solutions, a DBA of Centaurus Enterprises LLC" in html
+    assert "California Organization Producer License #6020392" in html
+    assert "john.brown@bfginsurancesolutions.com" in html
+    assert "NPN " not in html
+    assert "CA Lic." not in html
+    assert not re.search(r'mailto:(?!john\.brown@bfginsurancesolutions\.com)', html)
+
+
+def test_public_notification_debug_route_is_absent():
+    rules = {rule.rule for rule in app_module.app.url_map.iter_rules()}
+    assert not any("debug-notifications" in rule for rule in rules)
 
 
 def test_dashboard_does_not_equate_evidence_retention_with_contact_clearance():
@@ -223,3 +249,4 @@ def test_dashboard_does_not_equate_evidence_retention_with_contact_clearance():
     assert "Evidence hold — do not contact" in dashboard
     assert "Evidence retained — contact control still applies" in dashboard
     assert "CLEARED_TO_CONTACT" in dashboard
+    assert "new URLSearchParams(window.location.search).get('lead')" in dashboard

@@ -1024,6 +1024,12 @@
   function init() {
     updateStatCounts();
     buildColumnGrid();
+    const requestedLeadId = Number(new URLSearchParams(window.location.search).get('lead'));
+    const requestedRow = document.querySelector(`.lead-row[data-id="${requestedLeadId}"]`);
+    if (Number.isInteger(requestedLeadId) && requestedLeadId > 0 && requestedRow) {
+      toggleExpand(requestedLeadId, requestedRow);
+      requestedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   }
 
   function updateStatCounts() {

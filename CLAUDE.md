@@ -47,6 +47,9 @@ production repository.
   tobacco answer, and affirmative consent are required.
 - ZIP intake is not California-only. State derivation and state/license/contact
   eligibility are separate controlled steps; receipt is not contact release.
+- The consumer Thank You page must not display or infer a state name or license
+  number from ZIP. State/license evaluation remains an internal contact-release
+  control.
 - Approximate Mortgage Balance is optional. If supplied, validate the current
   approved enum.
 - Code Word is optional. If supplied, validate and protect it. Never place it in

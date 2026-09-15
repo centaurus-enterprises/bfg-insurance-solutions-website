@@ -34,6 +34,9 @@ from db import get_connection
 
 STATEMENTS = [
     "ALTER TABLE leads ADD COLUMN IF NOT EXISTS consent_affirmed BOOLEAN DEFAULT FALSE",
+    "ALTER TABLE leads ADD COLUMN IF NOT EXISTS submission_session_id VARCHAR(64)",
+    "ALTER TABLE leads ADD COLUMN IF NOT EXISTS privacy_notice_version VARCHAR(50)",
+    "ALTER TABLE leads ADD COLUMN IF NOT EXISTS terms_version VARCHAR(50)",
     "ALTER TABLE leads ADD COLUMN IF NOT EXISTS lead_processing_status VARCHAR(30)",
     "ALTER TABLE leads ADD COLUMN IF NOT EXISTS evidence_hold_reason VARCHAR(255)",
     "ALTER TABLE leads ADD COLUMN IF NOT EXISTS evidence_retry_count INTEGER DEFAULT 0",
@@ -46,6 +49,8 @@ STATEMENTS = [
     "ALTER TABLE leads ADD COLUMN IF NOT EXISTS conversion_claimed_at TIMESTAMPTZ",
     "CREATE UNIQUE INDEX IF NOT EXISTS idx_leads_conversion_token "
     "ON leads (conversion_token) WHERE conversion_token IS NOT NULL",
+    "CREATE UNIQUE INDEX IF NOT EXISTS idx_leads_submission_session_id "
+    "ON leads (submission_session_id) WHERE submission_session_id IS NOT NULL",
 ]
 
 

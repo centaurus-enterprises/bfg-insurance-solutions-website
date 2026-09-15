@@ -34,6 +34,7 @@ def valid_payload(**overrides):
         "gclid": "test-gclid-123",
         "gbraid": "test-gbraid-456",
         "wbraid": "test-wbraid-789",
+        "submission_session_id": "generic_session_0001",
         "submitted_url": "https://protect-mortgage.com/?gclid=test-gclid-123",
         "consent": True,
         "consent_text": "browser text is not authoritative",
@@ -59,7 +60,8 @@ def fetch_processing_state(lead_id):
         SELECT lead_processing_status, evidence_hold_reason, evidence_retry_count,
                evidence_next_retry_at, contact_status, state_derivation_status,
                conversion_token, consent_affirmed, consent_text,
-               mortgage_balance, code_word
+               mortgage_balance, code_word, lead_source_bucket,
+               submission_session_id, privacy_notice_version, terms_version
         FROM leads WHERE id = %s
     """, (lead_id,))
     row = cur.fetchone()
@@ -83,6 +85,8 @@ def test_verified_submission_is_accepted_and_mints_token(client):
     assert '"accepted": true' in detail
     assert claimed_at is None
     assert expires_at is not None
+    state = fetch_processing_state(row[0])
+    assert state[11] == "self_generated"
 
 
 def test_non_california_five_digit_zip_is_received(client):
@@ -125,6 +129,17 @@ def test_server_controlled_consent_text_is_persisted(client):
     state = fetch_processing_state(lead_id)
     assert state[7] is True
     assert state[8] == app_module.MP_CONSENT_TEXT
+    assert state[12] == "generic_session_0001"
+    assert state[13] == app_module.MP_PRIVACY_NOTICE_VERSION
+    assert state[14] == app_module.MP_TERMS_VERSION
+
+
+def test_submission_session_id_prevents_duplicate_leads(client):
+    first = submit(client)
+    second = submit(client)
+    assert first.status_code == second.status_code == 200
+    assert first.get_json()["conversion_token"] == second.get_json()["conversion_token"]
+    assert count_leads() == 1
 
 
 def test_evidence_failure_persists_hold_without_notification_or_token(client, monkeypatch):
@@ -151,6 +166,7 @@ def test_evidence_failure_persists_hold_without_notification_or_token(client, mo
     assert state[1] == "lead mismatch"
     assert state[4] == "DO_NOT_CONTACT"
     assert state[6] is None
+    assert state[11] == "self_generated"
 
 
 def test_transport_error_is_held_with_bounded_retry(client, monkeypatch):

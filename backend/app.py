@@ -31,13 +31,20 @@ MP_MORTGAGE_BALANCE_VALUES = {
     "under_100k", "100k_249999", "250k_499999", "500k_749999", "750k_plus"
 }
 MP_CONSENT_VERSION = "1.1"
+MP_PRIVACY_NOTICE_VERSION = "draft-2026-09-15"
+MP_TERMS_VERSION = "draft-2026-09-15"
+MP_LEAD_MAIL_FROM = "leads@bfginsurancesolutions.com"
+MP_LEAD_MAIL_TO = "john.brown@bfginsurancesolutions.com"
 MP_CONSENT_TEXT = (
+    "By checking the box below and selecting “Request My Mortgage Protection Quote,” "
     "I authorize BFG Insurance Solutions, a DBA of Centaurus Enterprises LLC, "
     "to contact me at the phone number and email address I provided about my "
     "request for mortgage protection insurance information and available insurance "
     "options by live-agent telephone call, SMS/text message, and email. Message and "
     "data rates may apply to texts. I understand that this consent is not a condition "
-    "of purchasing any insurance product or service."
+    "of purchasing any insurance product or service. I may revoke or limit this consent "
+    "at any time, including by replying STOP to a text or asking not to be contacted "
+    "during a call; additional revocation methods are described in the Privacy Notice."
 )
 MP_EVIDENCE_RETRY_DELAYS_MINUTES = (5, 15, 60, 360, 1440)
 
@@ -185,7 +192,7 @@ MAINTENANCE_HTML = """<!DOCTYPE html>
     <h1>Something great is coming.</h1>
     <div class="divider"></div>
     <p>We're putting the finishing touches on our new website. Check back soon — we can't wait to show you what we've built.</p>
-    <p class="contact">In the meantime, reach us at<br/><a href="mailto:john.brown@centaurusenterprises.com">john.brown@centaurusenterprises.com</a></p>
+    <p class="contact">In the meantime, reach us at<br/><a href="mailto:john.brown@bfginsurancesolutions.com">john.brown@bfginsurancesolutions.com</a></p>
   </div>
 </body>
 </html>"""
@@ -269,7 +276,7 @@ def get_current_agent():
 
 def send_lead_notification(data: dict):
     """
-    Sends a new lead alert email to all agents with notify_on_lead = TRUE.
+    Sends a new lead alert email through the approved BFG mailbox route.
     Uses SendGrid API — works on Render free tier.
     Failures are silent so a mail issue never blocks a lead from being saved.
     """
@@ -277,24 +284,7 @@ def send_lead_notification(data: dict):
     from sendgrid.helpers.mail import Mail
 
     api_key = os.getenv("SENDGRID_API_KEY")
-    sender  = os.getenv("MAIL_SENDER")
-
-    if not api_key or not sender:
-        return
-
-    try:
-        conn = get_connection()
-        cur  = conn.cursor()
-        cur.execute(
-            "SELECT email, full_name FROM agents WHERE notify_on_lead = TRUE AND is_active = TRUE"
-        )
-        recipients = cur.fetchall()
-        cur.close()
-        conn.close()
-    except Exception:
-        return
-
-    if not recipients:
+    if not api_key:
         return
 
     PRODUCT_LABELS = {
@@ -326,7 +316,7 @@ def send_lead_notification(data: dict):
     <div style="font-family:'DM Sans',Arial,sans-serif;max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #e8d5c0;border-radius:8px;overflow:hidden">
       <div style="background:#4B2E2B;padding:1.25rem 1.5rem">
         <p style="font-family:Arial,sans-serif;font-size:1.15rem;font-weight:800;color:#ffffff;margin:0">
-          Brown<span style="color:#C08552">Financial Group</span>
+          BFG <span style="color:#C08552">Insurance Solutions</span>
         </p>
         <p style="font-size:0.75rem;color:#c8a882;margin:0.2rem 0 0;letter-spacing:0.08em;text-transform:uppercase">New Lead Notification</p>
       </div>
@@ -393,14 +383,13 @@ def send_lead_notification(data: dict):
 
     try:
         sg = SendGridAPIClient(api_key)
-        for recipient_email, recipient_name in recipients:
-            message = Mail(
-                from_email=sender,
-                to_emails=recipient_email,
-                subject=subject,
-                html_content=html_body
-            )
-            sg.send(message)
+        message = Mail(
+            from_email=MP_LEAD_MAIL_FROM,
+            to_emails=MP_LEAD_MAIL_TO,
+            subject=subject,
+            html_content=html_body
+        )
+        sg.send(message)
     except Exception:
         pass  # Never block a lead save due to email failure
 
@@ -426,24 +415,7 @@ def send_mortgage_protection_lead_notification(lead: dict):
     from sendgrid.helpers.mail import Mail
 
     api_key = os.getenv("SENDGRID_API_KEY")
-    sender  = os.getenv("MAIL_SENDER")
-
-    if not api_key or not sender:
-        return
-
-    try:
-        conn = get_connection()
-        cur  = conn.cursor()
-        cur.execute(
-            "SELECT email, full_name FROM agents WHERE notify_on_lead = TRUE AND is_active = TRUE"
-        )
-        recipients = cur.fetchall()
-        cur.close()
-        conn.close()
-    except Exception:
-        return
-
-    if not recipients:
+    if not api_key:
         return
 
     first            = html.escape(lead.get("first_name", ""))
@@ -467,12 +439,14 @@ def send_mortgage_protection_lead_notification(lead: dict):
     mortgage_balance = html.escape(
         mortgage_labels.get(raw_mortgage_balance, raw_mortgage_balance)
     )
+    derived_state = html.escape(lead.get("derived_state") or "Pending authoritative derivation")
     submitted        = mp_format_pacific_timestamp(lead["submitted_at_utc"])
 
     subject_first = re.sub(r"[\x00-\x1f\x7f]+", " ", str(lead.get("first_name", ""))).strip()
     subject_last = re.sub(r"[\x00-\x1f\x7f]+", " ", str(lead.get("last_name", ""))).strip()
     subject_name = " ".join(part for part in (subject_first, subject_last) if part)
-    subject = f"New Lead: {subject_name}"
+    subject = f"Mortgage Protection Lead — SCREENING PENDING — {subject_name} — Lead {lead_id}"
+    secure_lead_url = f"https://protect-mortgage.com/admin?lead={lead_id}"
 
     code_word_block = ""
     if code_word:
@@ -513,6 +487,10 @@ def send_mortgage_protection_lead_notification(lead: dict):
             <td style="padding:0.5rem 0;color:#9a7a6a;font-weight:600">ZIP Code</td>
             <td style="padding:0.5rem 0;color:#2C1810">{zip_code}</td>
           </tr>
+          <tr>
+            <td style="padding:0.5rem 0;color:#9a7a6a;font-weight:600">State</td>
+            <td style="padding:0.5rem 0;color:#2C1810">{derived_state}</td>
+          </tr>
         </table>
 
         <p style="font-size:0.7rem;color:#9a7a6a;margin:0 0 0.4rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase">Applicant</p>
@@ -552,10 +530,13 @@ def send_mortgage_protection_lead_notification(lead: dict):
         </table>
 
         <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid #f0e4d4">
-          <a href="https://protect-mortgage.com/admin"
+          <a href="{secure_lead_url}"
              style="display:inline-block;background:#C08552;color:#ffffff;font-weight:700;font-size:0.875rem;padding:0.65rem 1.4rem;border-radius:6px;text-decoration:none">
-            View in Dashboard →
+            Open Secure CRM Record →
           </a>
+          <p style="font-size:0.76rem;color:#7a271a;margin:1rem 0 0;line-height:1.5;font-weight:700">
+            This email contains lead contact data and may contain a Code Word. Do not forward.
+          </p>
         </div>
       </div>
     </div>
@@ -563,14 +544,13 @@ def send_mortgage_protection_lead_notification(lead: dict):
 
     try:
         sg = SendGridAPIClient(api_key)
-        for recipient_email, recipient_name in recipients:
-            message = Mail(
-                from_email=sender,
-                to_emails=recipient_email,
-                subject=subject,
-                html_content=html_body
-            )
-            sg.send(message)
+        message = Mail(
+            from_email=MP_LEAD_MAIL_FROM,
+            to_emails=MP_LEAD_MAIL_TO,
+            subject=subject,
+            html_content=html_body
+        )
+        sg.send(message)
     except Exception:
         pass  # Never block a lead save due to email failure
 
@@ -615,54 +595,6 @@ def db_test():
         conn = get_connection()
         conn.close()
         return jsonify({"status": "ok", "message": "Database connection successful."})
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
-
-
-@app.route("/debug-notifications-r5m8v")
-def debug_notifications():
-    """Temporary read-only diagnostic for the lead-notification pipeline.
-    No secrets/passwords returned -- just whether the SendGrid env vars are
-    set, who would actually receive a new-lead email right now, and the
-    most recent mortgage-protection lead's timestamps (confirms the DB
-    write side of the chain). Delete once the notification issue is
-    resolved."""
-    try:
-        conn = get_connection()
-        cur  = conn.cursor()
-        cur.execute("SELECT full_name, email, notify_on_lead, is_active FROM agents ORDER BY id")
-        all_agents = cur.fetchall()
-        cur.execute("""
-            SELECT id, first_name, last_name, submitted_at, code_word, code_word_set_at
-            FROM leads WHERE product_type = 'mortgage-protection'
-            ORDER BY id DESC LIMIT 5
-        """)
-        recent_leads = cur.fetchall()
-        cur.close()
-        conn.close()
-
-        return jsonify({
-            "status": "ok",
-            "sendgrid_api_key_set": bool(os.getenv("SENDGRID_API_KEY")),
-            "mail_sender_set":      bool(os.getenv("MAIL_SENDER")),
-            "mail_sender_value":    os.getenv("MAIL_SENDER") or None,
-            "all_agents": [
-                {"full_name": a[0], "email": a[1], "notify_on_lead": a[2], "is_active": a[3]}
-                for a in all_agents
-            ],
-            "would_notify": [
-                a[1] for a in all_agents if a[2] and a[3]
-            ],
-            "recent_mortgage_protection_leads": [
-                {
-                    "id": l[0], "name": f"{l[1]} {l[2]}",
-                    "submitted_at": l[3].isoformat() if l[3] else None,
-                    "code_word": l[4],
-                    "code_word_set_at": l[5].isoformat() if l[5] else None,
-                }
-                for l in recent_leads
-            ],
-        })
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
@@ -1231,9 +1163,7 @@ def apply():
             return jsonify({"status": "error", "message": "No data received."}), 400
 
         api_key = os.getenv("SENDGRID_API_KEY")
-        sender  = os.getenv("MAIL_SENDER")
-
-        if not api_key or not sender:
+        if not api_key:
             return jsonify({"status": "ok"})
 
         first        = data.get("first_name", "")
@@ -1257,7 +1187,7 @@ def apply():
         <div style="font-family:'DM Sans',Arial,sans-serif;max-width:580px;margin:0 auto;background:#ffffff;border:1px solid #e8d5c0;border-radius:8px;overflow:hidden">
           <div style="background:#4B2E2B;padding:1.25rem 1.5rem">
             <p style="font-family:Arial,sans-serif;font-size:1.15rem;font-weight:800;color:#ffffff;margin:0">
-              Brown<span style="color:#C08552">Financial Group</span>
+              BFG <span style="color:#C08552">Insurance Solutions</span>
             </p>
             <p style="font-size:0.75rem;color:#c8a882;margin:0.2rem 0 0;letter-spacing:0.08em;text-transform:uppercase">New Agent Application</p>
           </div>
@@ -1313,20 +1243,14 @@ def apply():
         </div>
         """
 
-        recipients = [
-            "john.brown@centaurusenterprises.com",
-            "johnmbrown@outlook.com"
-        ]
-
         sg = SendGridAPIClient(api_key)
-        for recipient in recipients:
-            message_obj = Mail(
-                from_email=sender,
-                to_emails=recipient,
-                subject=subject,
-                html_content=html_body
-            )
-            sg.send(message_obj)
+        message_obj = Mail(
+            from_email=MP_LEAD_MAIL_FROM,
+            to_emails=MP_LEAD_MAIL_TO,
+            subject=subject,
+            html_content=html_body
+        )
+        sg.send(message_obj)
 
         return jsonify({"status": "ok"})
 
@@ -1375,6 +1299,9 @@ def run_migration_mortgage_protection():
             "ALTER TABLE leads ADD COLUMN IF NOT EXISTS wbraid VARCHAR(255)",
             "ALTER TABLE leads ADD COLUMN IF NOT EXISTS consent_version VARCHAR(10)",
             "ALTER TABLE leads ADD COLUMN IF NOT EXISTS consent_text TEXT",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS submission_session_id VARCHAR(64)",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS privacy_notice_version VARCHAR(50)",
+            "ALTER TABLE leads ADD COLUMN IF NOT EXISTS terms_version VARCHAR(50)",
             "ALTER TABLE leads ADD COLUMN IF NOT EXISTS trustedform_cert_url VARCHAR(500)",
             "ALTER TABLE leads ADD COLUMN IF NOT EXISTS submitted_url TEXT",
             "ALTER TABLE leads ADD COLUMN IF NOT EXISTS ip_address VARCHAR(64)",
@@ -1487,6 +1414,9 @@ def run_migration_init():
                 consent_version VARCHAR(10),
                 consent_text TEXT,
                 consent_affirmed BOOLEAN DEFAULT FALSE,
+                submission_session_id VARCHAR(64),
+                privacy_notice_version VARCHAR(50),
+                terms_version VARCHAR(50),
                 trustedform_cert_url VARCHAR(500),
                 submitted_url TEXT,
                 ip_address VARCHAR(64),
@@ -1511,6 +1441,10 @@ def run_migration_init():
         cur.execute("""
             CREATE UNIQUE INDEX IF NOT EXISTS idx_leads_conversion_token
             ON leads (conversion_token) WHERE conversion_token IS NOT NULL
+        """)
+        cur.execute("""
+            CREATE UNIQUE INDEX IF NOT EXISTS idx_leads_submission_session_id
+            ON leads (submission_session_id) WHERE submission_session_id IS NOT NULL
         """)
         cur.execute("""
             CREATE TABLE IF NOT EXISTS agents (
@@ -1626,7 +1560,7 @@ def mp_process_evidence(lead_id):
     conn = get_connection()
     cur = conn.cursor()
     cur.execute("""
-        SELECT id, first_name, last_name, mobile_phone, email, zip, age, gender,
+        SELECT id, first_name, last_name, mobile_phone, email, zip, state, age, gender,
                tobacco, mortgage_balance, code_word, submitted_at,
                trustedform_cert_url, lead_processing_status, conversion_token,
                evidence_retry_count
@@ -1638,7 +1572,7 @@ def mp_process_evidence(lead_id):
     if not lead:
         return {"status": "error", "message": "Lead not found."}
 
-    (lead_id, first_name, last_name, mobile_phone, email, zip_code, age, gender,
+    (lead_id, first_name, last_name, mobile_phone, email, zip_code, derived_state, age, gender,
      tobacco, mortgage_balance, code_word, submitted_at, cert_url,
      processing_status, existing_token, retry_count) = lead
     if processing_status == "INTAKE_ACCEPTED":
@@ -1664,7 +1598,6 @@ def mp_process_evidence(lead_id):
                 evidence_next_retry_at = NULL,
                 contact_status = 'STATE_LICENSE_SCREENING_PENDING',
                 state_derivation_status = 'PENDING_AUTHORITATIVE_DERIVATION',
-                lead_source_bucket = 'approved',
                 conversion_token = COALESCE(conversion_token, %(token)s),
                 conversion_token_expires_at = COALESCE(conversion_token_expires_at, %(expires_at)s)
             WHERE id = %(lead_id)s
@@ -1687,7 +1620,8 @@ def mp_process_evidence(lead_id):
         send_mortgage_protection_lead_notification({
             "lead_id": lead_id, "first_name": first_name, "last_name": last_name,
             "code_word": code_word or "", "phone_display": phone_display,
-            "email": email, "zip": zip_code, "age": age, "sex": gender,
+            "email": email, "zip": zip_code, "derived_state": derived_state,
+            "age": age, "sex": gender,
             "tobacco_use": "yes" if tobacco else "no",
             "mortgage_balance": mortgage_balance,
             "submitted_at_utc": submitted_at_utc,
@@ -1709,7 +1643,6 @@ def mp_process_evidence(lead_id):
             evidence_last_attempt_at = %(now)s,
             evidence_next_retry_at = %(next_retry)s,
             contact_status = 'DO_NOT_CONTACT',
-            lead_source_bucket = 'outside',
             conversion_token = NULL,
             conversion_token_expires_at = NULL
         WHERE id = %(lead_id)s
@@ -1780,6 +1713,13 @@ def submit_mortgage_protection():
         return jsonify({"status": "error", "field": "consent",
                         "message": "Affirmative consent is required."}), 400
 
+    supplied_session_id = str(data.get("submission_session_id") or "").strip()
+    submission_session_id = (
+        supplied_session_id
+        if re.fullmatch(r"[A-Za-z0-9_-]{16,64}", supplied_session_id)
+        else secrets.token_urlsafe(24)
+    )
+
     now = datetime.now(timezone.utc)
 
     try:
@@ -1791,7 +1731,9 @@ def submit_mortgage_protection():
                 zip, age, gender, tobacco, mortgage_balance,
                 code_word, code_word_set_at, code_word_confirmed,
                 gclid, gbraid, wbraid,
-                consent_version, consent_text, consent_affirmed, trustedform_cert_url,
+                submission_session_id,
+                consent_version, consent_text, consent_affirmed,
+                privacy_notice_version, terms_version, trustedform_cert_url,
                 submitted_url, ip_address, user_agent,
                 lead_source, lead_source_bucket,
                 lead_processing_status, evidence_hold_reason, evidence_retry_count,
@@ -1801,12 +1743,17 @@ def submit_mortgage_protection():
                 %(zip)s, %(age)s, %(gender)s, %(tobacco)s, %(mortgage_balance)s,
                 %(code_word)s, %(code_word_set_at)s, %(code_word_confirmed)s,
                 %(gclid)s, %(gbraid)s, %(wbraid)s,
-                %(consent_version)s, %(consent_text)s, %(consent_affirmed)s, %(trustedform_cert_url)s,
+                %(submission_session_id)s,
+                %(consent_version)s, %(consent_text)s, %(consent_affirmed)s,
+                %(privacy_notice_version)s, %(terms_version)s, %(trustedform_cert_url)s,
                 %(submitted_url)s, %(ip_address)s, %(user_agent)s,
                 %(lead_source)s, %(lead_source_bucket)s,
                 %(lead_processing_status)s, %(evidence_hold_reason)s, %(evidence_retry_count)s,
                 %(contact_status)s, %(state_derivation_status)s
             )
+            ON CONFLICT (submission_session_id)
+                WHERE submission_session_id IS NOT NULL
+            DO NOTHING
             RETURNING id
         """, {
             "product_type":         "mortgage-protection",
@@ -1825,15 +1772,18 @@ def submit_mortgage_protection():
             "gclid":                data.get("gclid") or None,
             "gbraid":               data.get("gbraid") or None,
             "wbraid":               data.get("wbraid") or None,
+            "submission_session_id": submission_session_id,
             "consent_version":      MP_CONSENT_VERSION,
             "consent_text":         MP_CONSENT_TEXT,
             "consent_affirmed":     True,
+            "privacy_notice_version": MP_PRIVACY_NOTICE_VERSION,
+            "terms_version":        MP_TERMS_VERSION,
             "trustedform_cert_url": data.get("trustedform_cert_url") or None,
             "submitted_url":        data.get("submitted_url", ""),
             "ip_address":           request.headers.get("X-Forwarded-For", request.remote_addr or ""),
             "user_agent":           request.headers.get("User-Agent", ""),
             "lead_source":          "protect-mortgage.com",
-            "lead_source_bucket":   "outside",
+            "lead_source_bucket":   "self_generated",
             "lead_processing_status": "EVIDENCE_HOLD",
             "evidence_hold_reason": "TRUSTEDFORM_PENDING",
             "evidence_retry_count": 0,
@@ -1841,7 +1791,15 @@ def submit_mortgage_protection():
             "state_derivation_status": "PENDING_AUTHORITATIVE_DERIVATION",
         })
 
-        lead_id = cur.fetchone()[0]
+        inserted = cur.fetchone()
+        if inserted:
+            lead_id = inserted[0]
+        else:
+            cur.execute(
+                "SELECT id FROM leads WHERE submission_session_id = %s",
+                (submission_session_id,),
+            )
+            lead_id = cur.fetchone()[0]
         conn.commit()
         cur.close()
         conn.close()

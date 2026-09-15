@@ -239,6 +239,7 @@
       <input type="hidden" id="gbraid" name="gbraid"/>
       <input type="hidden" id="wbraid" name="wbraid"/>
       <input type="hidden" id="submitted_url" name="submitted_url"/>
+      <input type="hidden" id="submission_session_id" name="submission_session_id"/>
       <!-- Compatibility field: visible control is Gender; backend continues to receive sex. -->
       <input type="hidden" id="sex" name="sex"/>
 
@@ -359,6 +360,7 @@
       landingUrl: 'bfg_mp_click_landing_url'
     };
     var MP_CLICK_ID_TTL_MS = 2 * 60 * 60 * 1000;
+    var MP_SUBMISSION_SESSION_KEY = 'bfg_mp_submission_session_id';
 
     function mpSessionStorageGet(key) {
       try { return window.sessionStorage.getItem(key); } catch (e) { return null; }
@@ -368,6 +370,23 @@
     }
     function mpSessionStorageRemove(key) {
       try { window.sessionStorage.removeItem(key); } catch (e) {}
+    }
+    function createMpSubmissionSessionId() {
+      if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+        return window.crypto.randomUUID();
+      }
+      return 'mp_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 18);
+    }
+    function populateMpSubmissionSessionId() {
+      var value = mpSessionStorageGet(MP_SUBMISSION_SESSION_KEY);
+      if (!value || !/^[A-Za-z0-9_-]{16,64}$/.test(value)) {
+        value = createMpSubmissionSessionId();
+        mpSessionStorageSet(MP_SUBMISSION_SESSION_KEY, value);
+      }
+      document.getElementById('submission_session_id').value = value;
+    }
+    function clearMpSubmissionSessionId() {
+      mpSessionStorageRemove(MP_SUBMISSION_SESSION_KEY);
     }
     function clearMpClickAttribution() {
       mpSessionStorageRemove(MP_CLICK_ID_STORAGE_KEYS.gclid);
@@ -415,6 +434,7 @@
       document.getElementById('submitted_url').value = submittedUrl;
     }
     populateMpClickAttribution();
+    populateMpSubmissionSessionId();
 
     document.getElementById('phone').addEventListener('input', function() {
       var digits = this.value.replace(/\D/g, '').slice(0, 10);
@@ -540,6 +560,7 @@
         gbraid: document.getElementById('gbraid').value,
         wbraid: document.getElementById('wbraid').value,
         submitted_url: document.getElementById('submitted_url').value,
+        submission_session_id: document.getElementById('submission_session_id').value,
         consent: consentCheck.checked,
         consent_text: document.querySelector('.consent-box').innerText,
         trustedform_cert_url: certResult.value,
@@ -555,9 +576,11 @@
       .then(function(result) {
         if (result.body.status === 'ok') {
           clearMpClickAttribution();
+          clearMpSubmissionSessionId();
           window.location.href = '/thank-you?ct=' + encodeURIComponent(result.body.conversion_token || '');
         } else if (result.body.status === 'received') {
           clearMpClickAttribution();
+          clearMpSubmissionSessionId();
           window.location.href = '/thank-you?status=review';
         } else {
           btn.disabled = false;

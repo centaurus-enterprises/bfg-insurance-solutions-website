@@ -1,40 +1,11 @@
 """Regression coverage for the Mortgage Protection lead-notification email.
 
-Exercises send_mortgage_protection_lead_notification directly with SendGrid
-and agent-recipient lookup mocked out. No real email is sent and no live DB
-connection is required.
+Exercises send_mortgage_protection_lead_notification directly with SendGrid.
+No real email is sent and no live DB connection is required.
 """
 from datetime import datetime, timezone
 
 import app as app_module
-
-
-class FakeCursor:
-    def __init__(self, rows):
-        self._rows = rows
-
-    def execute(self, *a, **k):
-        pass
-
-    def fetchall(self):
-        return self._rows
-
-    def close(self):
-        pass
-
-
-class FakeConnection:
-    def __init__(self, rows):
-        self._rows = rows
-
-    def cursor(self):
-        return FakeCursor(self._rows)
-
-    def commit(self):
-        pass
-
-    def close(self):
-        pass
 
 
 class FakeMail:
@@ -57,11 +28,6 @@ class FakeSendGridClient:
 
 def render_notification(monkeypatch, lead_overrides=None):
     monkeypatch.setenv("SENDGRID_API_KEY", "test-key")
-    monkeypatch.setenv("MAIL_SENDER", "sender@example.com")
-    monkeypatch.setattr(
-        app_module, "get_connection",
-        lambda: FakeConnection([("agent@example.com", "Agent One")])
-    )
 
     FakeSendGridClient.sent = []
     monkeypatch.setattr("sendgrid.SendGridAPIClient", FakeSendGridClient)
@@ -92,7 +58,7 @@ def render_notification(monkeypatch, lead_overrides=None):
 
 def test_subject_uses_first_and_last_name(monkeypatch):
     message = render_notification(monkeypatch)
-    assert message.subject == "New Lead: Alex Morgan"
+    assert message.subject == "Mortgage Protection Lead — SCREENING PENDING — Alex Morgan — Lead 42"
 
 
 def test_subject_strips_control_characters(monkeypatch):
@@ -103,7 +69,13 @@ def test_subject_strips_control_characters(monkeypatch):
     assert "\r" not in message.subject
     assert "\n" not in message.subject
     assert "\t" not in message.subject
-    assert message.subject == "New Lead: Alex Bcc: bad@example.com Morgan"
+    assert message.subject == "Mortgage Protection Lead — SCREENING PENDING — Alex Bcc: bad@example.com Morgan — Lead 42"
+
+
+def test_sender_and_recipient_are_the_approved_bfg_mailboxes(monkeypatch):
+    message = render_notification(monkeypatch)
+    assert message.from_email == "leads@bfginsurancesolutions.com"
+    assert message.to_emails == "john.brown@bfginsurancesolutions.com"
 
 
 def test_brand_is_bfg_insurance_solutions(monkeypatch):
@@ -119,7 +91,7 @@ def test_code_word_is_present(monkeypatch):
 
 def test_blank_optional_code_word_is_omitted(monkeypatch):
     message = render_notification(monkeypatch, lead_overrides={"code_word": ""})
-    assert "Code Word" not in message.html_content
+    assert ">Code Word</p>" not in message.html_content
 
 
 def test_lead_id_is_present(monkeypatch):
@@ -214,7 +186,14 @@ def test_email_does_not_assert_consent_was_captured(monkeypatch):
 
 def test_dashboard_link_is_present(monkeypatch):
     message = render_notification(monkeypatch)
-    assert "https://protect-mortgage.com/admin" in message.html_content
+    assert "https://protect-mortgage.com/admin?lead=42" in message.html_content
+    assert "Open Secure CRM Record" in message.html_content
+
+
+def test_notification_includes_internal_state_status_and_no_forward_notice(monkeypatch):
+    message = render_notification(monkeypatch)
+    assert "Pending authoritative derivation" in message.html_content
+    assert "Do not forward" in message.html_content
 
 
 def test_notification_blocks_contact_until_state_license_screening(monkeypatch):
