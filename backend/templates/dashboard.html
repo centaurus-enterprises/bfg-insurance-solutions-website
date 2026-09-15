@@ -1278,8 +1278,14 @@
         </div>
         <div class="edit-field edit-field-wide">
           <label>TrustedForm Certificate</label>
-          <div style="padding:0.4rem 0;font-size:0.85rem;font-weight:600;color:${lead.trustedform_retained === true ? '#22C55E' : (lead.trustedform_retained === false ? '#EF4444' : '#9a7a6a')};">
-            ${lead.trustedform_retained === true ? '✓ Retained — callable' : (lead.trustedform_retained === false ? '✗ Not retained — do not dial' : '— Not yet processed')}
+          <div style="padding:0.4rem 0;font-size:0.85rem;font-weight:600;color:${lead.contact_status === 'CLEARED_TO_CONTACT' ? '#22C55E' : (lead.lead_processing_status === 'EVIDENCE_HOLD' ? '#EF4444' : '#9a7a6a')};">
+            ${lead.lead_processing_status === 'EVIDENCE_HOLD'
+              ? '✗ Evidence hold — do not contact'
+              : (lead.contact_status === 'CLEARED_TO_CONTACT'
+                ? '✓ Evidence retained — contact cleared'
+                : (lead.trustedform_retained === true
+                  ? '✓ Evidence retained — contact control still applies'
+                  : '— Evidence not yet verified'))}
           </div>
           ${lead.trustedform_cert_url ? `<div style="font-size:0.78rem;color:#9a7a6a;word-break:break-all;">Cert URL: ${lead.trustedform_cert_url}</div>` : ''}
           ${lead.trustedform_retain_response ? `<div style="font-size:0.78rem;color:#9a7a6a;word-break:break-all;margin-top:0.25rem;">Detail: ${lead.trustedform_retain_response}</div>` : ''}

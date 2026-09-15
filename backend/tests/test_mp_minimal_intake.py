@@ -12,6 +12,7 @@ FORM_PATH = os.path.join(REPO_ROOT, "protect_mortgage.html")
 THANK_YOU_PATH = os.path.join(REPO_ROOT, "mortgage_thank_you.html")
 PRIVACY_PATH = os.path.join(REPO_ROOT, "privacy.html")
 TERMS_PATH = os.path.join(REPO_ROOT, "terms.html")
+DASHBOARD_PATH = os.path.join(REPO_ROOT, "backend", "templates", "dashboard.html")
 
 
 def read_form():
@@ -213,3 +214,12 @@ def test_privacy_and_terms_contain_no_personal_era_identity_or_contact_details()
         "619-432-2727",
     ):
         assert removed not in combined
+
+
+def test_dashboard_does_not_equate_evidence_retention_with_contact_clearance():
+    with open(DASHBOARD_PATH, "r", encoding="utf-8") as dashboard_file:
+        dashboard = dashboard_file.read()
+    assert "Retained — callable" not in dashboard
+    assert "Evidence hold — do not contact" in dashboard
+    assert "Evidence retained — contact control still applies" in dashboard
+    assert "CLEARED_TO_CONTACT" in dashboard
