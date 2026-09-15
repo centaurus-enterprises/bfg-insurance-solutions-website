@@ -102,7 +102,7 @@ def test_mortgage_balance_and_code_word_are_optional(client):
     token = resp.get_json()["conversion_token"]
     lead_id = fetch_lead_row_by_token(token)[0]
     state = fetch_processing_state(lead_id)
-    assert state[-2:] == (None, None)
+    assert state[9:11] == (None, None)
 
 
 def test_optional_fields_validate_when_supplied(client):
